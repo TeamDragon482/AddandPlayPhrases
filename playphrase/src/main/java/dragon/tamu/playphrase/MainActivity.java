@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -25,14 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     ArrayList<Language> mLanguages = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //Adding languages to the pull out list.
-        for(Language l : Language.values())
-        {
+        for (Language l : Language.values()) {
             mLanguages.add(l);
         }
 
@@ -42,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
         // Populate the Navigtion Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
-        LanguageListAdapter adapter = new LanguageListAdapter(this, mLanguages);
+        //LanguageListAdapter adapter = new LanguageListAdapter(this, mLanguages);
+        ArrayAdapter<Language> adapter = new ArrayAdapter<Language>(this, android.R.layout.simple_list_item_multiple_choice, mLanguages);
+        mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mDrawerList.setAdapter(adapter);
 
         // Drawer Item click listeners
@@ -54,52 +57,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    enum Language{English, French, Arabic, German}
-    class LanguageListAdapter extends BaseAdapter {
+    enum Language {English, French, Arabic, German}
 
-        Context mContext;
-        ArrayList<Language> mLanguages;
-
-        public LanguageListAdapter(Context context, ArrayList<Language> langauges)
-        {
-            mContext = context;
-            mLanguages = langauges;
-        }
-
-        @Override
-        public int getCount()
-        {
-            return mLanguages.size();
-        }
-
-        @Override
-        public Object getItem(int position)
-        {
-            return mLanguages.get(position);
-        }
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.drawer_item, null);
-            }
-            else {
-                view = convertView;
-            }
-
-            TextView titleView = (TextView) view.findViewById(R.id.title);
-
-            titleView.setText( mLanguages.get(position).name() );
-
-            return view;
-        }
-    }
 
 }
