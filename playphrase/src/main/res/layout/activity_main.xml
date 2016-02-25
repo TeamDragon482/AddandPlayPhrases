@@ -15,9 +15,25 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginRight="15dp"
-            android:src="@drawable/ic_action_add"></android.support.design.widget.FloatingActionButton>
+            android:src="@drawable/ic_action_add"
+            android:id="@+id/floating_button"></android.support.design.widget.FloatingActionButton>
+        <ExpandableListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/expandableListView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="5dp"
+            android:layout_above="@id/floating_button" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:layout_above="@id/floating_button"
+            android:background="@android:color/darker_gray"/>
     </RelativeLayout>
 
 
