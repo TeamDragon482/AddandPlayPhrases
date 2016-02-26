@@ -3,13 +3,16 @@ package dragon.tamu.playphrase;
 import android.animation.LayoutTransition;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -65,6 +68,20 @@ public class MainActivity extends AppCompatActivity {
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        mDrawerToggle.syncState();
+
+
+
+
+
 
         // Populate the Navigtion Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
@@ -140,6 +157,27 @@ public class MainActivity extends AppCompatActivity {
         mPhraseList.put(mCategoryList.get(2), panic);
 
     }
+
+    @Override
+    protected void onPostCreate(Bundle b)
+    {
+        super.onPostCreate(b);
+        mDrawerToggle.syncState();
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        mDrawerToggle.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     //Temporary just to populate the pullout menu until we have back-end
     enum Language {English, French, Arabic, German}
