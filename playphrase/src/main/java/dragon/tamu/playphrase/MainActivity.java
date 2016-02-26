@@ -1,12 +1,14 @@
 package dragon.tamu.playphrase;
 
 import android.animation.LayoutTransition;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
+    private ActionBar mActionBar;
 
     ArrayList<Language> mLanguages = new ArrayList<>();
 
@@ -69,10 +72,30 @@ public class MainActivity extends AppCompatActivity {
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+        //Sets up the menu button to toggle between the language bar and the main screen
+        mActionBar = getSupportActionBar();
+        mActionBar.setTitle("Pick Phrases");
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setHomeButtonEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close)
+        {
+            @Override
+            public void onDrawerClosed(View v)
+            {
+                super.onDrawerClosed(v);
+                mActionBar.setTitle("Pick Phrases");
+                invalidateOptionsMenu();
+            }
+            @Override
+            public void onDrawerOpened(View v)
+            {
+                super.onDrawerOpened(v);
+                mActionBar.setTitle("Select Languages");
+                invalidateOptionsMenu();
+            }
+        };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -83,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // Populate the Navigtion Drawer with options
+        // Populate the Navigation Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
         //LanguageListAdapter adapter = new LanguageListAdapter(this, mLanguages);
