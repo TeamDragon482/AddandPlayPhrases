@@ -1,13 +1,11 @@
 package dragon.tamu.playphrase;
 
 import android.animation.LayoutTransition;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,9 +20,9 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout mDrawerPane;
 
     //Variables for ListView
-    ExpandeableListAdapter mListAdapter;
+    ExpandeableCategoryListAdapter mListAdapter;
     ExpandableListView mListView;
     ArrayList<String> mCategoryList; //List of categories
     HashMap<String, ArrayList<String>> mPhraseList;
@@ -59,15 +57,16 @@ public class MainActivity extends AppCompatActivity {
         //This method is temporary and is just used to populate the expandable list for demonstration
         prepareListData();
 
-        mListAdapter = new ExpandeableListAdapter(this, mCategoryList, mPhraseList);
+        mListAdapter = new ExpandeableCategoryListAdapter(this, mCategoryList, mPhraseList);
 
         //Set the adapter
         mListView.setAdapter(mListAdapter);
 
+        //TODO add onClickListener for the expandable list view
+
         //Adding languages to the pull out list.
-        for (Language l : Language.values()) {
-            mLanguages.add(l);
-        }
+        Collections.addAll(mLanguages, Language.values());
+
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -75,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Sets up the menu button to toggle between the language bar and the main screen
         mActionBar = getSupportActionBar();
-        mActionBar.setTitle("Pick Phrases");
+        assert mActionBar != null;
+        mActionBar.setTitle(R.string.drawer_close_title);
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mActionBar.setHomeButtonEnabled(true);
 
@@ -84,15 +84,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerClosed(View v)
             {
+                //TODO save which languages are selected here
                 super.onDrawerClosed(v);
-                mActionBar.setTitle("Pick Phrases");
+                mActionBar.setTitle(R.string.drawer_close_title);
                 invalidateOptionsMenu();
             }
             @Override
             public void onDrawerOpened(View v)
             {
                 super.onDrawerOpened(v);
-                mActionBar.setTitle("Select Languages");
+                mActionBar.setTitle(R.string.drawer_open_title);
                 invalidateOptionsMenu();
             }
         };
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
         //LanguageListAdapter adapter = new LanguageListAdapter(this, mLanguages);
-        ArrayAdapter<Language> adapter = new ArrayAdapter<Language>(this, R.layout.drawer_item, mLanguages);
+        ArrayAdapter<Language> adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
         mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mDrawerList.setAdapter(adapter);
 
@@ -120,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this.getApplicationContext(), "Selected " + mLanguages.get(position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this.getApplicationContext(), "Selected " + mLanguages.get(position), Toast.LENGTH_SHORT).show();
+               //TODO proper handling for what to do when a new language is selected goes here.
             }
         });
     }
@@ -143,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
         LayoutTransition lt = new LayoutTransition();
         lt.enableTransitionType(LayoutTransition.CHANGING);
         searchBar.setLayoutTransition(lt);
+
+        //TODO need to setup handling for search bar inputs.
 
 
         return true;

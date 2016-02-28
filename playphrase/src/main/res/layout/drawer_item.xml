@@ -7,7 +7,6 @@
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:textColor="#000"
-        android:text="Line 1"
         android:textStyle="bold"
         android:layout_alignParentTop="true"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
