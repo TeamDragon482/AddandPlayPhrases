@@ -1,8 +1,5 @@
 package dragon.tamu.playphrase;
 
-import android.animation.LayoutTransition;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -61,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Set the adapter
         mListView.setAdapter(mListAdapter);
+        mListView.requestFocus();
 
         //TODO add onClickListener for the expandable list view
 
@@ -102,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerToggle.syncState();
 
+        //SearchView initialization and settings
+        SearchView searchView = (SearchView) findViewById(R.id.search_view);
+
+
 
 
 
@@ -132,19 +133,13 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.options_menu, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
+        /*SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-
-
-        //Setup SearchView animation
-        LinearLayout searchBar = (LinearLayout) searchView.findViewById(R.id.search_bar);
-        LayoutTransition lt = new LayoutTransition();
-        lt.enableTransitionType(LayoutTransition.CHANGING);
-        searchBar.setLayoutTransition(lt);
+*/
 
         //TODO need to setup handling for search bar inputs.
 
