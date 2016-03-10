@@ -110,6 +110,12 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             return true;
 
         }
+        if(target instanceof CategoryViewHolder && !(viewHolder instanceof CategoryViewHolder))
+        {
+            if(!((CategoryViewHolder) target).isExpanded())
+                expandParent(((CategoryViewHolder) target).getCategory());
+
+        }
         if(viewHolder instanceof PhraseViewHolder)
         {
             int parentIndex = -1;
@@ -142,59 +148,82 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 notifyChildItemMoved(parentListIndex, fromPosition - 1 - parentIndex, toPosition - 1 - parentIndex);
                 return true;
             }
+            else if(target instanceof CategoryViewHolder && toPosition > 0)
+            {
+                int targetParentListIndex = -1;
+                int childToPosition = -1;
+                Phrase p = ((PhraseViewHolder) viewHolder).getPhrase();
+                if(fromPosition < toPosition)
+                {
+                    //Remove from current category
+                    list.remove(fromPosition - 1 - parentIndex);
+
+                    //and then add to new category
+                    List<Object> tempList = (List<Object>)mList.get(parentListIndex + 1).getChildItemList();
+                    tempList.add(0, p);
+                    list = tempList;
+
+                    targetParentListIndex = parentListIndex + 1;
+                    childToPosition = 0;
+                }
+                if(fromPosition > toPosition)
+                {
+                    expandParent(parentListIndex - 1);
+                    //Remove from current category
+                    list.remove(fromPosition - 1 - parentIndex);
+
+                    //and then add to new category
+                    List<Object> tempList = (List<Object>)mList.get(parentListIndex - 1).getChildItemList();
+                    tempList.add(p);
+                    list = tempList;
+
+                    targetParentListIndex = parentListIndex - 1;
+                    childToPosition = list.size() - 1;
+                }
+                notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
+                notifyChildItemInserted(targetParentListIndex, childToPosition);
+                return true;
+
+            }
+            return false;
         }
+
 
 
         return false;
     }
 
-
-
-
-    /*private static final String[] STRINGS = new String[]{
-            "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"
-    };
-
-    private final List<String> mItems = new ArrayList<>();
-
-    public RecyclerListAdapter() {
-        mItems.addAll(Arrays.asList(STRINGS));
-    }
-
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.expandable_inner_item, parent, false);
-        return new ItemViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
-        holder.textView.setText(mItems.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mItems.size();
-    }
-
-    @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        if(fromPosition < toPosition)
+    public boolean onItemSwiped(RecyclerView.ViewHolder viewHolder) {
+        if(viewHolder instanceof CategoryViewHolder)
         {
-            for(int i = fromPosition; i < toPosition; i++)
-            {
-                Collections.swap(mItems, i, i+1);
-            }
-
+            int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
+            mList.remove(parentIndex);
+            notifyParentItemRemoved(parentIndex);
+            return true;
         }
-        else
+        else if(viewHolder instanceof PhraseViewHolder)
         {
-            for( int i = fromPosition; i > toPosition; i--)
+            int fromPosition = viewHolder.getAdapterPosition();
+            int parentIndex = -1;
+            int parentListIndex = 0;
+            List<?> list = null;
+            for(int i = 0; i < mList.size(); i++)
             {
-                Collections.swap(mItems, i, i-1);
+                list = mList.get(i).getChildItemList();
+                if(list.contains(((PhraseViewHolder) viewHolder).getPhrase()))
+                {
+                    int itemIndex = list.indexOf(((PhraseViewHolder) viewHolder).getPhrase());
+                    parentIndex = fromPosition - 1 - itemIndex;
+                    parentListIndex = i;
+                    break;
+                }
             }
+            list.remove(fromPosition - 1 - parentIndex);
+            notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
+            return true;
         }
-        notifyItemMoved(fromPosition, toPosition);
-        return true;
-    }*/
+        return false;
+    }
+
 }

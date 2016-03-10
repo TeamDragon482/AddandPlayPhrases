@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,10 +7,37 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="dragon.tamu.playphrase.EditActivity">
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/edit_list_view"/>
+        android:id="@+id/edit_list_view"
+        android:layout_weight=".5"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:id="@+id/swipe_instr_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            android:text="@string/swipe_instr"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:scaleType="center"
+            android:src="@drawable/ic_arrow_right"
+            android:layout_toRightOf="@id/swipe_instr_text"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
