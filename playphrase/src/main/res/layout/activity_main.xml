@@ -69,8 +69,7 @@
             android:layout_marginTop="15dp"
             android:padding="8dp"
             android:textColor="#FFFFFF"
-            style="@style/TextAppearance.AppCompat.Title" />
-        </RelativeLayout>
+            style="@style/TextAppearance.AppCompat.Title" /></RelativeLayout>
 
         <!-- List of Actions (pages) -->
         <ListView

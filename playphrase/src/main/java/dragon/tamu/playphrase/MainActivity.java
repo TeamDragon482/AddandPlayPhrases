@@ -1,5 +1,6 @@
 package dragon.tamu.playphrase;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -95,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mDrawerToggle.syncState();
 
@@ -141,12 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 searchManager.getSearchableInfo(getComponentName()));
 */
 
-        //TODO need to setup handling for search bar inputs.
 
 
         return true;
     }
-
 
     private void prepareListData()
     {
@@ -196,7 +194,18 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item)
     {
         mDrawerToggle.onOptionsItemSelected(item);
-        return super.onOptionsItemSelected(item);
+        switch(item.getItemId())
+        {
+            case R.id.edit_menu:
+                Intent edit_intent = new Intent(this, EditActivity.class);
+                //This is where any data goes that will be stuffed into the intent launching the new activity
+
+
+                startActivity(edit_intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
