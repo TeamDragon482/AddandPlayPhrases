@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
+import com.bignerdranch.expandablerecyclerview.Model.ParentWrapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -84,6 +85,21 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         });
 
     }
+    public void notifyChildItemAdopted(int fromParentIndex, int toParentIndex, int fromParentSize)
+    {
+        if(fromParentIndex < toParentIndex)
+        {
+            Object fromChild = mItemList.remove(fromParentIndex + fromParentSize);
+            mItemList.add(fromParentIndex + fromParentSize + 1, fromChild);
+            notifyItemMoved(fromParentIndex + fromParentSize, fromParentIndex + fromParentSize + 1);
+        }
+        if (fromParentIndex > toParentIndex)
+        {
+            Object fromChild = mItemList.remove(fromParentIndex + 1);
+            mItemList.add(fromParentIndex, fromChild);
+            notifyItemMoved(fromParentIndex + 1, fromParentIndex);
+        }
+    }
 
 
     @Override
@@ -110,10 +126,30 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             return true;
 
         }
-        if(target instanceof CategoryViewHolder && !(viewHolder instanceof CategoryViewHolder))
+        if(target instanceof CategoryViewHolder)
         {
             if(!((CategoryViewHolder) target).isExpanded())
                 expandParent(((CategoryViewHolder) target).getCategory());
+            if(fromPosition > toPosition && toPosition > 0) {
+                int index = mList.indexOf(((CategoryViewHolder) target).getCategory()) - 1;
+                int listIndex = -1;
+                int listItemCount = mItemList.size();
+                for (int i = 0; i < listItemCount; i++) {
+                    Object listItem = mItemList.get(i);
+                    if (listItem instanceof ParentWrapper) {
+                        if (((ParentWrapper) listItem).getParentListItem().equals(mList.get(index))) {
+                            listIndex = i;
+                        }
+                    }
+                }
+                assert listIndex >= 0;
+                if(!((ParentWrapper)mItemList.get(listIndex)).isExpanded()) {
+                    expandParent(mList.get(index));
+
+                    fromPosition += mList.get(index).getChildItemList().size();
+                    toPosition += mList.get(index).getChildItemList().size();
+                }
+            }
 
         }
         if(viewHolder instanceof PhraseViewHolder)
@@ -151,6 +187,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             else if(target instanceof CategoryViewHolder && toPosition > 0)
             {
                 int targetParentListIndex = -1;
+                int targetParentIndex = -1;
                 int childToPosition = -1;
                 Phrase p = ((PhraseViewHolder) viewHolder).getPhrase();
                 if(fromPosition < toPosition)
@@ -164,11 +201,12 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                     list = tempList;
 
                     targetParentListIndex = parentListIndex + 1;
+                    targetParentIndex = toPosition;
                     childToPosition = 0;
+
                 }
                 if(fromPosition > toPosition)
                 {
-                    expandParent(parentListIndex - 1);
                     //Remove from current category
                     list.remove(fromPosition - 1 - parentIndex);
 
@@ -178,10 +216,12 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                     list = tempList;
 
                     targetParentListIndex = parentListIndex - 1;
+                    targetParentIndex = toPosition - 1 - (mList.get(targetParentListIndex).getChildItemList().size() - 1);
                     childToPosition = list.size() - 1;
                 }
-                notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
-                notifyChildItemInserted(targetParentListIndex, childToPosition);
+                notifyChildItemAdopted(parentIndex, targetParentIndex, mList.get(parentListIndex).getChildItemList().size() + 1);
+                /*notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
+                notifyChildItemInserted(targetParentListIndex, childToPosition);*/
                 return true;
 
             }
