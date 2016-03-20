@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.app.Activity;
+import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,113 +16,78 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Map;
 
-public class FileAccessor extends Activity
+public class FileAccessor
 {
     //Members
     public ArrayList<Category> informationList;
     public Map<String, String> languageList;
+    private Context context;
+
     //constructor
-    public FileAccessor() {
+    public FileAccessor(Context c) {
+        context = c;
         informationList = this.getInfoList();
         languageList = this.getLangList();
     }
 
-    public ArrayList<Category> getInfoList()
-    {
+    public ArrayList<Category> getInfoList() {
         ArrayList<Category> result = new ArrayList<Category>();
         InputStream input;
         JSONObject json;
         try
         {
-            input = openFileInput("fileLayout.json");
+            input = context.openFileInput("fileLayout.json");
             int size = input.available();
             byte[] buffer = new byte[size];
             input.read(buffer);
             input.close();
             String text = new String(buffer);
             json = new JSONObject(text);
-
-            JSONArray cats = json.getJSONArray("Categories");
-            if (cats == null)
-                return getEmptyFileSystem();
-
-            for (int i=0; i<cats.length(); i++)
-            {
-                JSONObject catJson = cats.getJSONObject(i);
-                Category catObj = new Category(catJson.getString("Name"));
-                JSONArray phrasesJson = catJson.getJSONArray("Phrases");
-                for (int j=0; j<phrasesJson.length(); j++)
-                {
-                    JSONObject phraseJson = phrasesJson.getJSONObject(j);
-                    Phrase phraseObj = new Phrase(phraseJson.getString("Name"));
-
-                    JSONObject fileMap = phraseJson.getJSONObject("Languages");
-                    Iterator<String> keyIt = fileMap.keys();
-                    while (keyIt.hasNext())
-                        phraseObj.addLanguage(keyIt.toString(), fileMap.getString(keyIt.toString()));
-                }
-                result.add(catObj);
-            }
+            return parseInfoJSON(json);
         } catch(IOException e){
             return getEmptyFileSystem();
         } catch(JSONException e) {
             return getEmptyFileSystem();
         }
-        return new ArrayList<Category>();
     }
 
-    public Map<String, String> getLangList()
-    {
-        Map<String, String> languageMap = new HashMap<>();
+    public Map<String, String> getLangList() {
         InputStream input;
         JSONObject json;
         try
         {
-            input = openFileInput("langList.json");
+            input = context.openFileInput("langList.json");
             int size = input.available();
             byte[] buffer = new byte[size];
             input.read(buffer);
             input.close();
             String text = new String(buffer);
             json = new JSONObject(text);
-
-            JSONArray languages = json.getJSONArray("Languages");
-            if(languages == null){
-                return getEmptyLanguageFile();
-            }
-            for(int i=0; i<languages.length(); i++){
-                JSONObject langJson = languages.getJSONObject(i);
-                String langName = langJson.getString("Name");
-                String langABV = langJson.getString("ABV");
-                languageMap.put(langABV, langName);
-            }
+            return parseLangJSON(json);
         } catch(IOException e){
             return getEmptyLanguageFile();
         } catch(JSONException e) {
             return getEmptyLanguageFile();
         }
-
-        return languageMap;
     }
 
-    public void addLanguage(String name, String abbreviation)
-    {
+    //region Language Manipulation
+    public void addLanguage(String name, String abbreviation) {
     }
 
-    public void removeLanguage(String name)
-    {
+    public void removeLanguage(String name) {
     }
+    //endregion
 
-    public ArrayList<Category> addPhrase(String name, String language, String filePath, String categoryName)
-    {
+    //region Phrase Manipulation
+    public ArrayList<Category> addPhrase(String name, String language, String filePath, String categoryName) {
         String[] split = filePath.split("\\.");
         String extension = split[split.length-1];
 
         String storageFileName = name + language.toUpperCase();
-        File directory = getFilesDir();
+        File directory = context.getFilesDir();
         File soundFile = new File(filePath);
         File newPlace = new File(directory,  storageFileName + "." + extension);
         soundFile.renameTo(newPlace);
@@ -159,8 +125,7 @@ public class FileAccessor extends Activity
         return informationList;
     }
 
-    public ArrayList<Category> removePhrase(String name, String categoryName)
-    {
+    public ArrayList<Category> removePhrase(String name, String categoryName) {
         Category category = null;
         for (Category cat : informationList)
         {
@@ -191,12 +156,12 @@ public class FileAccessor extends Activity
         return informationList;
     }
 
-    public void movePhrase(String name, Category cat, int pos)
-    {
+    public void movePhrase(String name, Category cat, int pos) {
     }
+    //endregion
 
-    public ArrayList<Category> addCategory(String name)
-    {
+    //region Category Manipulation
+    public ArrayList<Category> addCategory(String name) {
         Category category = null;
         for (Category cat : informationList)
         {
@@ -215,8 +180,7 @@ public class FileAccessor extends Activity
         return informationList;
     }
 
-    public ArrayList<Category> removeCategory(String name)
-    {
+    public ArrayList<Category> removeCategory(String name) {
         Category category = null;
         for (Category cat : informationList)
         {
@@ -234,21 +198,12 @@ public class FileAccessor extends Activity
         return informationList;
     }
 
-    public void moveCategory(String name, int pos)
-    {
+    public void moveCategory(String name, int pos) {
     }
+    //endregion
 
-    private Map<String, String> getEmptyLanguageFile(){
-        return new HashMap<>();
-    }
-
-    private ArrayList<Category> getEmptyFileSystem()
-    {
-        return new ArrayList<Category>();
-    }
-
-    private void saveLangToFile(Map<String, String> langList)
-    {
+    //region Private Helper Methods
+    private void saveLangToFile(Map<String, String> langList) {
         JSONObject languages = new JSONObject(langList);
 
         JSONObject saveJSON = new JSONObject();
@@ -259,14 +214,13 @@ public class FileAccessor extends Activity
         }
 
         try {
-            OutputStream outputStream = openFileOutput("langList.json", MODE_PRIVATE);
+            OutputStream outputStream = context.openFileOutput("langList.json", context.MODE_PRIVATE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private void saveInfoToFile(ArrayList<Category> categoryArrayList)
-    {
+    private void saveInfoToFile(ArrayList<Category> categoryArrayList) {
         JSONArray categories = categoryToJSON(categoryArrayList);
 
         JSONObject saveJSON = new JSONObject();
@@ -277,14 +231,22 @@ public class FileAccessor extends Activity
         }
 
         try {
-            OutputStream outputStream = openFileOutput("fileLayout.json", MODE_PRIVATE);
+            OutputStream outputStream = context.openFileOutput("fileLayout.json", context.MODE_PRIVATE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private JSONArray categoryToJSON(ArrayList<Category> categoryArrayList)
+    private static Map<String, String> getEmptyLanguageFile(){
+        return new HashMap<>();
+    }
+
+    private static ArrayList<Category> getEmptyFileSystem()
     {
+        return new ArrayList<Category>();
+    }
+
+    private static JSONArray categoryToJSON(ArrayList<Category> categoryArrayList) {
         try{
             JSONArray result = new JSONArray();
             for(Category category: categoryArrayList)
@@ -307,5 +269,52 @@ public class FileAccessor extends Activity
             return new JSONArray();
         }
     }
+    //endregion
+
+    //region Private Methods Exposed for Testing
+    public static ArrayList<Category> parseInfoJSON(JSONObject json) throws JSONException {
+        ArrayList<Category> result = new ArrayList<Category>();
+        JSONArray cats = json.getJSONArray("Categories");
+        if (cats == null)
+            return getEmptyFileSystem();
+
+        for (int i=0; i<cats.length(); i++)
+        {
+            JSONObject catJson = cats.getJSONObject(i);
+            Category catObj = new Category(catJson.getString("Name"));
+            JSONArray phrasesJson = catJson.getJSONArray("Phrases");
+            for (int j=0; j<phrasesJson.length(); j++)
+            {
+                JSONObject phraseJson = phrasesJson.getJSONObject(j);
+                Phrase phraseObj = new Phrase(phraseJson.getString("Name"));
+
+                JSONObject fileMap = phraseJson.getJSONObject("Languages");
+                Iterator<String> keyIt = fileMap.keys();
+                while (keyIt.hasNext()) {
+                    String lang = keyIt.next();
+                    phraseObj.addLanguage(lang, fileMap.getString(lang));
+                }
+                catObj.phraseList.add(phraseObj);
+            }
+            result.add(catObj);
+        }
+        return result;
+    }
+
+    public static Map<String, String> parseLangJSON(JSONObject json) throws JSONException {
+        Map<String, String> languageMap = new HashMap<>();
+        JSONObject languages = json.getJSONObject("Languages");
+        if(languages == null){
+            return getEmptyLanguageFile();
+        }
+
+        Iterator<String> keyIt = languages.keys();
+        while (keyIt.hasNext()) {
+            String lang = keyIt.next();
+            languageMap.put(lang, languages.getString(lang));
+        }
+        return languageMap;
+    }
+    //endregion
 }
 

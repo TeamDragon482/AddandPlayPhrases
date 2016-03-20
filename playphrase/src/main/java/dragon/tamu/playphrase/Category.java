@@ -23,4 +23,13 @@ public class Category {
         phraseList.add(p);
     }
 
+    @Override
+    public String toString() {
+        String result = name;
+        for(int i=0; i<phraseList.size(); i++)
+        {
+            result += "\n" + phraseList.get(i);
+        }
+        return result;
+    }
 }

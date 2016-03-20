@@ -22,4 +22,9 @@ public class Phrase {
     public void addLanguage(String langAbrv, String fileLocation){
         phraseLanguages.put(langAbrv, fileLocation);
     }
+
+    @Override
+    public String toString() {
+        return name + " " + phraseLanguages.size();
+    }
 }
