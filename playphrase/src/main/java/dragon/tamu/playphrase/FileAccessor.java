@@ -82,15 +82,15 @@ public class FileAccessor
     //endregion
 
     //region Phrase Manipulation
-    public ArrayList<Category> addPhrase(String name, String language, String filePath, String categoryName) {
+    public void addPhrase(String name, String language, String filePath, String categoryName) {
         String[] split = filePath.split("\\.");
         String extension = split[split.length-1];
 
         String storageFileName = name + language.toUpperCase();
         File directory = context.getFilesDir();
         File soundFile = new File(filePath);
-        File newPlace = new File(directory,  storageFileName + "." + extension);
-        soundFile.renameTo(newPlace);
+        File newName = new File(directory, storageFileName + "." + extension);
+        soundFile.renameTo(newName);
 
         Category category = null;
         for (Category cat : informationList)
@@ -119,13 +119,12 @@ public class FileAccessor
             phrase = new Phrase(name);
             category.phraseList.add(phrase);
         }
-        phrase.addLanguage(language, filePath);
+        phrase.addLanguage(language, soundFile.getPath());
 
         saveInfoToFile(informationList);
-        return informationList;
     }
 
-    public ArrayList<Category> removePhrase(String name, String categoryName) {
+    public void removePhrase(String name, String categoryName) {
         Category category = null;
         for (Category cat : informationList)
         {
@@ -136,7 +135,7 @@ public class FileAccessor
             }
         }
         if (category == null)
-            return informationList;
+            return;
 
         Phrase phrase = null;
         for (Phrase phr : category.phraseList)
@@ -153,7 +152,6 @@ public class FileAccessor
             category.phraseList.remove(phrase);
             saveInfoToFile(informationList);
         }
-        return informationList;
     }
 
     public void movePhrase(String name, Category cat, int pos) {
@@ -238,12 +236,16 @@ public class FileAccessor
     }
 
     private static Map<String, String> getEmptyLanguageFile(){
-        return new HashMap<>();
+        Map<String, String> defaultLanguages =  new HashMap<>();
+        defaultLanguages.put("English", "ENG");
+        return defaultLanguages;
     }
 
     private static ArrayList<Category> getEmptyFileSystem()
     {
-        return new ArrayList<Category>();
+        ArrayList<Category> defaultFileSystem = new ArrayList<Category>();
+        defaultFileSystem.add(new Category("Uncatergorized"));
+        return defaultFileSystem;
     }
 
     private static JSONArray categoryToJSON(ArrayList<Category> categoryArrayList) {
