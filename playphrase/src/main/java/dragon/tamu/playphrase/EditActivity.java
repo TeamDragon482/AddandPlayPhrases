@@ -1,11 +1,15 @@
 package dragon.tamu.playphrase;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
@@ -16,6 +20,10 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     private ItemTouchHelper touchHelper;
 
+    private FloatingActionButton fab, addPhraseButton, addCategoryButton;
+    private boolean isFabOpen;
+    private Animation rotate_forward, rotate_backward, fab_open, fab_close;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +32,24 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setHasFixedSize(true);
         listView.setItemAnimator(new DefaultItemAnimator());
+
+        //Code for floating action buttons
+        isFabOpen = false;
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        addPhraseButton = (FloatingActionButton)findViewById(R.id.fab1);
+        addCategoryButton = (FloatingActionButton)findViewById(R.id.fab2);
+        //Animations for fab
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateFAB();
+            }
+        });
 
 
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
@@ -67,34 +93,25 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         touchHelper.startDrag(viewHolder);
     }
+    public void animateFAB(){
+
+        if(isFabOpen){
+
+            fab.startAnimation(rotate_backward);
+            addPhraseButton.startAnimation(fab_close);
+            addCategoryButton.startAnimation(fab_close);
+            addPhraseButton.setClickable(false);
+            addCategoryButton.setClickable(false);
+            isFabOpen = false;
 
 
-    /*private void prepareListData()
-    {
-        mCategoryList = new ArrayList<>();
-        mPhraseList = new HashMap<>();
-
-        //Adding categories here
-
-        ArrayList<String> shore = new ArrayList<>();
-        shore.add("Please sit your butt down");
-        shore.add("Slow down your approach speed");
-        shore.add("If you start to sink, push off the person next to you");
-
-        ArrayList<String> spotted = new ArrayList<>();
-        spotted.add("Follow the people who know what they're doing");
-        spotted.add("Look for the guiding light");
-        spotted.add("Beware of alligators");
-
-        ArrayList<String> panic = new ArrayList<>();
-        panic.add("This is no time to panic");
-        panic.add("Everything will be fine");
-        panic.add("Seriously though, there are alligators");
-        panic.add("Keith smells");
-
-        mPhraseList.put(mCategoryList.get(0), shore);
-        mPhraseList.put(mCategoryList.get(1), spotted);
-        mPhraseList.put(mCategoryList.get(2), panic);
-
-    }*/
+        } else {
+            fab.startAnimation(rotate_forward);
+            addPhraseButton.startAnimation(fab_open);
+            addCategoryButton.startAnimation(fab_open);
+            addPhraseButton.setClickable(true);
+            addCategoryButton.setClickable(true);
+            isFabOpen = true;
+        }
+    }
 }
