@@ -1,18 +1,6 @@
 package dragon.tamu.playphrase;
 
-public class Phrase
-{
-    private String mPhraseText;
 
-<<<<<<< remotes/origin/Seth_Dev
-    public Phrase(String text)
-    {
-        mPhraseText = text;
-    }
-
-    public String getPhraseText() {
-        return mPhraseText;
-=======
 public class Phrase
 {
     private String mPhraseText;
@@ -29,15 +17,7 @@ public class Phrase
     }
     public void addLanguage(String langAbrv, String fileLocation){
         phraseLanguages.put(langAbrv, fileLocation);
->>>>>>> local
-    }
 
-    public void setPhraseText(String mPhraseText) {
-        this.mPhraseText = mPhraseText;
-    }
-<<<<<<< remotes/origin/Seth_Dev
-}
-=======
 
     public String getPhraseText() {
         return mPhraseText;
@@ -48,4 +28,3 @@ public class Phrase
     }
 }
 
->>>>>>> local
