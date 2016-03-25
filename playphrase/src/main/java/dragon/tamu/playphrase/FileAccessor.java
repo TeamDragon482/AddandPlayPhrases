@@ -1,12 +1,10 @@
 package dragon.tamu.playphrase;
 
-import android.app.Activity;
 import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +14,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class FileAccessor
@@ -33,7 +32,7 @@ public class FileAccessor
     }
 
     public ArrayList<Category> getInfoList() {
-        ArrayList<Category> result = new ArrayList<Category>();
+        ArrayList<Category> result = new ArrayList<>();
         InputStream input;
         JSONObject json;
         try
@@ -41,6 +40,7 @@ public class FileAccessor
             input = context.openFileInput("fileLayout.json");
             int size = input.available();
             byte[] buffer = new byte[size];
+            //TODO check if the number of bytes read is non-zero.
             input.read(buffer);
             input.close();
             String text = new String(buffer);
@@ -61,6 +61,7 @@ public class FileAccessor
             input = context.openFileInput("langList.json");
             int size = input.available();
             byte[] buffer = new byte[size];
+            //TODO check if the number of bytes read is non-zero.
             input.read(buffer);
             input.close();
             String text = new String(buffer);
@@ -90,6 +91,7 @@ public class FileAccessor
         File directory = context.getFilesDir();
         File soundFile = new File(filePath);
         File newName = new File(directory, storageFileName + "." + extension);
+        //TODO no error checking here, might need it.
         soundFile.renameTo(newName);
 
         Category category = null;
@@ -105,10 +107,10 @@ public class FileAccessor
             category = informationList.get(informationList.size()-1);
 
         Phrase phrase = null;
-        for (Phrase phr : category.phraseList)
-        {
-            if (phr.name.equals(name))
-            {
+        List<Object> phraseList = category.phraseList;
+        for (int i = 0; i < phraseList.size(); i++) {
+            Phrase phr = (Phrase)phraseList.get(i);
+            if (phr.name.equals(name)) {
                 phrase = phr;
                 break;
             }
@@ -138,10 +140,10 @@ public class FileAccessor
             return;
 
         Phrase phrase = null;
-        for (Phrase phr : category.phraseList)
-        {
-            if (phr.name.equals(name))
-            {
+        List<Object> phraseList = category.phraseList;
+        for (int i = 0; i < phraseList.size(); i++) {
+            Phrase phr = (Phrase)phraseList.get(i);
+            if (phr.name.equals(name)) {
                 phrase = phr;
                 break;
             }
@@ -212,7 +214,7 @@ public class FileAccessor
         }
 
         try {
-            OutputStream outputStream = context.openFileOutput("langList.json", context.MODE_PRIVATE);
+            OutputStream outputStream = context.openFileOutput("langList.json", Context.MODE_PRIVATE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -229,7 +231,7 @@ public class FileAccessor
         }
 
         try {
-            OutputStream outputStream = context.openFileOutput("fileLayout.json", context.MODE_PRIVATE);
+            OutputStream outputStream = context.openFileOutput("fileLayout.json", Context.MODE_PRIVATE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -243,7 +245,7 @@ public class FileAccessor
 
     private static ArrayList<Category> getEmptyFileSystem()
     {
-        ArrayList<Category> defaultFileSystem = new ArrayList<Category>();
+        ArrayList<Category> defaultFileSystem = new ArrayList<>();
         defaultFileSystem.add(new Category("Uncatergorized"));
         return defaultFileSystem;
     }
@@ -256,8 +258,9 @@ public class FileAccessor
                 JSONObject catJSON = new JSONObject();
                 catJSON.put("Name", category);
                 JSONArray phraseJSON_list = new JSONArray();
-                for(Phrase phrase: category.phraseList)
-                {
+
+                for (int i = 0; i < category.phraseList.size(); i++) {
+                    Phrase phrase = (Phrase)category.phraseList.get(i);
                     JSONObject phraseJSON = new JSONObject();
                     phraseJSON.put("Name", phrase.name);
                     phraseJSON.put("Languages", new JSONObject(phrase.phraseLanguages));
@@ -275,7 +278,7 @@ public class FileAccessor
 
     //region Private Methods Exposed for Testing
     public static ArrayList<Category> parseInfoJSON(JSONObject json) throws JSONException {
-        ArrayList<Category> result = new ArrayList<Category>();
+        ArrayList<Category> result = new ArrayList<>();
         JSONArray cats = json.getJSONArray("Categories");
         if (cats == null)
             return getEmptyFileSystem();

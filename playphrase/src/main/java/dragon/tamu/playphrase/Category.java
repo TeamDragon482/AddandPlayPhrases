@@ -1,8 +1,5 @@
 package dragon.tamu.playphrase;
 
-import java.lang.String;
-import java.lang.Object;
-
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
 import java.util.List;
@@ -10,34 +7,35 @@ import java.util.List;
 public class Category implements ParentListItem{
 
 
-    private List<Object> mPhraseList;
-    private String mCategoryTitle;
+    public List<Object> phraseList;
+    public String name;
 
-    public Category(String mCategoryTitle) {
-        this.mCategoryTitle = mCategoryTitle;
+    public Category(String name) {
+        this.name = name;
     }
     public Category(List<Object> phraseList, String title)
     {
-        mPhraseList = phraseList;
-        mCategoryTitle = title;
+        this.phraseList = phraseList;
+        name = title;
     }
 
     public void setChildItemList(List<Object> list)
     {
-        mPhraseList = list;
+        phraseList = list;
     }
 
     public String getCategoryTitle() {
-        return mCategoryTitle;
+        return name;
     }
 
     public void setCategoryTitle(String mCategoryTitle) {
-        this.mCategoryTitle = mCategoryTitle;
+        this.name = mCategoryTitle;
     }
 
     @Override
     public List<?> getChildItemList() {
-        return mPhraseList;
+        return phraseList;
+    }
 
     @Override
     public boolean isInitiallyExpanded() {
