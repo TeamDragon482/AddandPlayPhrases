@@ -101,6 +101,8 @@ public class FileAccessor
                 break;
             }
         }
+
+        //TODO make go to uncaterogized
         if (category == null)
             category = informationList.get(informationList.size()-1);
 
@@ -160,6 +162,8 @@ public class FileAccessor
 
     //region Category Manipulation
     public ArrayList<Category> addCategory(String name) {
+
+        //TODO make unable to delete uncaterogized
         Category category = null;
         for (Category cat : informationList)
         {
