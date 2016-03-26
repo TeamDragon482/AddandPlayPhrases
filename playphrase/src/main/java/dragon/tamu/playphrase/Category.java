@@ -1,35 +1,48 @@
 package dragon.tamu.playphrase;
 
-import java.util.ArrayList;
-import java.lang.String;
-import java.lang.Object;
+import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
+
+import java.util.List;
+
+public class Category implements ParentListItem{
 
 
-public class Category {
+    public List<Object> phraseList;
     public String name;
-    public ArrayList<Phrase> phraseList;
 
-    //Constructors
-    public Category(String s){
-        name = s;
-        phraseList = new ArrayList<>();
+    public Category(String name) {
+        this.name = name;
     }
-    public Category(String s, ArrayList<Phrase> aL){
-        name = s;
-        phraseList.addAll(aL);
+    public Category(List<Object> phraseList, String title)
+    {
+        this.phraseList = phraseList;
+        name = title;
     }
 
-    public void addPhrase(Phrase p){
-        phraseList.add(p);
+    public void setChildItemList(List<Object> list)
+    {
+        phraseList = list;
+    }
+
+    public String getCategoryTitle() {
+        return name;
+    }
+
+    public void setCategoryTitle(String mCategoryTitle) {
+        this.name = mCategoryTitle;
     }
 
     @Override
-    public String toString() {
-        String result = name;
-        for(int i=0; i<phraseList.size(); i++)
-        {
-            result += "\n" + phraseList.get(i);
-        }
-        return result;
+    public List<?> getChildItemList() {
+        return phraseList;
+    }
+
+    @Override
+    public boolean isInitiallyExpanded() {
+        return false;
+    }
+	public void addPhrase(Phrase p){
+        phraseList.add(p);
+
     }
 }
