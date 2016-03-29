@@ -24,9 +24,14 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Main FileAccessor for Application
+    //------------------------------------------------Still don't understand context
+    FileAccessor fileSystem = new FileAccessor(MainActivity.this.getApplicationContext());
+
     //Variables for Drawer
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
+    ArrayList<String> currentlySelectedLang = new ArrayList<>();
 
     //Variables for ListView
     ExpandeableCategoryListAdapter mListAdapter;
@@ -39,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
 
-    ArrayList<Language> mLanguages = new ArrayList<>();
+    ArrayList<String> mLanguages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
         //TODO add onClickListener for the expandable list view
 
         //Adding languages to the pull out list.
-        Collections.addAll(mLanguages, Language.values());
+        //------------------------------------------------would this constantly update with oncreate being called multiple times? also why doesnt it work
+        // Languages.values()
+        Collections.addAll(mLanguages, fileSystem.extractLangNames());
 
 
         // DrawerLayout
@@ -112,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
         //LanguageListAdapter adapter = new LanguageListAdapter(this, mLanguages);
-        ArrayAdapter<Language> adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
+        //------------------------------------------------Changed from lang to string
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
         mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mDrawerList.setAdapter(adapter);
 
@@ -124,6 +132,17 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(MainActivity.this.getApplicationContext(), "Selected " + mLanguages.get(position), Toast.LENGTH_SHORT).show();
                //TODO proper handling for what to do when a new language is selected goes here.
+                //How to tell if it's selecting or deselecting
+
+                //If the language isn't in the current list add it
+                if(currentlySelectedLang.indexOf(mLanguages.get(position)) == -1){
+                    currentlySelectedLang.add(mLanguages.get(position));
+                }
+                //If it is it means its a deselecting so we remove it
+                else {
+                    currentlySelectedLang.remove(mLanguages.get(position));
+                }
+
             }
         });
     }

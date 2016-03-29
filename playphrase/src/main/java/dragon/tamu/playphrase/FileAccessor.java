@@ -13,15 +13,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class FileAccessor
 {
     //Members
     public ArrayList<Category> informationList;
-    public Map<String, String> languageList;
+    public Map<String, String> languageList; //Name, ABV
     private Context context;
 
     //constructor
@@ -79,6 +81,17 @@ public class FileAccessor
     }
 
     public void removeLanguage(String name) {
+    }
+
+    //Get language names from map
+    public ArrayList<String> extractLangNames() {
+        ArrayList<String> langNames = new ArrayList<>();
+
+        for(String key : languageList.keySet()){
+            langNames.add(key);
+        }
+
+        return langNames;
     }
     //endregion
 
