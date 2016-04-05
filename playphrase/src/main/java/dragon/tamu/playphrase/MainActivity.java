@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
 
-    ArrayList<String> mLanguages = new ArrayList<>();
+    ArrayList<String> mLanguages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void prepareLanguageListData(){
+        mLanguages = new ArrayList<>();
         for(String lang : fileSystem.extractLangNames()){
             mLanguages.add(lang);
         }
