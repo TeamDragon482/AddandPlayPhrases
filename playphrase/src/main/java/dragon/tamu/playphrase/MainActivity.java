@@ -26,7 +26,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     //Main FileAccessor for Application
-    //------------------------------------------------Still don't understand context
     FileAccessor fileSystem;
 
     //Variables for Drawer
@@ -115,8 +114,6 @@ public class MainActivity extends AppCompatActivity {
         // Populate the Navigation Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
-        //LanguageListAdapter adapter = new LanguageListAdapter(this, mLanguages);
-        //------------------------------------------------Changed from lang to string
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
         mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mDrawerList.setAdapter(adapter);
