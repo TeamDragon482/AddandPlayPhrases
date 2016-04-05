@@ -78,9 +78,15 @@ public class FileAccessor
 
     //region Language Manipulation
     public void addLanguage(String name, String abbreviation) {
+        if(!languageList.containsKey(name)) {
+            languageList.put(name, abbreviation);
+        }
     }
 
     public void removeLanguage(String name) {
+        if(languageList.containsKey(name)){
+            languageList.remove(name);
+        }
     }
 
     //Get language names from map
