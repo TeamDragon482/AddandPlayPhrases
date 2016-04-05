@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,12 +22,12 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
     //Main FileAccessor for Application
     //------------------------------------------------Still don't understand context
-    FileAccessor fileSystem = new FileAccessor(MainActivity.this.getApplicationContext());
+    FileAccessor fileSystem;
 
     //Variables for Drawer
     ListView mDrawerList;
@@ -50,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fileSystem = new FileAccessor(MainActivity.this.getBaseContext());
         //Setting up category expandable list view
 
-        //get the listview
+        //get the list view
         mListView = (ExpandableListView)findViewById(R.id.expandableListView);
 
-        //prepare the list data
-        //This method is temporary and is just used to populate the expandable list for demonstration
+        //Put Phrases and Categories in display
         prepareListData();
 
         mListAdapter = new ExpandeableCategoryListAdapter(this, mCategoryList, mPhraseList);
@@ -65,12 +66,8 @@ public class MainActivity extends AppCompatActivity {
         mListView.setAdapter(mListAdapter);
         mListView.requestFocus();
 
-        //TODO add onClickListener for the expandable list view
-
         //Adding languages to the pull out list.
-        //------------------------------------------------would this constantly update with oncreate being called multiple times? also why doesnt it work
-        // Languages.values()
-        Collections.addAll(mLanguages, fileSystem.extractLangNames());
+        prepareLanguageListData();
 
 
         // DrawerLayout
@@ -129,11 +126,8 @@ public class MainActivity extends AppCompatActivity {
         // Drawer Item click listeners
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
+            //When a language is Selected in Language Pane
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(MainActivity.this.getApplicationContext(), "Selected " + mLanguages.get(position), Toast.LENGTH_SHORT).show();
-               //TODO proper handling for what to do when a new language is selected goes here.
-                //How to tell if it's selecting or deselecting
-
                 //If the language isn't in the current list add it
                 if(currentlySelectedLang.indexOf(mLanguages.get(position)) == -1){
                     currentlySelectedLang.add(mLanguages.get(position));
@@ -150,51 +144,36 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
-
-        // Associate searchable configuration with the SearchView
-        /*SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-*/
-
-
-
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        prepareListData();
+        prepareLanguageListData();
+    }
+
+    //Sets up phrases and Categories
     private void prepareListData()
     {
         mCategoryList = new ArrayList<>();
         mPhraseList = new HashMap<>();
+        for(Category cat :  fileSystem.getLocalInformationList()){
+            List<Object> phraseList = cat.phraseList;
+            ArrayList<String> phraseNames = new ArrayList<>();
+            for(int i = 0; i < phraseList.size(); i++){
+                phraseNames.add(((Phrase)phraseList.get(i)).name);
+            }
+            mPhraseList.put(cat.name, phraseNames);
+            mCategoryList.add(cat.name);
+        }
+    }
 
-        //Adding categories here
-        mCategoryList.add("Approaching Shore");
-        mCategoryList.add("Recently Spotted");
-        mCategoryList.add("Displaying Panic");
-
-        ArrayList<String> shore = new ArrayList<>();
-        shore.add("Please sit your butt down");
-        shore.add("Slow down your approach speed");
-        shore.add("If you start to sink, push off the person next to you");
-
-        ArrayList<String> spotted = new ArrayList<>();
-        spotted.add("Follow the people who know what they're doing");
-        spotted.add("Look for the guiding light");
-        spotted.add("Beware of alligators");
-
-        ArrayList<String> panic = new ArrayList<>();
-        panic.add("This is no time to panic");
-        panic.add("Everything will be fine");
-        panic.add("Seriously though, there are alligators");
-        panic.add("Keith smells");
-
-        mPhraseList.put(mCategoryList.get(0), shore);
-        mPhraseList.put(mCategoryList.get(1), spotted);
-        mPhraseList.put(mCategoryList.get(2), panic);
-
+    private void prepareLanguageListData(){
+        for(String lang : fileSystem.extractLangNames()){
+            mLanguages.add(lang);
+        }
     }
 
     @Override
@@ -226,11 +205,4 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-
-    //Temporary just to populate the pullout menu until we have back-end
-    enum Language {English, French, Arabic, German}
-
-
 }

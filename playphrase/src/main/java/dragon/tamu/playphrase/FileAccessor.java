@@ -177,6 +177,10 @@ public class FileAccessor
         }
     }
 
+    public ArrayList<Category> getLocalInformationList() {
+        return informationList;
+    }
+
     public void movePhrase(String name, Category cat, int pos) {
     }
     //endregion
