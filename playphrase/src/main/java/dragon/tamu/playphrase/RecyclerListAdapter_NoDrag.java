@@ -15,7 +15,7 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
     LayoutInflater mInflater;
     List<ParentListItem> mList;
 
-    public RecyclerListAdapter_NoDrag(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener) {
+    public RecyclerListAdapter_NoDrag(Context context, List<ParentListItem> parentItemList) {
         super(parentItemList);
 
         mInflater = LayoutInflater.from(context);
@@ -26,13 +26,13 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
 
     @Override
     public CategoryViewHolder onCreateParentViewHolder(ViewGroup viewGroup) {
-        View view = mInflater.inflate(R.layout.expandable_group_item_drag, viewGroup, false);
+        View view = mInflater.inflate(R.layout.expandable_group_item, viewGroup, false);
         return new CategoryViewHolder(view);
     }
 
     @Override
     public PhraseViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
-        View view = mInflater.inflate(R.layout.expandable_inner_item_drag, viewGroup, false);
+        View view = mInflater.inflate(R.layout.expandable_inner_item, viewGroup, false);
 
         return new PhraseViewHolder(view);
 
