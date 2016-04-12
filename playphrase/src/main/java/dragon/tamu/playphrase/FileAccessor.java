@@ -13,15 +13,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class FileAccessor
 {
     //Members
     public ArrayList<Category> informationList;
-    public Map<String, String> languageList;
+    public Map<String, String> languageList; //Name, ABV
     private Context context;
 
     //constructor
@@ -76,9 +78,26 @@ public class FileAccessor
 
     //region Language Manipulation
     public void addLanguage(String name, String abbreviation) {
+        if(!languageList.containsKey(name)) {
+            languageList.put(name, abbreviation);
+        }
     }
 
     public void removeLanguage(String name) {
+        if(languageList.containsKey(name)){
+            languageList.remove(name);
+        }
+    }
+
+    //Get language names from map
+    public ArrayList<String> extractLangNames() {
+        ArrayList<String> langNames = new ArrayList<>();
+
+        for(String key : languageList.keySet()){
+            langNames.add(key);
+        }
+
+        return langNames;
     }
     //endregion
 
@@ -103,6 +122,8 @@ public class FileAccessor
                 break;
             }
         }
+
+        //TODO make go to uncaterogized
         if (category == null)
             category = informationList.get(informationList.size()-1);
 
@@ -156,12 +177,18 @@ public class FileAccessor
         }
     }
 
+    public ArrayList<Category> getLocalInformationList() {
+        return informationList;
+    }
+
     public void movePhrase(String name, Category cat, int pos) {
     }
     //endregion
 
     //region Category Manipulation
     public ArrayList<Category> addCategory(String name) {
+
+        //TODO make unable to delete uncaterogized
         Category category = null;
         for (Category cat : informationList)
         {
