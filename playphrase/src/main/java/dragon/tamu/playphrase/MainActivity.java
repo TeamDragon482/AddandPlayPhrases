@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,14 +33,14 @@ public class MainActivity extends AppCompatActivity {
     //Variables for Drawer
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
-    ArrayList<String> currentlySelectedLang = new ArrayList<>();
+    ArrayList<String> currentlySelectedLang;
 
     //Variables for ListView
     RecyclerListAdapter_NoDrag mListAdapter;
     RecyclerView mListView;
     List<ParentListItem> mCategoryList; //List of categories
 
-
+    ArrayAdapter<String> adapter;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -51,26 +52,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fileSystem = new FileAccessor(MainActivity.this.getBaseContext());
+        //fileSystem = new FileAccessor(MainActivity.this.getBaseContext());
+        currentlySelectedLang = new ArrayList<>();
         //Setting up category expandable list view
 
         //get the list view
         mListView = (RecyclerView)findViewById(R.id.expandableListView);
 
-        //Put Phrases and Categories in display
-        prepareListData();
 
-        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+//        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
 
         //Set the adapter
         mListView.setLayoutManager(new LinearLayoutManager(this));
         mListView.setHasFixedSize(true);
         mListView.setItemAnimator(new DefaultItemAnimator());
-        mListView.setAdapter(mListAdapter);
+//        mListView.setAdapter(mListAdapter);
         mListView.requestFocus();
 
-        //Adding languages to the pull out list.
-        prepareLanguageListData();
 
 
         // DrawerLayout
@@ -118,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
         // Populate the Navigation Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
+//        adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
         mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        mDrawerList.setAdapter(adapter);
+//        mDrawerList.setAdapter(adapter);
 
 
 
@@ -149,11 +147,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Log.d("Main Activity", "OnResume");
+        fileSystem = new FileAccessor(MainActivity.this.getBaseContext());
+        // if(currentlySelectedLang.isEmpty()) {
         prepareListData();
+        // } else{
+        //     prepareSelectedListData();
+        // }
         prepareLanguageListData();
+        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListView.setAdapter(mListAdapter);
+        adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
+        mDrawerList.setAdapter(adapter);
     }
+
 
     //Sets up phrases and Categories
     private void prepareListData()
@@ -164,6 +179,18 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> phraseNames = new ArrayList<>();
             for(int i = 0; i < phraseList.size(); i++){
                 phraseNames.add(((Phrase)phraseList.get(i)).name);
+            }
+            mCategoryList.add(new Category(phraseList, cat.name));
+        }
+    }
+
+    private void prepareSelectedListData() {
+        mCategoryList = new ArrayList<>();
+        for (Category cat : fileSystem.getLocalInformationList()) {
+            List<Object> phraseList = cat.phraseList;
+            ArrayList<String> phraseNames = new ArrayList<>();
+            for (int i = 0; i < phraseList.size(); i++) {
+                phraseNames.add(((Phrase) phraseList.get(i)).name);
             }
             mCategoryList.add(new Category(phraseList, cat.name));
         }
