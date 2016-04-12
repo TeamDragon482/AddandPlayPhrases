@@ -31,13 +31,15 @@ import android.view.animation.LinearInterpolator;
  */
 public class RecordingFragment extends Fragment {
     private Spinner phrase_spinner, category_spinner, language_spinner;
+    private int phrase_spinner_pos, category_spinner_pos, language_spinner_pos;
     private ImageButton btnSubmit, btnPlay, btnStartRecording, btnStopRecording;
     private TextView textPlaceholder;
     private List<String> phrase_list = new ArrayList<String>();
     private List<String> category_list = new ArrayList<String>();
     private List<String> language_list = new ArrayList<String>();
-    private List<String> language_abbr_list = new ArrayList<String>();
     private EditText newPhraseText, newCategoryText, newLanguageText, newLanguageAbbr;
+    private Button btnSavePhrase, btnSaveCategory, btnSaveLanguage;
+    private Boolean phraseSaved, categorySaved, languageSaved;
     //ThingsAdapter adapter;
     FragmentActivity listener;
 
@@ -110,6 +112,15 @@ public class RecordingFragment extends Fragment {
         newCategoryText = (EditText) getView().findViewById(R.id.newCategoryText);
         newLanguageText = (EditText) getView().findViewById(R.id.newLanguageText);
         newLanguageAbbr = (EditText) getView().findViewById(R.id.newLanguageAbbr);
+        btnSavePhrase = (Button) getView().findViewById(R.id.savePhrase);
+        btnSaveCategory = (Button) getView().findViewById(R.id.saveCategory);
+        btnSaveLanguage = (Button) getView().findViewById(R.id.saveLanguage);
+        phrase_spinner_pos = 0;
+        category_spinner_pos = 0;
+        language_spinner_pos = 0;
+        phraseSaved = true;
+        categorySaved = true;
+        languageSaved = true;
 
         addItemsOnPhraseSpinner();
         addItemsOnCategorySpinner();
@@ -122,8 +133,11 @@ public class RecordingFragment extends Fragment {
         phrase_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
-                if(pos==0){
-                    //
+                phrase_spinner_pos = pos;
+                if (pos == 1) {
+                    phraseSaved = false;
+                    newPhraseText.setVisibility(View.VISIBLE);
+                    btnSavePhrase.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -131,21 +145,59 @@ public class RecordingFragment extends Fragment {
             }
         });
 
-        btnSubmit.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Toast.makeText(getActivity(),
-                        "OnClickListener : " +
-                                "\nPhrase Spinner : " + String.valueOf(phrase_spinner.getSelectedItem()) +
-                                "\nCategory Spinner : " + String.valueOf(category_spinner.getSelectedItem()) +
-                                "\nLanguage Spinner : " + String.valueOf(language_spinner.getSelectedItem()),
-                        Toast.LENGTH_SHORT).show();
+        category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+                category_spinner_pos = pos;
+                if (pos == 1) {
+                    categorySaved = false;
+                    newCategoryText.setVisibility(View.VISIBLE);
+                    btnSaveCategory.setVisibility(View.VISIBLE);
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
-        btnPlay.setOnClickListener(new OnClickListener(){
+        language_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+                language_spinner_pos = pos;
+                if (pos == 1) {
+                    languageSaved = false;
+                    newLanguageText.setVisibility(View.VISIBLE);
+                    newLanguageAbbr.setVisibility(View.VISIBLE);
+                    btnSaveLanguage.setVisibility(View.VISIBLE);
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
+                if (phrase_spinner_pos !=0 && category_spinner_pos != 0  && language_spinner_pos != 0 && phraseSaved && categorySaved && languageSaved) {
+                    Toast.makeText(getActivity(),
+                            "OnClickListener : " +
+                                    "\nPhrase Spinner : " + String.valueOf(phrase_spinner.getSelectedItem()) +
+                                    "\nCategory Spinner : " + String.valueOf(category_spinner.getSelectedItem()) +
+                                    "\nLanguage Spinner : " + String.valueOf(language_spinner.getSelectedItem()),
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getActivity(),
+                            "You must select a Phrase, a Category, and a Language",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnPlay.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Toast.makeText(getActivity(),
                         "OnClickListener : Recording should PLAYBACK now!",
                         Toast.LENGTH_SHORT).show();
@@ -175,6 +227,87 @@ public class RecordingFragment extends Fragment {
                 btnSubmit.setEnabled(true);
             }
         });
+
+        btnSavePhrase.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if ((""+newPhraseText.getText()).length() >= 2) {
+                    Toast.makeText(getActivity(),
+                            "OnClickListener : NEW PHRASE: "+newPhraseText.getText()+" should be saved now!",
+                            Toast.LENGTH_SHORT).show();
+
+                    addOneItemOnPhraseSpinner("" + newPhraseText.getText());
+                    newPhraseText.setVisibility(View.INVISIBLE);
+                    btnSavePhrase.setVisibility(View.INVISIBLE);
+                    phraseSaved = true;
+                }
+                else {
+                    Toast.makeText(getActivity(),
+                            "NEW PHRASE must have at least 2 characters!",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnSaveCategory.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if ((""+newCategoryText.getText()).length() >= 2) {
+                    Toast.makeText(getActivity(),
+                            "OnClickListener : NEW CATEGORY: "+newCategoryText.getText()+" should be saved now!",
+                            Toast.LENGTH_SHORT).show();
+
+                    addOneItemOnCategorySpinner("" + newCategoryText.getText());
+                    newCategoryText.setVisibility(View.INVISIBLE);
+                    btnSaveCategory.setVisibility(View.INVISIBLE);
+                    categorySaved = true;
+                }
+                else {
+                    Toast.makeText(getActivity(),
+                            "NEW CATEGORY must have at least 2 characters!",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnSaveLanguage.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if ((""+newLanguageText.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() <= 4) {
+                    Toast.makeText(getActivity(),
+                            "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
+                                            "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
+                            Toast.LENGTH_SHORT).show();
+
+                    addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
+                    newLanguageText.setVisibility(View.INVISIBLE);
+                    newLanguageAbbr.setVisibility(View.INVISIBLE);
+                    btnSaveLanguage.setVisibility(View.INVISIBLE);
+                    languageSaved = true;
+                }
+                else {
+                    Toast.makeText(getActivity(),
+                            "NEW LANGUAGE must have at least 2 characters!\n" +
+                            "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    public void addOneItemOnPhraseSpinner(String newPhrase){
+        phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
+        phrase_list.add(newPhrase);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //phrase_spinner.setAdapter(dataAdapter);
+        phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                dataAdapter,
+                R.layout.contact_phrase_spinner_row_nothing_selected,
+                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                this.getActivity()));
+        phrase_spinner.setSelection(phrase_list.size());
     }
 
     public void addItemsOnPhraseSpinner(){
@@ -187,10 +320,24 @@ public class RecordingFragment extends Fragment {
         phrase_spinner.setPrompt("Select Phrase...");
         //phrase_spinner.setAdapter(dataAdapter);
         phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                                    dataAdapter,
-                                    R.layout.contact_phrase_spinner_row_nothing_selected,
-                                    // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                                    this.getActivity()));
+                dataAdapter,
+                R.layout.contact_phrase_spinner_row_nothing_selected,
+                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                this.getActivity()));
+    }
+
+    public void addOneItemOnCategorySpinner(String newCategory){
+        category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
+        category_list.add(newCategory);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //phrase_spinner.setAdapter(dataAdapter);
+        category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                dataAdapter,
+                R.layout.contact_phrase_spinner_row_nothing_selected,
+                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                this.getActivity()));
+        category_spinner.setSelection(category_list.size());
     }
 
     public void addItemsOnCategorySpinner(){
@@ -203,11 +350,26 @@ public class RecordingFragment extends Fragment {
         category_spinner.setPrompt("Select Category...");
         //category_spinner.setAdapter(dataAdapter);
         category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                                      dataAdapter,
-                                      R.layout.contact_category_spinner_row_nothing_selected,
-                                      // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                                      this.getActivity()));
+                dataAdapter,
+                R.layout.contact_category_spinner_row_nothing_selected,
+                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                this.getActivity()));
 
+    }
+
+    public void addOneItemOnLanguageSpinner(String newLanguage, String newAbbr){
+        language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
+        String langAndAbbr = newLanguage + " [" + newAbbr.toUpperCase() + "]";
+        language_list.add(langAndAbbr);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //phrase_spinner.setAdapter(dataAdapter);
+        language_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                dataAdapter,
+                R.layout.contact_phrase_spinner_row_nothing_selected,
+                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                this.getActivity()));
+        language_spinner.setSelection(language_list.size());
     }
 
     public void addItemsOnLanguageSpinner(){
