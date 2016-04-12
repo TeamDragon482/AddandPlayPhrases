@@ -2,6 +2,7 @@ package dragon.tamu.playphrase;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Category implements ParentListItem{
@@ -12,6 +13,8 @@ public class Category implements ParentListItem{
 
     public Category(String name) {
         this.name = name;
+        phraseList = new ArrayList<>();
+
     }
     public Category(List<Object> phraseList, String title)
     {
