@@ -188,7 +188,6 @@ public class FileAccessor
     //region Category Manipulation
     public ArrayList<Category> addCategory(String name) {
 
-        //TODO make unable to delete uncaterogized
         Category category = null;
         for (Category cat : informationList)
         {
@@ -211,8 +210,10 @@ public class FileAccessor
         Category category = null;
         for (Category cat : informationList)
         {
-            if (cat.name.equals(name))
+            if (cat.name.equals(name) && (name != "Uncategorized"))
             {
+                //TODO how prevent user from being able to see the delete feedback when swipe on uncategorized??
+                //TODO if has items, move them all to uncategorized
                 category = cat;
                 break;
             }
@@ -273,7 +274,7 @@ public class FileAccessor
     private static ArrayList<Category> getEmptyFileSystem()
     {
         ArrayList<Category> defaultFileSystem = new ArrayList<>();
-        defaultFileSystem.add(new Category("Uncatergorized"));
+        defaultFileSystem.add(new Category("Uncategorized"));
         return defaultFileSystem;
     }
 

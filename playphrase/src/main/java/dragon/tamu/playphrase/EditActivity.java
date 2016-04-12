@@ -50,6 +50,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
                 animateFAB();
             }
         });
+        addCategoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCategory();
+            }
+        });
 
 
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
@@ -59,6 +65,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         listView.setAdapter(adapter);
     }
+
+    //@Override
+    //protected void onResume(Bundle savedInstanceState) {
+        //super.onResume(savedInstanceState);
+
+    //}
 
     //temporary generator for demonstration purposes
     private List<ParentListItem> generateList()
@@ -113,5 +125,10 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addCategoryButton.setClickable(true);
             isFabOpen = true;
         }
+    }
+
+    public void addCategory()
+    {
+
     }
 }
