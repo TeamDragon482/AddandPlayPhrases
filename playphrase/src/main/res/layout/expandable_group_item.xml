@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler_inner_item"
+    android:layout_width="match_parent"
+    android:layout_height="?listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="true"
     android:padding="8dp"
-    android:background="#00695c">
+    android:background="#00695c"
+    >
     <TextView
         android:id="@+id/category_view"
         android:layout_width="wrap_content"
@@ -12,7 +15,22 @@
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
         style="@style/Base.TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
+        android:layout_gravity="center_vertical|left"
         android:elevation="15dp"/>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|right">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/parent_list_item_expand_arrow"
+            android:layout_width="?listPreferredItemHeight"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@android:drawable/arrow_down_float"
+            />
+    </RelativeLayout>
+
+
+</FrameLayout>
