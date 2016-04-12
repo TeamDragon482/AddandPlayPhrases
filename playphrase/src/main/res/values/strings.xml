@@ -11,4 +11,6 @@
     <string name="searchable_hint">Enter phrase...</string>
     <string name="edit_title">Edit Menu</string>
     <string name="swipe_instr">Swipe right to delete...</string>
+    <string name="add_category">Add Category</string>
+    <string name="add_phrase">Add Phrase</string>
 </resources>
