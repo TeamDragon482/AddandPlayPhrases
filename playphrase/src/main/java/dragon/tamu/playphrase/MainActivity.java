@@ -7,21 +7,22 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> currentlySelectedLang = new ArrayList<>();
 
     //Variables for ListView
-    ExpandeableCategoryListAdapter mListAdapter;
-    ExpandableListView mListView;
-    ArrayList<String> mCategoryList; //List of categories
-    HashMap<String, ArrayList<String>> mPhraseList;
+    RecyclerListAdapter_NoDrag mListAdapter;
+    RecyclerView mListView;
+    List<ParentListItem> mCategoryList; //List of categories
+
 
 
     private ActionBarDrawerToggle mDrawerToggle;
@@ -54,14 +55,17 @@ public class MainActivity extends AppCompatActivity {
         //Setting up category expandable list view
 
         //get the list view
-        mListView = (ExpandableListView)findViewById(R.id.expandableListView);
+        mListView = (RecyclerView)findViewById(R.id.expandableListView);
 
         //Put Phrases and Categories in display
         prepareListData();
 
-        mListAdapter = new ExpandeableCategoryListAdapter(this, mCategoryList, mPhraseList);
+        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
 
         //Set the adapter
+        mListView.setLayoutManager(new LinearLayoutManager(this));
+        mListView.setHasFixedSize(true);
+        mListView.setItemAnimator(new DefaultItemAnimator());
         mListView.setAdapter(mListAdapter);
         mListView.requestFocus();
 
@@ -155,15 +159,13 @@ public class MainActivity extends AppCompatActivity {
     private void prepareListData()
     {
         mCategoryList = new ArrayList<>();
-        mPhraseList = new HashMap<>();
         for(Category cat :  fileSystem.getLocalInformationList()){
             List<Object> phraseList = cat.phraseList;
             ArrayList<String> phraseNames = new ArrayList<>();
             for(int i = 0; i < phraseList.size(); i++){
                 phraseNames.add(((Phrase)phraseList.get(i)).name);
             }
-            mPhraseList.put(cat.name, phraseNames);
-            mCategoryList.add(cat.name);
+            mCategoryList.add(new Category(phraseList, cat.name));
         }
     }
 
