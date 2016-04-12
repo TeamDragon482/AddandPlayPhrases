@@ -186,7 +186,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
             else if(target instanceof CategoryViewHolder && toPosition > 0)
             {
-                int targetParentListIndex = -1;
+                int targetParentListIndex;
                 int targetParentIndex = -1;
                 int childToPosition = -1;
                 Phrase p = ((PhraseViewHolder) viewHolder).getPhrase();
@@ -200,9 +200,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                     tempList.add(0, p);
                     list = tempList;
 
-                    targetParentListIndex = parentListIndex + 1;
                     targetParentIndex = toPosition;
-                    childToPosition = 0;
 
                 }
                 if(fromPosition > toPosition)
