@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,8 +49,10 @@ public class FileAccessor
             json = new JSONObject(text);
             return parseInfoJSON(json);
         } catch(IOException e){
+            Log.d("FileAccessor", e.getMessage());
             return getEmptyFileSystem();
         } catch(JSONException e) {
+            Log.d("FileAccessor2", e.getMessage());
             return getEmptyFileSystem();
         }
     }
@@ -178,9 +182,6 @@ public class FileAccessor
     public ArrayList<Category> getLocalInformationList() {
         return informationList;
     }
-
-    public void movePhrase(String name, Category cat, int pos) {
-    }
     //endregion
 
     //region Category Manipulation
@@ -229,7 +230,7 @@ public class FileAccessor
     //endregion
 
     //region Private Helper Methods
-    private void saveLangToFile(Map<String, String> langList) {
+    public void saveLangToFile(Map<String, String> langList) {
         JSONObject languages = new JSONObject(langList);
 
         JSONObject saveJSON = new JSONObject();
@@ -241,24 +242,30 @@ public class FileAccessor
 
         try {
             OutputStream outputStream = context.openFileOutput("langList.json", Context.MODE_PRIVATE);
+            PrintStream printStream = new PrintStream(outputStream);
+            printStream.print(saveJSON.toString());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private void saveInfoToFile(ArrayList<Category> categoryArrayList) {
+    public void saveInfoToFile(ArrayList<Category> categoryArrayList) {
         JSONArray categories = categoryToJSON(categoryArrayList);
 
         JSONObject saveJSON = new JSONObject();
         try {
             saveJSON.put("Categories", categories);
         } catch (JSONException e) {
+            Log.d("saveInfoToFile", "JSONException " + e.getMessage());
             e.printStackTrace();
         }
 
         try {
             OutputStream outputStream = context.openFileOutput("fileLayout.json", Context.MODE_PRIVATE);
+            PrintStream printStream = new PrintStream(outputStream);
+            printStream.print(saveJSON.toString());
         } catch (FileNotFoundException e) {
+            Log.d("saveInfoToFile", "FileNotFoundException " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -282,7 +289,7 @@ public class FileAccessor
             for(Category category: categoryArrayList)
             {
                 JSONObject catJSON = new JSONObject();
-                catJSON.put("Name", category);
+                catJSON.put("Name", category.name);
                 JSONArray phraseJSON_list = new JSONArray();
 
                 for (int i = 0; i < category.phraseList.size(); i++) {
@@ -297,6 +304,7 @@ public class FileAccessor
             }
             return result;
         } catch(JSONException e) {
+            Log.d("categoryToJSON", e.getMessage());
             return new JSONArray();
         }
     }

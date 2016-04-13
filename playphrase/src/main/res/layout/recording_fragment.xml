@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/colorPrimary"
+    android:elevation="20sp"
+    android:orientation="vertical"
+    android:padding="30sp">
+
+    <RelativeLayout
+
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#FC9"
+        android:gravity="center">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="New   Recording"
+              android:textColor="#000"
+              android:textSize="40sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/phrase_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:layout_gravity="fill_horizontal"
+            android:entries="@array/Phrase_choices"
+            android:prompt="@string/Choose_Phrase_prompt"
+        />
+        <EditText
+            android:id="@+id/newPhraseText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:text="Phrase..."
+            android:visibility="invisible"
+        />
+        <Button
+            android:id="@+id/savePhrase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Save"
+            android:visibility="invisible"
+        />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:layout_gravity="fill_horizontal"
+            android:entries="@array/Category_choices"
+            android:prompt="@string/Choose_Category_prompt"
+        />
+        <EditText
+            android:id="@+id/newCategoryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:text="Category..."
+            android:visibility="invisible"
+        />
+        <Button
+            android:id="@+id/saveCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Save"
+            android:visibility="invisible"
+        />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/language_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:layout_gravity="fill_horizontal"
+            android:entries="@array/Language_choices"
+            android:prompt="@string/Choose_Language_prompt"
+        />
+        <EditText
+            android:id="@+id/newLanguageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:text="Language..."
+            android:visibility="invisible"
+        />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/newLanguageAbbr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="12sp"
+            android:text="Abbreviation (4 Letters)"
+            android:visibility="invisible"
+        />
+        <Button
+            android:id="@+id/saveLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Save"
+            android:visibility="invisible"
+        />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textPlaceholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="97sp"
+        android:text="Keith Smells\n"
+        android:textAlignment="center"
+    />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play_arrow_green_600_48dp"
+            android:background="@color/colorPrimary"
+            android:padding="20sp"
+        />
+        <Button
+            android:id="@+id/spacer1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/btnPlay"
+            android:visibility="invisible"
+            android:padding="20sp"
+        />
+        <ImageButton
+            android:id="@+id/btnStartRecording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/spacer1"
+            android:src="@drawable/ic_fiber_manual_record_red_600_48dp"
+            android:visibility="visible"
+            android:background="@color/colorPrimary"
+            android:padding="20sp"
+        />
+        <ImageButton
+            android:id="@+id/btnStopRecording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/spacer1"
+            android:src="@drawable/ic_stop_red_600_48dp"
+            android:visibility="invisible"
+            android:background="@color/colorPrimary"
+            android:padding="20sp"
+        />
+        <Button
+            android:id="@+id/spacer2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/btnStartRecording"
+            android:visibility="invisible"
+            android:padding="20sp"
+        />
+        <ImageButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/spacer2"
+            android:src="@drawable/ic_save_black_48dp"
+            android:text="Save"
+            android:background="@color/colorPrimary"
+            android:padding="20sp"
+        />
+    </RelativeLayout>
+</LinearLayout>
