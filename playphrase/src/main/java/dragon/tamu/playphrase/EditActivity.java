@@ -34,6 +34,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private TextView addCat, addPhrase;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
+    RecyclerView listView;
 
     FileAccessor fileSystem;
 
@@ -41,7 +42,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        RecyclerView listView = (RecyclerView)findViewById(R.id.edit_list_view);
+
+        listView = (RecyclerView)findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setHasFixedSize(true);
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -86,12 +88,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         });
 
 
-        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-        touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(listView);
 
-        listView.setAdapter(adapter);
     }
 
     @Override
@@ -175,6 +172,11 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     protected void onResume() {
         super.onResume();
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
+        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(listView);
+        listView.setAdapter(adapter);
 
     }
 
