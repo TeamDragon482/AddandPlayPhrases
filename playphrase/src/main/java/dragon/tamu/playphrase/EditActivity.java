@@ -27,7 +27,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
     //Members for fragments
-    public Fragment addPhraseFrag;
+    public Fragment recordingFragment;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
@@ -50,7 +50,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
         //Instantiating the fragment
-        addPhraseFrag = new AddPhraseFragment();
+        recordingFragment = new RecordingFragment();
 
         //Code for floating action buttons
         isFabOpen = false;
@@ -77,7 +77,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         addPhraseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startFragmentFromButton(v, addPhraseFrag);
+                startFragmentFromButton(v, recordingFragment);
             }
         });
         addCategoryButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +88,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         });
 
 
+        /*
+        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(listView);
 
+        listView.setAdapter(adapter);
+        */
     }
 
     @Override
@@ -176,6 +183,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(listView);
+
         listView.setAdapter(adapter);
 
     }
@@ -223,22 +231,22 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         animateFAB();
         fab.hide();
         getFragmentManager().beginTransaction().add(R.id.edit_coord_layout, fragment, "phrase_add_frag").addToBackStack(null).commit();
-       /* CoordinatorLayout root = (CoordinatorLayout) findViewById( R.id.edit_coord_layout );
-        DisplayMetrics dm = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics( dm );
+        /* CoordinatorLayout root = (CoordinatorLayout) findViewById( R.id.edit_coord_layout );
+         DisplayMetrics dm = new DisplayMetrics();
+         this.getWindowManager().getDefaultDisplay().getMetrics( dm );
 
-        int originalPos[] = new int[2];
-        view.getLocationOnScreen( originalPos);
+         int originalPos[] = new int[2];
+         view.getLocationOnScreen( originalPos);
 
-        int xDest = dm.widthPixels/2;
-        xDest -= (view.getMeasuredWidth()/2);
-        int yDest = dm.heightPixels/2 - (view.getMeasuredHeight()/2);
+         int xDest = dm.widthPixels/2;
+         xDest -= (view.getMeasuredWidth()/2);
+         int yDest = dm.heightPixels/2 - (view.getMeasuredHeight()/2);
 
-        TranslateAnimation anim = new TranslateAnimation( 0, xDest - originalPos[0] , 0, yDest - originalPos[1] );
-        anim.setDuration(1000);
-        anim.setFillAfter(true);
-        view.startAnimation(anim);
-*/
+         TranslateAnimation anim = new TranslateAnimation( 0, xDest - originalPos[0] , 0, yDest - originalPos[1] );
+         anim.setDuration(1000);
+         anim.setFillAfter(true);
+         view.startAnimation(anim);
+ */
     }
 
 
