@@ -13,24 +13,4 @@
     <string name="swipe_instr">Swipe right to delete...</string>
     <string name="add_category">Add Category</string>
     <string name="add_phrase">Add Phrase</string>
-
-    <string name = "Choose_Phrase_prompt">Select Phrase...</string>
-    <string-array name = "Phrase_choices">
-        <item>Add New Phrase</item>
-        <item>Stay in the Boat</item>
-    </string-array>
-
-    <string name = "Choose_Category_prompt">Select Category...</string>
-    <string-array name = "Category_choices">
-        <item>Add New Category</item>
-        <item>Approaching Shore</item>
-
-    </string-array>
-
-    <string name = "Choose_Language_prompt">Select Language...</string>
-    <string-array name = "Language_choices">
-        <item>Add New Language</item>
-        <item>Engrish</item>
-
-    </string-array>
 </resources>

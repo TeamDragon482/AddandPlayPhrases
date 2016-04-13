@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -22,6 +23,10 @@ import java.util.List;
 
 public class EditActivity extends AppCompatActivity implements OnStartDragListener {
 
+
+    List<ParentListItem> mCategoryList; //List of categories
+
+    
     //Members for fragments
     public Fragment recordingFragment;
     private ItemTouchHelper touchHelper;
@@ -31,6 +36,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
 
+    FileAccessor fileSystem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +110,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     //temporary generator for demonstration purposes
     private List<ParentListItem> generateList()
     {
-        ArrayList<ParentListItem> categoryList = new ArrayList<>();
+        /*ArrayList<ParentListItem> categoryList = new ArrayList<>();
 
         ArrayList<Object> shore = new ArrayList<>();
         shore.add(new Phrase("Please sit your butt down"));
@@ -125,8 +131,55 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         categoryList.add(new Category(shore, "Approaching Shore"));
         categoryList.add(new Category(spotted, "Recently Spotted"));
         categoryList.add(new Category(panic, "Displaying Panic"));
+        categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));*/
 
-        return categoryList;
+        mCategoryList = new ArrayList<>();
+        for (Category cat : fileSystem.getLocalInformationList()) {
+            List<Object> phraseList = cat.phraseList;
+            ArrayList<String> phraseNames = new ArrayList<>();
+            for (int i = 0; i < phraseList.size(); i++) {
+                phraseNames.add(((Phrase) phraseList.get(i)).name);
+            }
+            mCategoryList.add(new Category(phraseList, cat.name));
+        }
+
+        return mCategoryList;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onStop()
+
+    {
+        super.onStop();
+        /*ArrayList<Category> temp = new ArrayList<>();
+        for(int i = 0; i < mCategoryList.size(); i++){
+            temp.add((Category) mCategoryList.get(i));
+        }
+        fileSystem.saveInfoToFile(temp);*/
+        Log.d("Edit Activity", "OnStop");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ArrayList<Category> temp = new ArrayList<>();
+        for (int i = 0; i < mCategoryList.size(); i++) {
+            temp.add((Category) mCategoryList.get(i));
+        }
+        fileSystem.saveInfoToFile(temp);
+        Log.d("Edit Activity", "OnPause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
+
     }
 
     @Override

@@ -32,11 +32,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        if(direction == ItemTouchHelper.RIGHT)
-        {
-            mAdapter.onItemSwiped(viewHolder);
+        if (!((CategoryViewHolder) viewHolder).getCategory().name.equals("Uncategorized")) {
+            if (direction == ItemTouchHelper.RIGHT) {
+                mAdapter.onItemSwiped(viewHolder);
+            }
         }
     }
+
 
     @Override
     public boolean isLongPressDragEnabled() {
