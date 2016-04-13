@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     List<ParentListItem> mCategoryList; //List of categories
 
-    
+
     //Members for fragments
     public Fragment recordingFragment;
     private ItemTouchHelper touchHelper;
@@ -35,6 +34,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private TextView addCat, addPhrase;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
+    RecyclerView listView;
 
     FileAccessor fileSystem;
 
@@ -42,14 +42,15 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        RecyclerView listView = (RecyclerView)findViewById(R.id.edit_list_view);
+
+        listView = (RecyclerView)findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setHasFixedSize(true);
         listView.setItemAnimator(new DefaultItemAnimator());
 
+
         //Instantiating the fragment
         recordingFragment = new RecordingFragment();
-
 
         //Code for floating action buttons
         isFabOpen = false;
@@ -66,7 +67,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         slide_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_appear);
         slide_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_disappear);
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +106,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         } else
             super.onBackPressed();
     }
-
 
     //temporary generator for demonstration purposes
     private List<ParentListItem> generateList()
@@ -179,7 +178,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     @Override
     protected void onResume() {
         super.onResume();
-        RecyclerView listView = (RecyclerView)findViewById(R.id.edit_list_view);
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
@@ -220,8 +218,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             isFabOpen = true;
         }
     }
-
-
 
     private void startFragmentFromButton(View view, Fragment fragment) {
         Bundle args = new Bundle();
