@@ -244,6 +244,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         }
         else if(viewHolder instanceof PhraseViewHolder)
         {
+            //TODO give a warning before deleting.
             int fromPosition = viewHolder.getAdapterPosition();
             int parentIndex = -1;
             int parentListIndex = 0;

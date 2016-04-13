@@ -22,7 +22,7 @@ import java.util.List;
 public class EditActivity extends AppCompatActivity implements OnStartDragListener {
 
     //Members for fragments
-    public Fragment addPhraseFrag;
+    public Fragment addPhraseFrag, addCategoryFrag;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
@@ -42,6 +42,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         //Instantiating the fragment
         addPhraseFrag = new AddPhraseFragment();
+        addCategoryFrag = new AddCategoryFragment();
 
         //Code for floating action buttons
         isFabOpen = false;
@@ -75,10 +76,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         addCategoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startFragmentFromButton(v, null);
+                startFragmentFromButton(v, addCategoryFrag);
             }
         });
-
 
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
@@ -87,12 +87,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         listView.setAdapter(adapter);
     }
-
-    //@Override
-    //protected void onResume(Bundle savedInstanceState) {
-        //super.onResume(savedInstanceState);
-
-    //}
 
     @Override
     public void onBackPressed() {
