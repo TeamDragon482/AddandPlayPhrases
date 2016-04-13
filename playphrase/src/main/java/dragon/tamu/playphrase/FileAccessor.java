@@ -210,14 +210,14 @@ public class FileAccessor
         {
             if (cat.name.equals(name) && (name != "Uncategorized"))
             {
-                //TODO how prevent user from being able to see the delete feedback when swipe on uncategorized??
-                //TODO if has items, move them all to uncategorized
                 category = cat;
                 break;
             }
         }
         if (category != null)
         {
+            //TODO if has items, move them all to uncategorized
+
             informationList.remove(category);
             saveInfoToFile(informationList);
         }
