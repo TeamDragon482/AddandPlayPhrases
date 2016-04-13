@@ -88,13 +88,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         });
 
 
-
+        /*
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(listView);
 
         listView.setAdapter(adapter);
+        */
     }
 
     @Override
@@ -178,7 +179,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     @Override
     protected void onResume() {
         super.onResume();
+        RecyclerView listView = (RecyclerView)findViewById(R.id.edit_list_view);
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
+        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(listView);
+
+        listView.setAdapter(adapter);
 
     }
 

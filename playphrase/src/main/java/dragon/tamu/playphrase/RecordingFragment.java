@@ -396,3 +396,5 @@ public class RecordingFragment extends Fragment {
 //Add input to phrase_list/category_list/language_list upon hitting respective Save button and set values to invisible
 //
 //CONNECT SPINNERS TO ACTUAL LISTS
+//SNACK BAR INSTEAD OF TOAST
+//make background for edit texts white, elevate them, set hints instead of starting text
