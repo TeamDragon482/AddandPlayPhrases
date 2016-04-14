@@ -1,6 +1,8 @@
 package dragon.tamu.playphrase;
 
 import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +22,8 @@ import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditActivity extends AppCompatActivity implements OnStartDragListener {
+public class EditActivity extends AppCompatActivity implements OnStartDragListener
+{
 
 
     List<ParentListItem> mCategoryList; //List of categories
@@ -39,11 +42,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     FileAccessor fileSystem;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        listView = (RecyclerView)findViewById(R.id.edit_list_view);
+        listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setHasFixedSize(true);
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -54,9 +58,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         //Code for floating action buttons
         isFabOpen = false;
-        fab = (FloatingActionButton)findViewById(R.id.fab);
-        addPhraseButton = (FloatingActionButton)findViewById(R.id.fab1);
-        addCategoryButton = (FloatingActionButton)findViewById(R.id.fab2);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        addPhraseButton = (FloatingActionButton) findViewById(R.id.fab1);
+        addCategoryButton = (FloatingActionButton) findViewById(R.id.fab2);
         //Code for action button labels
         addPhrase = (TextView) findViewById(R.id.fab1_tView);
         addCat = (TextView) findViewById(R.id.fab2_tView);
@@ -68,26 +72,31 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         slide_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_appear);
         slide_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_disappear);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 animateFAB();
             }
         });
-        addPhraseButton.setOnClickListener(new View.OnClickListener() {
+        addPhraseButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 startFragmentFromButton(v, recordingFragment);
             }
         });
-        addCategoryButton.setOnClickListener(new View.OnClickListener() {
+        addCategoryButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 startFragmentFromButton(v, null);
             }
         });
-
-
+        handleIntent(getIntent());
         /*
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
@@ -99,18 +108,37 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     }
 
     @Override
-    public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+    protected void onNewIntent(Intent intent)
+    {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent)
+    {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+        {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            ArrayList<ParentListItem> searchResults = new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+        {
             getFragmentManager().popBackStack();
             fab.show();
-        } else
+        }
+        else
             super.onBackPressed();
     }
 
     //temporary generator for demonstration purposes
     private List<ParentListItem> generateList()
     {
-        /*ArrayList<ParentListItem> categoryList = new ArrayList<>();
+        ArrayList<ParentListItem> categoryList = new ArrayList<>();
 
         ArrayList<Object> shore = new ArrayList<>();
         shore.add(new Phrase("Please sit your butt down"));
@@ -131,23 +159,24 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         categoryList.add(new Category(shore, "Approaching Shore"));
         categoryList.add(new Category(spotted, "Recently Spotted"));
         categoryList.add(new Category(panic, "Displaying Panic"));
-        categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));*/
+        categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));
 
-        mCategoryList = new ArrayList<>();
-        for (Category cat : fileSystem.getLocalInformationList()) {
-            List<Object> phraseList = cat.phraseList;
-            ArrayList<String> phraseNames = new ArrayList<>();
-            for (int i = 0; i < phraseList.size(); i++) {
-                phraseNames.add(((Phrase) phraseList.get(i)).name);
-            }
-            mCategoryList.add(new Category(phraseList, cat.name));
-        }
-
+//        mCategoryList = new ArrayList<>();
+//        for (Category cat : fileSystem.getLocalInformationList()) {
+//            List<Object> phraseList = cat.phraseList;
+//            ArrayList<String> phraseNames = new ArrayList<>();
+//            for (int i = 0; i < phraseList.size(); i++) {
+//                phraseNames.add(((Phrase) phraseList.get(i)).name);
+//            }
+//            mCategoryList.add(new Category(phraseList, cat.name));
+//        }
+        mCategoryList = categoryList;
         return mCategoryList;
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
 
     }
@@ -164,11 +193,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         fileSystem.saveInfoToFile(temp);*/
         Log.d("Edit Activity", "OnStop");
     }
+
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
         ArrayList<Category> temp = new ArrayList<>();
-        for (int i = 0; i < mCategoryList.size(); i++) {
+        for (int i = 0; i < mCategoryList.size(); i++)
+        {
             temp.add((Category) mCategoryList.get(i));
         }
         fileSystem.saveInfoToFile(temp);
@@ -176,7 +208,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
         RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
@@ -193,9 +226,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         touchHelper.startDrag(viewHolder);
     }
-    public void animateFAB(){
 
-        if(isFabOpen){
+    public void animateFAB()
+    {
+
+        if (isFabOpen)
+        {
 
             fab.startAnimation(rotate_backward);
             addPhraseButton.startAnimation(fab_close);
@@ -206,8 +242,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addCategoryButton.setClickable(false);
             isFabOpen = false;
 
-
-        } else {
+        }
+        else
+        {
             fab.startAnimation(rotate_forward);
             addPhraseButton.startAnimation(fab_open);
             addCategoryButton.startAnimation(fab_open);
@@ -219,7 +256,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         }
     }
 
-    private void startFragmentFromButton(View view, Fragment fragment) {
+    private void startFragmentFromButton(View view, Fragment fragment)
+    {
         Bundle args = new Bundle();
         int originalPos[] = new int[2];
         view.getLocationOnScreen(originalPos);
