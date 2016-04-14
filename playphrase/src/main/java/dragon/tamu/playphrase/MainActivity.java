@@ -138,7 +138,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        setMediaPane();
+
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -231,5 +235,11 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setMediaPane(){
+
+
+
     }
 }
