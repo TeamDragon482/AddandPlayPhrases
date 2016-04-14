@@ -24,12 +24,12 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
         repeat = b;
     }
 
-    public void playPhrase(/*Maybe Sound File Location?*/) {
-//        phraseFiles = new LinkedList<String>();
-//        for (int i = 0; i < languages.size(); i++) {
-//            if(p.phraseLanguages.containsKey(languages.get(i)))
-//                phraseFiles.add(languages.get(i));
-//        }
+    public void playPhrase(Phrase p, ArrayList<String> languages) {
+        phraseFiles = new LinkedList<String>();
+        for (int i = 0; i < languages.size(); i++) {
+            if(p.phraseLanguages.containsKey(languages.get(i)))
+                phraseFiles.add(languages.get(i));
+        }
         curPosition = 0;
         mp = new MediaPlayer();
         mp.setOnPreparedListener(this);

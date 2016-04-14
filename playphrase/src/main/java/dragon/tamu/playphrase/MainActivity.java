@@ -26,8 +26,10 @@ import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     //Main FileAccessor for Application
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //On Click?
         setMediaPlayer();
 
     }
@@ -240,28 +243,21 @@ public class MainActivity extends AppCompatActivity {
     public void setMediaPlayer() {
 
         final PlayManager pm = new PlayManager();
+
+        mListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         TextView tx4;
         TextView tx5;
 
-        //Get Phrases
-        ArrayList<Phrase> phraseNames = new ArrayList<>();
-        for(Category cat :  fileSystem.getLocalInformationList()) {
-            List<Object> phraseList = cat.phraseList;
-            for(int i = 0; i < phraseList.size(); i++){
-                phraseNames.add(((Phrase)phraseList.get(i)));
-            }
-        }
+        tx4 = (TextView) findViewById(R.id.title);
+        //tx4.setText(mPhrase.getPhraseText()); //Modify to take current phrase name string
+        tx5 = (TextView) findViewById(R.id.lang);
+        tx5.setText(getselectAbrv().toString());
 
-        //On Click for a phrase, get that phrase text and play
-        //Possible to attach onClickListeners to mListView contents??
-        Phrase p;
-        tx4 = (TextView)findViewById(R.id.title);
-        tx4.setText(p.getPhraseText()); //Modify to take current phrase name string
-        tx5 = (TextView)findViewById(R.id.lang);
-        tx5.setText(p.getAbrv());
-        pm.playPhrase();
-//
-//        p.addLanguage("Eng", "C:\\Users\\Jacob\\AndroidStudioProjects\\AddandPlayPhrases\\playphrase\\src\\main\\res\\raw\\swordland.mp3");
 
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
         ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
@@ -276,9 +272,9 @@ public class MainActivity extends AppCompatActivity {
 
         //repeat
         repeatButton.setOnClickListener(new View.OnClickListener() {
+            int n = 0;
             @Override
             public void onClick(View v) {
-                int n = 0;
                 if ((n % 2) == 0) {
                     pm.toggleRepeat(true);
                     ++n;
@@ -288,5 +284,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public ArrayList<String> getselectAbrv(){
+        ArrayList<String> selectedAbrv = new ArrayList<>();
+        for(int i = 0; i < currentlySelectedLang.size(); i++){
+            selectedAbrv.add(fileSystem.languageList.get(currentlySelectedLang.get(i)));
+        }
+        return selectedAbrv;
     }
 }

@@ -10,10 +10,11 @@ import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
 import java.util.List;
 
-public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<CategoryViewHolder, PhraseViewHolder>{
+public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<CategoryViewHolder, PhraseViewHolder_NoDrag>{
 
     LayoutInflater mInflater;
     List<ParentListItem> mList;
+    MainActivity activity;
 
     public RecyclerListAdapter_NoDrag(Context context, List<ParentListItem> parentItemList) {
         super(parentItemList);
@@ -21,6 +22,8 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
         mInflater = LayoutInflater.from(context);
 
         mList = parentItemList;
+
+        activity = (MainActivity) context;
 
     }
 
@@ -31,10 +34,10 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
     }
 
     @Override
-    public PhraseViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+    public PhraseViewHolder_NoDrag onCreateChildViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.expandable_inner_item, viewGroup, false);
 
-        return new PhraseViewHolder(view);
+        return new PhraseViewHolder_NoDrag(view, activity);
 
     }
 
@@ -46,7 +49,7 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
     }
 
     @Override
-    public void onBindChildViewHolder(final PhraseViewHolder phraseViewHolder, int i, Object o)
+    public void onBindChildViewHolder(final PhraseViewHolder_NoDrag phraseViewHolder, int i, Object o)
     {
 
         Phrase phrase = (Phrase) o;
