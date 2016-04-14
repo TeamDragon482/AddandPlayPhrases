@@ -244,20 +244,6 @@ public class MainActivity extends AppCompatActivity {
 
         final PlayManager pm = new PlayManager();
 
-        mListView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        TextView tx4;
-        TextView tx5;
-
-        tx4 = (TextView) findViewById(R.id.title);
-        //tx4.setText(mPhrase.getPhraseText()); //Modify to take current phrase name string
-        tx5 = (TextView) findViewById(R.id.lang);
-        tx5.setText(getselectAbrv().toString());
-
 
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
         ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);

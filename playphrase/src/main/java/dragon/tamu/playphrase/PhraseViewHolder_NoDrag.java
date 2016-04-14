@@ -32,6 +32,14 @@ public class PhraseViewHolder_NoDrag extends ChildViewHolder implements View.OnC
     @Override
     public void onClick(View v) {
         PlayManager pm = new PlayManager();
-        //pm.playPhrase(mPhrase, getselectAbrv());
+        pm.playPhrase(mPhrase, mainActivity.getselectAbrv());
+
+        TextView tx4;
+        TextView tx5;
+
+        tx4 = (TextView) mainActivity.findViewById(R.id.title);
+        tx4.setText(mPhrase.getPhraseText()); //Modify to take current phrase name string
+        tx5 = (TextView) mainActivity.findViewById(R.id.lang);
+        tx5.setText(mainActivity.getselectAbrv().toString());
     }
 }
