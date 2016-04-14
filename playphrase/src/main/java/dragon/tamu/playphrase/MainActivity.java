@@ -18,8 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setMediaPane();
+        setMediaPlayer();
 
     }
 
@@ -153,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -173,10 +175,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawerList.setAdapter(adapter);
     }
 
-
     //Sets up phrases and Categories
-    private void prepareListData()
-    {
+    private void prepareListData() {
         mCategoryList = new ArrayList<>();
         for(Category cat :  fileSystem.getLocalInformationList()){
             List<Object> phraseList = cat.phraseList;
@@ -208,20 +208,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle b)
-    {
+    protected void onPostCreate(Bundle b) {
         super.onPostCreate(b);
         mDrawerToggle.syncState();
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         mDrawerToggle.onOptionsItemSelected(item);
         switch(item.getItemId())
         {
@@ -237,9 +237,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setMediaPane(){
+    public void setMediaPlayer() {
+        //MEDIA STUFF
+        //mediaPlayer = MediaPlayer.create(this, R.raw.swordland);
 
+        final PlayManager pm = new PlayManager();
+        TextView tx4;
+        TextView tx5;
 
+        Phrase p = new Phrase("swordland");
 
+        p.addLanguage("Eng", "C:\\Users\\Jacob\\AndroidStudioProjects\\AddandPlayPhrases\\playphrase\\src\\main\\res\\raw\\swordland.mp3");
+
+        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
+
+        tx4 = (TextView)findViewById(R.id.title);
+        tx4.setText(p.getPhraseText()); //Modify to take current phrase name string
+        tx5 = (TextView)findViewById(R.id.lang);
+        tx5.setText(p.getAbrv());
+
+        //stop
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pm.stopPhrase();
+            }
+        });
+
+        //repeat
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int n = 0;
+                if ((n % 2) == 0) {
+                    pm.toggleRepeat(true);
+                    ++n;
+                } else {
+                    pm.toggleRepeat(false);
+                    ++n;
+                }
+            }
+        });
     }
 }

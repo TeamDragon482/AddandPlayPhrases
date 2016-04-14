@@ -94,10 +94,8 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="Large Text"
                         android:id="@+id/title"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignRight="@+id/lang"
-                        android:layout_alignEnd="@+id/lang"
-                        android:textColor="#ffffff" />
+                        android:textColor="#ffffff"
+                        android:layout_centerHorizontal="true" />
 
                     <TextView
                         android:layout_width="wrap_content"
