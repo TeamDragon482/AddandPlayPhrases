@@ -27,6 +27,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
     //Members for fragments
+    public Fragment addPhraseFrag, addCategoryFrag;
     public Fragment recordingFragment;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
@@ -50,6 +51,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
         //Instantiating the fragment
+        addCategoryFrag = new AddCategoryFragment();
         recordingFragment = new RecordingFragment();
 
         //Code for floating action buttons
@@ -74,6 +76,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
                 animateFAB();
             }
         });
+
         addPhraseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +86,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         addCategoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startFragmentFromButton(v, null);
+                startFragmentFromButton(v, addCategoryFrag);
             }
         });
 
@@ -178,14 +181,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     @Override
     protected void onResume() {
         super.onResume();
-        fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
-        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-        touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(listView);
-
-        listView.setAdapter(adapter);
-
+        loadList();
     }
 
     @Override
@@ -242,11 +238,21 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
          xDest -= (view.getMeasuredWidth()/2);
          int yDest = dm.heightPixels/2 - (view.getMeasuredHeight()/2);
 
-         TranslateAnimation anim = new TranslateAnimation( 0, xDest - originalPos[0] , 0, yDest - originalPos[1] );
-         anim.setDuration(1000);
-         anim.setFillAfter(true);
-         view.startAnimation(anim);
- */
+        TranslateAnimation anim = new TranslateAnimation( 0, xDest - originalPos[0] , 0, yDest - originalPos[1] );
+        anim.setDuration(1000);
+        anim.setFillAfter(true);
+        view.startAnimation(anim);
+*/
+}
+    public void loadList()
+    {
+        fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
+        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(listView);
+
+        listView.setAdapter(adapter);
     }
 
 
