@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@color/material_blue_grey_800">
+                android:background="#040d83">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
