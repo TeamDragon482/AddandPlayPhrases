@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class RecordingFragment extends Fragment {
     private Button btnSavePhrase, btnSaveCategory, btnSaveLanguage;
     private Boolean phraseSaved, categorySaved, languageSaved;
     private Boolean firstOpen = true;
+    private Boolean recordStopped = false;
     //ThingsAdapter adapter;
     FragmentActivity listener;
 
@@ -100,7 +102,7 @@ public class RecordingFragment extends Fragment {
     // onViewCreated() is only called if the view returned from onCreateView() is non-null.
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
         language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
@@ -183,18 +185,62 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos !=0 && category_spinner_pos != 0  && language_spinner_pos != 0 && phraseSaved && categorySaved && languageSaved) {
-                    Toast.makeText(getActivity(),
+                if (phrase_spinner_pos !=0 && category_spinner_pos != 0  && language_spinner_pos != 0 && phraseSaved && categorySaved && languageSaved && recordStopped) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Saved!", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "OnClickListener : " +
                                     "\nPhrase Spinner : " + String.valueOf(phrase_spinner.getSelectedItem()) +
                                     "\nCategory Spinner : " + String.valueOf(category_spinner.getSelectedItem()) +
                                     "\nLanguage Spinner : " + String.valueOf(language_spinner.getSelectedItem()),
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
                 }
-                else {
-                    Toast.makeText(getActivity(),
+                else if(phrase_spinner_pos == 0) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Phrase Not Selected", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "You must select a Phrase, a Category, and a Language",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
+                }
+                else if(category_spinner_pos == 0) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Category Not Selected", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                }
+                else if(language_spinner_pos == 0) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Language Not Selected", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                }
+                else if(!phraseSaved) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "New Phrase Unsaved", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                }
+                else if(!categorySaved) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "New Category Unsaved", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                }
+                else if(!languageSaved) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "New Language Unsaved", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                }
+                else if(!recordStopped) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Finish Recording First", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
                 }
             }
         });
@@ -202,33 +248,59 @@ public class RecordingFragment extends Fragment {
         btnPlay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(),
-                        "OnClickListener : Recording should PLAYBACK now!",
-                        Toast.LENGTH_SHORT).show();
+                if (recordStopped) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "PLAYBACK", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
+                            "OnClickListener : Recording should PLAYBACK now!",
+                            Toast.LENGTH_SHORT).show();*/
+                }
+                else
+                {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Finish Recording First", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
+                            "Cannot playback until recording has stopped!",
+                            Toast.LENGTH_SHORT).show();*/
+                }
             }
         });
 
         btnStartRecording.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast.makeText(getActivity(),
+                Snackbar snackbar = Snackbar
+                        .make( view, "Start Recording", Snackbar.LENGTH_LONG);
+
+                snackbar.show();
+                /*Toast.makeText(getActivity(),
                         "OnClickListener : Recording should START now!",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
                 btnStartRecording.setVisibility(View.INVISIBLE);
                 btnStopRecording.setVisibility(View.VISIBLE);
+                recordStopped = false;
             }
         });
 
         btnStopRecording.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast.makeText(getActivity(),
+                Snackbar snackbar = Snackbar
+                        .make( view, "Stop Recording", Snackbar.LENGTH_LONG);
+
+                snackbar.show();
+                /*Toast.makeText(getActivity(),
                         "OnClickListener : Recording should STOP now!",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
                 btnStartRecording.setVisibility(View.VISIBLE);
                 btnStopRecording.setVisibility(View.INVISIBLE);
                 btnPlay.setEnabled(true);
                 btnSubmit.setEnabled(true);
+                recordStopped = true;
             }
         });
 
@@ -236,9 +308,13 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v){
                 if ((""+newPhraseText.getText()).length() >= 2) {
-                    Toast.makeText(getActivity(),
+                    Snackbar snackbar = Snackbar
+                            .make( view, "New Phrase Saved", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "OnClickListener : NEW PHRASE: "+newPhraseText.getText()+" should be saved now!",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
 
                     addOneItemOnPhraseSpinner("" + newPhraseText.getText());
                     newPhraseText.setVisibility(View.INVISIBLE);
@@ -246,9 +322,13 @@ public class RecordingFragment extends Fragment {
                     phraseSaved = true;
                 }
                 else {
-                    Toast.makeText(getActivity(),
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "NEW PHRASE must have at least 2 characters!",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
                 }
             }
         });
@@ -257,9 +337,13 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v){
                 if ((""+newCategoryText.getText()).length() >= 2) {
-                    Toast.makeText(getActivity(),
+                    Snackbar snackbar = Snackbar
+                            .make( view, "New Category Saved", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "OnClickListener : NEW CATEGORY: "+newCategoryText.getText()+" should be saved now!",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
 
                     addOneItemOnCategorySpinner("" + newCategoryText.getText());
                     newCategoryText.setVisibility(View.INVISIBLE);
@@ -267,9 +351,13 @@ public class RecordingFragment extends Fragment {
                     categorySaved = true;
                 }
                 else {
-                    Toast.makeText(getActivity(),
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Category Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "NEW CATEGORY must have at least 2 characters!",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
                 }
             }
         });
@@ -278,10 +366,14 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v){
                 if ((""+newLanguageText.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() <= 4) {
-                    Toast.makeText(getActivity(),
+                    Snackbar snackbar = Snackbar
+                            .make( view, "New Language Saved", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
                                             "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
 
                     addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
                     newLanguageText.setVisibility(View.INVISIBLE);
@@ -289,11 +381,27 @@ public class RecordingFragment extends Fragment {
                     btnSaveLanguage.setVisibility(View.INVISIBLE);
                     languageSaved = true;
                 }
-                else {
-                    Toast.makeText(getActivity(),
+                else if(!((""+newLanguageText.getText()).length() >= 2)) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Language Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                    /*Toast.makeText(getActivity(),
                             "NEW LANGUAGE must have at least 2 characters!\n" +
                             "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();*/
+                }
+                else if(!((""+newLanguageAbbr.getText()).length() >= 2)) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
+                }
+                else if(!((""+newLanguageAbbr.getText()).length() <= 4)) {
+                    Snackbar snackbar = Snackbar
+                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
+
+                    snackbar.show();
                 }
             }
         });
