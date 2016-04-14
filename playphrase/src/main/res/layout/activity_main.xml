@@ -69,7 +69,7 @@
                         android:layout_height="50dp"
                         android:id="@+id/repeatButton"
                         android:clickable="true"
-                        android:src="@drawable/repeat"
+                        android:src="@drawable/repeat1"
                         android:layout_gravity="center_horizontal"
                         android:layout_alignParentBottom="true"
                         android:layout_toRightOf="@+id/stopButton"
