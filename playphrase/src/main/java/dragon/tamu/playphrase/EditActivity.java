@@ -51,7 +51,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
         //Instantiating the fragment
-        addPhraseFrag = new AddPhraseFragment();
         addCategoryFrag = new AddCategoryFragment();
         recordingFragment = new RecordingFragment();
 
@@ -182,14 +181,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     @Override
     protected void onResume() {
         super.onResume();
-        fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
-        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-        touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(listView);
-
-        listView.setAdapter(adapter);
-
+        loadList();
     }
 
     @Override
@@ -252,8 +244,15 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         view.startAnimation(anim);
 */
 }
-    public void addCategory()
+    public void loadList()
     {
+        fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
+        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(listView);
+
+        listView.setAdapter(adapter);
     }
 
 

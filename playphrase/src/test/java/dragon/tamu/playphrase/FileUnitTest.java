@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import dalvik.annotation.TestTargetClass;
+import dragon.tamu.playphrase.FileAccessor;
 
 import static org.junit.Assert.*;
 
@@ -43,6 +44,8 @@ public class FileUnitTest {
         ArrayList<Category> result = FileAccessor.parseInfoJSON(json);
 
         // check that won't remove uncategorized
+        //ArrayList<Category> temp = FileAccessor.removeCategory("Uncategorized");
+
         // remove Stuff, all items should go into uncategorized
         //category.getChildItemList() ...   see Category.java
     }

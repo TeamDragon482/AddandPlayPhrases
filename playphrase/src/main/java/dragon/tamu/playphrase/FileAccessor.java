@@ -25,6 +25,7 @@ public class FileAccessor
     public ArrayList<Category> informationList;
     public Map<String, String> languageList; //Name, ABV
     private Context context;
+    private String uncategorized = "Uncategorized";
 
     //constructor
     public FileAccessor(Context c) {
@@ -127,7 +128,16 @@ public class FileAccessor
 
         //TODO make go to uncaterogized
         if (category == null)
-            category = informationList.get(informationList.size()-1);
+        {
+            for (Category cat : informationList)
+            {
+                if (cat.name.equals(uncategorized))
+                {
+                    category = cat;
+                    break;
+                }
+            }
+        }
 
         Phrase phrase = null;
         List<Object> phraseList = category.phraseList;
@@ -199,7 +209,9 @@ public class FileAccessor
         if (category == null)
         {
             Category newCat = new Category(name);
-            informationList.add(newCat);
+            // Adding a new category to the top will help keep Uncategorized at end
+            // Also provides right functionality for the AddCategory button
+            informationList.add(0, newCat);
             saveInfoToFile(informationList);
         }
         return informationList;
@@ -209,7 +221,7 @@ public class FileAccessor
         Category category = null;
         for (Category cat : informationList)
         {
-            if (cat.name.equals(name) && (name != "Uncategorized"))
+            if (cat.name.equals(name) && (name != uncategorized))
             {
                 category = cat;
                 break;
@@ -217,7 +229,26 @@ public class FileAccessor
         }
         if (category != null)
         {
-            //TODO if has items, move them all to uncategorized
+            //TODO check that this actually works...
+            List<Object> phraseList = category.phraseList;
+            if (phraseList.size() != 0)
+            {
+                Category ucat = null;
+                for (Category cat : informationList)
+                {
+                    if (cat.name.equals(uncategorized))
+                    {
+                        ucat = cat;
+                        break;
+                    }
+                }
+                if (ucat != null)
+                {
+                    List<Object> uPhraseList = ucat.phraseList;
+                    uPhraseList.addAll(phraseList);
+                    ucat.setChildItemList(uPhraseList);
+                }
+            }
 
             informationList.remove(category);
             saveInfoToFile(informationList);
@@ -226,6 +257,7 @@ public class FileAccessor
     }
 
     public void moveCategory(String name, int pos) {
+        // TODO - move category backend code
     }
     //endregion
 
@@ -280,6 +312,7 @@ public class FileAccessor
     {
         ArrayList<Category> defaultFileSystem = new ArrayList<>();
         defaultFileSystem.add(new Category("Uncategorized"));
+
         return defaultFileSystem;
     }
 
