@@ -60,10 +60,10 @@ public class AddCategoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.add_category_fragment, container, false);
-        //TODO:  okay, I think it would be better to try to get the UI to match what we turned in
+        //TODO: Would be better to try to get the UI to match what we turned in
             // (like it's at the top, and when you hit save/enter/done the edit closes and the category
             //  is added to the top of the category list)
-        //TODO:  but for right now, I'm just going to try to get something that does in face create a category
+        //  but for right now, I'm just going to try to get something that does in face create a category
 
         //This bit of code is for a fancy expandable animation.
         v.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -95,8 +95,6 @@ public class AddCategoryFragment extends Fragment {
     {
         fileSystem = ((EditActivity) getActivity()).fileSystem;
 
-        //catText = (TextView) getView().findViewById(R.id.cat_text);
-        //TODO add hint text "New Category"
         categoryName = (EditText) getView().findViewById(R.id.category_name);
 
         categoryName.setOnEditorActionListener(new TextView.OnEditorActionListener() {

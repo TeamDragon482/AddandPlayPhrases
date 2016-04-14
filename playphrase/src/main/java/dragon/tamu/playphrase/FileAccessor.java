@@ -43,7 +43,6 @@ public class FileAccessor
             input = context.openFileInput("fileLayout.json");
             int size = input.available();
             byte[] buffer = new byte[size];
-            //TODO check if the number of bytes read is non-zero.
             input.read(buffer);
             input.close();
             String text = new String(buffer);
@@ -66,7 +65,6 @@ public class FileAccessor
             input = context.openFileInput("langList.json");
             int size = input.available();
             byte[] buffer = new byte[size];
-            //TODO check if the number of bytes read is non-zero.
             input.read(buffer);
             input.close();
             String text = new String(buffer);
@@ -113,7 +111,7 @@ public class FileAccessor
         File directory = context.getFilesDir();
         File soundFile = new File(filePath);
         File newName = new File(directory, storageFileName + "." + extension);
-        //TODO no error checking here, might need it.
+        //TODO (after Marc's code) no error checking here, might need it.
         soundFile.renameTo(newName);
 
         Category category = null;
@@ -126,7 +124,7 @@ public class FileAccessor
             }
         }
 
-        //TODO make go to uncaterogized
+        // make go to uncaterogized if a category isn't specified
         if (category == null)
         {
             for (Category cat : informationList)
@@ -254,10 +252,6 @@ public class FileAccessor
             saveInfoToFile(informationList);
         }
         return informationList;
-    }
-
-    public void moveCategory(String name, int pos) {
-        // TODO - move category backend code
     }
     //endregion
 
