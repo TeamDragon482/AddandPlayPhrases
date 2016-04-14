@@ -40,6 +40,7 @@ public class RecordingFragment extends Fragment {
     private EditText newPhraseText, newCategoryText, newLanguageText, newLanguageAbbr;
     private Button btnSavePhrase, btnSaveCategory, btnSaveLanguage;
     private Boolean phraseSaved, categorySaved, languageSaved;
+    private Boolean firstOpen = true;
     //ThingsAdapter adapter;
     FragmentActivity listener;
 
@@ -122,13 +123,16 @@ public class RecordingFragment extends Fragment {
         categorySaved = true;
         languageSaved = true;
 
-        addItemsOnPhraseSpinner();
-        addItemsOnCategorySpinner();
-        addItemsOnLanguageSpinner();
+        if(firstOpen) {
+            addItemsOnPhraseSpinner();
+            addItemsOnCategorySpinner();
+            addItemsOnLanguageSpinner();
+        }
+        firstOpen = false;
 
         btnPlay.setEnabled(false);
         btnSubmit.setEnabled(false);
-        textPlaceholder.setBackgroundColor(0xFFFFFFFF);
+        //textPlaceholder.setBackgroundColor(0xFFFFFFFF);
 
         phrase_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
