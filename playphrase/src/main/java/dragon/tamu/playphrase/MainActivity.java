@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity
     //Variables for Drawer
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
+
+    //For Language Select Pane
     ArrayList<String> currentlySelectedLang;
 
     //Variables for ListView
@@ -63,26 +65,23 @@ public class MainActivity extends AppCompatActivity
         //fileSystem = new FileAccessor(MainActivity.this.getBaseContext());
 
         handleIntent(getIntent());
-        currentlySelectedLang = new ArrayList<>();
-        //Setting up category expandable list view
 
+        //Set up Selected Languages
+        currentlySelectedLang = new ArrayList<>();
+
+        //Setting up category expandable list view
         //get the list view
         mListView = (RecyclerView) findViewById(R.id.expandableListView);
-
-
-//        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
 
         //Set the adapter
         mListView.setLayoutManager(new LinearLayoutManager(this));
         mListView.setHasFixedSize(true);
         mListView.setItemAnimator(new DefaultItemAnimator());
-//        mListView.setAdapter(mListAdapter);
         mListView.requestFocus();
 
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-
 
         //Sets up the menu button to toggle between the language bar and the main screen
         mActionBar = getSupportActionBar();
@@ -96,10 +95,17 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDrawerClosed(View v)
             {
-                //TODO save which languages are selected here
                 super.onDrawerClosed(v);
                 mActionBar.setTitle(R.string.drawer_close_title);
                 invalidateOptionsMenu();
+
+                if (currentlySelectedLang.isEmpty()) {
+                    prepareListData();
+                    Log.d("MainActivityDrawerClose", "Non-Sorted List");
+                } else {
+                    prepareSelectedListData();
+                    Log.d("MainActivityDrawerClose", "Sorted List");
+                }
             }
 
             @Override
@@ -108,6 +114,11 @@ public class MainActivity extends AppCompatActivity
                 super.onDrawerOpened(v);
                 mActionBar.setTitle(R.string.drawer_open_title);
                 invalidateOptionsMenu();
+
+                //Re-populate Language Pane when switching back from Other Activities
+                for (int i = 0; i < currentlySelectedLang.size(); i++) {
+                    mDrawerList.setItemChecked(mLanguages.indexOf(currentlySelectedLang.get(i)), true);
+                }
             }
         };
 
@@ -142,12 +153,11 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
         // Populate the Navigation Drawer with options
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         mDrawerList = (ListView) findViewById(R.id.navList);
-//        adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
         mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-//        mDrawerList.setAdapter(adapter);
 
 
         // Drawer Item click listeners
@@ -262,11 +272,6 @@ public class MainActivity extends AppCompatActivity
         for (Category cat : fileSystem.getLocalInformationList())
         {
             List<Object> phraseList = cat.phraseList;
-            ArrayList<String> phraseNames = new ArrayList<>();
-            for (int i = 0; i < phraseList.size(); i++)
-            {
-                phraseNames.add(((Phrase) phraseList.get(i)).name);
-            }
             mCategoryList.add(new Category(phraseList, cat.name));
         }
     }
@@ -277,12 +282,17 @@ public class MainActivity extends AppCompatActivity
         for (Category cat : fileSystem.getLocalInformationList())
         {
             List<Object> phraseList = cat.phraseList;
-            ArrayList<String> phraseNames = new ArrayList<>();
-            for (int i = 0; i < phraseList.size(); i++)
-            {
-                phraseNames.add(((Phrase) phraseList.get(i)).name);
+            List<Object> phraseListFinal = new ArrayList<>();
+            for (int i = 0; i < phraseList.size(); i++) {
+                for (int j = 0; j < currentlySelectedLang.size(); j++) {
+                    //If the current phrase has the language in its language map add it to the Final List. Only need one language
+                    if (((Phrase) phraseList.get(i)).phraseLanguages.containsKey(currentlySelectedLang.get(j))) {
+                        phraseListFinal.add(phraseList.get(i));
+                        break;
+                    }
+                }
             }
-            mCategoryList.add(new Category(phraseList, cat.name));
+            mCategoryList.add(new Category(phraseListFinal, cat.name));
         }
     }
 
