@@ -24,21 +24,18 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 {
 
 
-    List<ParentListItem> mCategoryList; //List of categories
-
-
     //Members for fragments
     public Fragment addPhraseFrag, addCategoryFrag;
     public Fragment recordingFragment;
+    List<ParentListItem> mCategoryList; //List of categories
+    RecyclerView listView;
+    FileAccessor fileSystem;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
     private TextView addCat, addPhrase;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
-    RecyclerView listView;
-
-    FileAccessor fileSystem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -124,7 +121,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     //temporary generator for demonstration purposes
     private List<ParentListItem> generateList()
     {
-        ArrayList<ParentListItem> categoryList = new ArrayList<>();
+        /*ArrayList<ParentListItem> categoryList = new ArrayList<>();
 
         ArrayList<Object> shore = new ArrayList<>();
         shore.add(new Phrase("Please sit your butt down"));
@@ -147,8 +144,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         categoryList.add(new Category(panic, "Displaying Panic"));
         categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));
 
-        mCategoryList = categoryList;
-/*
+        mCategoryList = categoryList;*/
+
         for (Category cat : fileSystem.getLocalInformationList()) {
             List<Object> phraseList = cat.phraseList;
             ArrayList<String> phraseNames = new ArrayList<>();
@@ -157,7 +154,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             }
             mCategoryList.add(new Category(phraseList, cat.name));
         }
-*/
 
         return mCategoryList;
     }

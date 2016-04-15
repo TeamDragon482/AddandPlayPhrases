@@ -1,3 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="e5f32fa48a3eb2de0c987025c11b6e3864b634d9">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.2.0_e3ee8bba26898b812a80d53812d4d2b531494255\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.0\support-annotations-23.2.0.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="c5bf571bb10462bd90e5419ade67793f71acbc87">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.2.0_44eb7c09a8cfdce2f1f7caccef8840d5f5ef1bee\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.0\jars\libs\internal_impl-23.2.0.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="6e239441500605809818997dd63b62a947195f8c">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.2.0_84751f42a7b9f39b9b220b828f2a5d5cfde2ce85\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.2.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="d4c936aa8c7d2522c82e3f1829c791d9e367f009">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.2.0_0bf0423dd190c661432dc1adc072062b33f914b8\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\exploded-aar\com.bignerdranch.android\expandablerecyclerview\2.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="60430e47e1fb0be5502390f96a0a4c7f0b4fcb3e">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\com.bignerdranch.android-expandablerecyclerview-2.1.1_95005e0c0d88c7685d8ee825ccaa3b12f6ed39e3\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="32673abdaf31252698d0e074e1d37c93d4322aad">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_97d4851eb53cf496575cb0642f877ee51739a766\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\exploded-aar\com.android.support\design\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.1.1_9cc4f9d970d009c01617068ffd2e4303cf97328f\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="15b461df8a0c7ca8a41e375f33a0699d71564981">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_1d2a8c7734fe720dec53090afcdfc5801e4d7233\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.1.1_b87ae08bfca8734d054dc382a5faa6ee643a87d9\classes.dex" />
+    </item>
+
+</items>
