@@ -146,6 +146,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         mCategoryList = categoryList;*/
 
+        mCategoryList = new ArrayList<>();
         for (Category cat : fileSystem.getLocalInformationList()) {
             List<Object> phraseList = cat.phraseList;
             ArrayList<String> phraseNames = new ArrayList<>();
@@ -181,12 +182,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     protected void onPause()
     {
         super.onPause();
-        ArrayList<Category> temp = new ArrayList<>();
-        for (int i = 0; i < mCategoryList.size(); i++)
-        {
-            temp.add((Category) mCategoryList.get(i));
-        }
-        fileSystem.saveInfoToFile(temp);
+        saveList();
         Log.d("Edit Activity", "OnPause");
     }
 
@@ -235,6 +231,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     private void startFragmentFromButton(View view, Fragment fragment)
     {
+        saveList();
         Bundle args = new Bundle();
         int originalPos[] = new int[2];
         view.getLocationOnScreen(originalPos);
@@ -273,6 +270,15 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         touchHelper.attachToRecyclerView(listView);
 
         listView.setAdapter(adapter);
+
+    }
+
+    private void saveList() {
+        ArrayList<Category> temp = new ArrayList<>();
+        for (int i = 0; i < mCategoryList.size(); i++) {
+            temp.add((Category) mCategoryList.get(i));
+        }
+        fileSystem.saveInfoToFile(temp);
     }
 
 
