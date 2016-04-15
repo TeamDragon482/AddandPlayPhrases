@@ -56,17 +56,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFFFF"
+            android:inputType="text|textCapSentences"
+            android:imeOptions="actionDone"
             android:elevation="26dp"
             android:padding="12dp"
             android:hint="Phrase..."
             android:visibility="invisible"
         />
-        <Button
-            android:id="@+id/savePhrase"
+        <ImageButton
+            android:id="@+id/cancelPhrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Save"
+            android:src="@drawable/ic_clear_red_600_24dp"
+            android:background="#FFFFFFFF"
+            android:text="Cancel"
             android:visibility="invisible"
         />
     </RelativeLayout>
@@ -99,17 +103,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFFFF"
+            android:inputType="text|textCapSentences"
+            android:imeOptions="actionDone"
             android:elevation="26dp"
             android:padding="12dp"
             android:hint="Category..."
             android:visibility="invisible"
         />
-        <Button
-            android:id="@+id/saveCategory"
+        <ImageButton
+            android:id="@+id/cancelCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Save"
+            android:src="@drawable/ic_clear_red_600_24dp"
+            android:background="#FFFFFFFF"
+            android:text="Cancel"
             android:visibility="invisible"
         />
     </RelativeLayout>
@@ -142,6 +150,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFFFF"
+            android:inputType="text|textCapSentences"
+            android:imeOptions="actionDone"
             android:elevation="26dp"
             android:padding="12dp"
             android:hint="Language..."
@@ -153,18 +163,21 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/newLanguageText"
             android:background="#FFFFFFFF"
+            android:inputType="text|textCapSentences"
+            android:imeOptions="actionDone"
             android:elevation="26dp"
             android:padding="12dp"
             android:hint="Abbreviation (4 Letters)"
             android:visibility="invisible"
         />
-        <Button
-            android:id="@+id/saveLanguage"
+        <ImageButton
+            android:id="@+id/cancelLanguage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/newLanguageAbbr"
-            android:text="Save"
+            android:src="@drawable/ic_clear_red_600_24dp"
+            android:background="#FFFFFFFF"
+            android:text="Cancel"
             android:visibility="invisible"
         />
     </RelativeLayout>
