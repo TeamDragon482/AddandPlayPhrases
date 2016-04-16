@@ -8,10 +8,12 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +55,13 @@ public class RecordingFragment extends Fragment {
     private Boolean phraseSaved, categorySaved, languageSaved, abbrSaved;
     private Boolean firstOpen = true;
     private Boolean recordStopped = false;
+    private Boolean cont = true;
+    private String finalPhraseName = "";
+    private String finalLangName = "";
+    private String finalLangAbbr = "";
+    private String finalFilePath = "";
+    private String finalCatName = "";
+    private MediaPlayer mediaPlayer;
     //ThingsAdapter adapter;
 
     FragmentActivity listener;
@@ -138,9 +147,11 @@ public class RecordingFragment extends Fragment {
         languageSaved = true;
         abbrSaved = true;
 
+
         fileSystem = ((EditActivity) getActivity()).fileSystem;
         catList = fileSystem.getInfoList();
 
+        ((EditActivity) getActivity()).loadList();
 
         if(firstOpen) {
             addItemsOnPhraseSpinner();
@@ -207,7 +218,7 @@ public class RecordingFragment extends Fragment {
                 else{
                     //TODO Change phrase list to match selected language
 
-                    //TODO Change category list to match selected language (pos+1 equals [0]th in language name list -- as implemented in addItemsOnLang...)
+                    //TODO Change category list to match selected language (spinnerpos+1 equals [0]th in language name list -- as implemented in addItemsOnLang...)
                 }
             }
 
@@ -218,14 +229,9 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && phraseSaved && categorySaved && languageSaved && recordStopped) {
-                    String finalPhraseName = "";
-                    String finalLangName = "";
-                    String finalLangAbbr = "";
-                    String finalFilePath = "";
-                    String finalCatName = "";
+                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped) {
 
-                    //Add category, language, and then phrase
+                    //Establish values to be saved and then call addPhrase
                     if(phrase_spinner_pos == 1){
                         finalPhraseName = newPhraseText.getText().toString();
                     }
@@ -251,7 +257,10 @@ public class RecordingFragment extends Fragment {
                         finalLangName = parts[0];
                         finalLangAbbr = parts[1];
                     }
-                    finalFilePath = "C:\\";
+                    //ONLY EXISTING ONE IS catname_langname_phrasename.mp3
+                    finalFilePath = "C:\\Users\\Marc\\Studio Projects\\new\\AddandPlayPhrases\\playphrase\\src\\main\\res\\raw\\" + finalCatName + "_" + finalLangName + "_" + finalPhraseName + ".mp3";
+
+                    addPhrase(finalPhraseName, finalLangName, finalLangAbbr, finalFilePath, finalCatName);
 
                     Snackbar snackbar = Snackbar
                             .make(view, "Saved!", Snackbar.LENGTH_LONG);
@@ -281,21 +290,6 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Language Not Selected", Snackbar.LENGTH_LONG);
 
                     snackbar.show();
-                } else if (!phraseSaved) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "New Phrase Unsaved", Snackbar.LENGTH_LONG);
-
-                    snackbar.show();
-                } else if (!categorySaved) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "New Category Unsaved", Snackbar.LENGTH_LONG);
-
-                    snackbar.show();
-                } else if (!languageSaved) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "New Language Unsaved", Snackbar.LENGTH_LONG);
-
-                    snackbar.show();
                 } else if (!recordStopped) {
                     Snackbar snackbar = Snackbar
                             .make(view, "Finish Recording First", Snackbar.LENGTH_LONG);
@@ -316,6 +310,9 @@ public class RecordingFragment extends Fragment {
                     /*Toast.makeText(getActivity(),
                             "OnClickListener : Recording should PLAYBACK now!",
                             Toast.LENGTH_SHORT).show();*/
+
+                    mediaPlayer.start();
+
                 } else {
                     Snackbar snackbar = Snackbar
                             .make(view, "Finish Recording First", Snackbar.LENGTH_LONG);
@@ -354,6 +351,10 @@ public class RecordingFragment extends Fragment {
                 /*Toast.makeText(getActivity(),
                         "OnClickListener : Recording should STOP now!",
                         Toast.LENGTH_SHORT).show();*/
+
+                //TODO stop recording and save file to raw
+                mediaPlayer = MediaPlayer.create(getActivity(), R.raw.catname_langname_phrasename);
+
                 btnStartRecording.setVisibility(View.VISIBLE);
                 btnStopRecording.setVisibility(View.INVISIBLE);
                 btnPlay.setEnabled(true);
@@ -832,12 +833,14 @@ public class RecordingFragment extends Fragment {
         List<Object> phraseList = category.phraseList;
         for (int i = 0; i < phraseList.size(); i++) {
             Phrase phr = (Phrase) phraseList.get(i);
-            if (phr.name.equals(phraseName)) {
+            if (phr.name.equalsIgnoreCase(phraseName)) {
                 phrase = phr;
                 phraseExists = true;
                 break;
             }
         }
+
+
         if(phraseExists){
             Map<String,String> langList = fileSystem.getLangList();
             if (langList.containsValue(language)){
@@ -849,6 +852,8 @@ public class RecordingFragment extends Fragment {
                             public void onClick(View view) {
                                 Snackbar snackbar1 = Snackbar.make(getView(), "Did not proceed to Save", Snackbar.LENGTH_SHORT);
                                 snackbar1.show();
+
+                                cont = false;
                             }
                         });
 
@@ -857,17 +862,32 @@ public class RecordingFragment extends Fragment {
         }
 
 
-
-        fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
-        ((EditActivity) getActivity()).loadList();
-        getActivity().onBackPressed();
+        if(cont) {
+            fileSystem.addCategory(finalCatName);
+            fileSystem.addLanguage(finalLangName, finalLangAbbr);
+            //TODO Find out why new languages aren't showing up on Language Pane despite calling addLanguage
+            fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
+            Log.d("Recording Fragment", "Added Phrase");
+            ((EditActivity) getActivity()).loadList();
+            getActivity().onBackPressed();
+        }
     }
 
+    public void addCategory(String categoryName) {
+        fileSystem.addCategory(categoryName);
+        Log.d("Recording Fragment", "Added Category");
+        ((EditActivity) getActivity()).loadList();
+    }
+
+    public void addLanguage(String languageName, String languageAbbr){
+        fileSystem.addLanguage(languageName, languageAbbr);
+        Log.d("Recording Fragment", "Added Language");
+        ((EditActivity) getActivity()).loadList();
+    }
 }
 
 
 //
-//CONNECT SPINNERS TO ACTUAL LISTS
 //Themes -- properties
 //automatically populate category when existing phrase is chosen
 //START AND STOP RECORDING
