@@ -1,7 +1,11 @@
 package dragon.tamu.playphrase;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -41,13 +45,18 @@ public class RecordingFragment extends Fragment {
     private List<String> phrase_list = new ArrayList<String>();
     private List<String> category_list = new ArrayList<String>();
     private List<String> language_list = new ArrayList<String>();
+    private ArrayList<Category> catList = new ArrayList<Category>();
+    private Set<String> langList;
+    private Collection<String> abbrList;
     private EditText newPhraseText, newCategoryText, newLanguageText, newLanguageAbbr;
     private ImageButton btnCancelPhrase, btnCancelCategory, btnCancelLanguage;
     private Boolean phraseSaved, categorySaved, languageSaved, abbrSaved;
     private Boolean firstOpen = true;
     private Boolean recordStopped = false;
     //ThingsAdapter adapter;
+
     FragmentActivity listener;
+    FileAccessor fileSystem;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -129,6 +138,10 @@ public class RecordingFragment extends Fragment {
         languageSaved = true;
         abbrSaved = true;
 
+        fileSystem = ((EditActivity) getActivity()).fileSystem;
+        catList = fileSystem.getInfoList();
+
+
         if(firstOpen) {
             addItemsOnPhraseSpinner();
             addItemsOnCategorySpinner();
@@ -149,6 +162,11 @@ public class RecordingFragment extends Fragment {
                     newPhraseText.setVisibility(View.VISIBLE);
                     btnCancelPhrase.setVisibility(View.VISIBLE);
                 }
+                else {
+                    //TODO Change Category list to match selected phrase
+
+                    //TODO Change Lang list to match selected phrase
+                }
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -163,6 +181,11 @@ public class RecordingFragment extends Fragment {
                     categorySaved = false;
                     newCategoryText.setVisibility(View.VISIBLE);
                     btnCancelCategory.setVisibility(View.VISIBLE);
+                }
+                else{
+                    //TODO Change phrase list to match selected category
+
+                    //TODO Change Lang list to match selected category
                 }
             }
 
@@ -181,6 +204,11 @@ public class RecordingFragment extends Fragment {
                     newLanguageAbbr.setVisibility(View.VISIBLE);
                     btnCancelLanguage.setVisibility(View.VISIBLE);
                 }
+                else{
+                    //TODO Change phrase list to match selected language
+
+                    //TODO Change category list to match selected language (pos+1 equals [0]th in language name list -- as implemented in addItemsOnLang...)
+                }
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -191,6 +219,40 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && phraseSaved && categorySaved && languageSaved && recordStopped) {
+                    String finalPhraseName = "";
+                    String finalLangName = "";
+                    String finalLangAbbr = "";
+                    String finalFilePath = "";
+                    String finalCatName = "";
+
+                    //Add category, language, and then phrase
+                    if(phrase_spinner_pos == 1){
+                        finalPhraseName = newPhraseText.getText().toString();
+                    }
+                    else{
+                        finalPhraseName = phrase_spinner.getSelectedItem().toString();
+                    }
+                    if(category_spinner_pos == 1){
+                        finalCatName = newCategoryText.getText().toString();
+                    }
+                    else{
+                        finalCatName = category_spinner.getSelectedItem().toString();
+                    }
+                    if(language_spinner_pos == 1){
+                        finalLangName = newLanguageText.getText().toString();
+                        finalLangAbbr = newLanguageAbbr.getText().toString();
+                    }
+                    else{
+                        String temp = language_spinner.getSelectedItem().toString();
+                        temp.replace(" ","");
+                        temp.replace("]","");
+                        String delimiter = "\\W";
+                        String[] parts = temp.split(delimiter);
+                        finalLangName = parts[0];
+                        finalLangAbbr = parts[1];
+                    }
+                    finalFilePath = "C:\\";
+
                     Snackbar snackbar = Snackbar
                             .make(view, "Saved!", Snackbar.LENGTH_LONG);
 
@@ -455,7 +517,7 @@ public class RecordingFragment extends Fragment {
 
                         //addOneItemOnPhraseSpinner("" + newPhraseText.getText());
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                        imm.hideSoftInputFromWindow(newPhraseText.getWindowToken(), 0);
                         //newPhraseText.setVisibility(View.INVISIBLE);
                         //btnCancelPhrase.setVisibility(View.INVISIBLE);
                         phraseSaved = true;
@@ -547,7 +609,7 @@ public class RecordingFragment extends Fragment {
                             //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
                             //newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
                             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                            imm.hideSoftInputFromWindow(newLanguageText.getWindowToken(), 0);
                             //newLanguageText.setVisibility(View.INVISIBLE);
                             //newLanguageAbbr.setVisibility(View.INVISIBLE);
                             //btnCancelLanguage.setVisibility(View.INVISIBLE);
@@ -597,7 +659,7 @@ public class RecordingFragment extends Fragment {
                             //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
                             newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
                             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                            imm.hideSoftInputFromWindow(newLanguageAbbr.getWindowToken(), 0);
                             //newLanguageText.setVisibility(View.INVISIBLE);
                             //newLanguageAbbr.setVisibility(View.INVISIBLE);
                             //btnCancelLanguage.setVisibility(View.INVISIBLE);
@@ -640,13 +702,23 @@ public class RecordingFragment extends Fragment {
 
     public void addItemsOnPhraseSpinner(){
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
-        //List<String> phrase_list = new ArrayList<String>();
+
         phrase_list.add("Add New Phrase");
-        phrase_list.add("Stay in the boat");
+        //phrase_list.add("Stay in the boat");
+
+        for (Category cat : catList)
+        {
+            List<Object> phraseList = cat.phraseList;
+            for (int i = 0; i < phraseList.size(); i++) {
+                String phr = ((Phrase) phraseList.get(i)).getPhraseText();
+                phrase_list.add(phr);
+            }
+        }
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         phrase_spinner.setPrompt("Select Phrase...");
-        //phrase_spinner.setAdapter(dataAdapter);
+
         phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
                 dataAdapter,
                 R.layout.contact_phrase_spinner_row_nothing_selected,
@@ -670,13 +742,19 @@ public class RecordingFragment extends Fragment {
 
     public void addItemsOnCategorySpinner(){
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
-        //List<String> category_list = new ArrayList<String>();
+
         category_list.add("Add New Category");
-        category_list.add("Entering Karaoke Zone");
+        //category_list.add("Entering Karaoke Zone");
+
+        for (Category cat : catList)
+        {
+            category_list.add(cat.getCategoryTitle());
+        }
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category_spinner.setPrompt("Select Category...");
-        //category_spinner.setAdapter(dataAdapter);
+
         category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
                 dataAdapter,
                 R.layout.contact_category_spinner_row_nothing_selected,
@@ -691,7 +769,7 @@ public class RecordingFragment extends Fragment {
         language_list.add(langAndAbbr);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //phrase_spinner.setAdapter(dataAdapter);
+
         language_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
                 dataAdapter,
                 R.layout.contact_phrase_spinner_row_nothing_selected,
@@ -702,9 +780,20 @@ public class RecordingFragment extends Fragment {
 
     public void addItemsOnLanguageSpinner(){
         language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
-        //List<String> language_list = new ArrayList<String>();
+        langList = fileSystem.getLangList().keySet();
+        abbrList = fileSystem.getLangList().values();
+        String[] tempLangArray = new String[langList.size()];
+        String[] tempAbbrArray = new String[abbrList.size()];
+        tempLangArray = langList.toArray(tempLangArray);
+        tempAbbrArray = abbrList.toArray(tempAbbrArray);
+
         language_list.add("Add New Language");
-        language_list.add("Engrish");
+        //language_list.add("Engrish");
+
+        for (int i=0; i < tempLangArray.length && i < tempAbbrArray.length; i++) {
+            language_list.add(tempLangArray[i] + " [" + tempAbbrArray[i] + "]");
+        }
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         language_spinner.setPrompt("Select Language...");
@@ -715,6 +804,63 @@ public class RecordingFragment extends Fragment {
                                       // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                                       this.getActivity()));
 
+    }
+
+    public void addPhrase(String phraseName, String language, String abbr, String filePath, String categoryName){
+        Boolean phraseExists = false;
+        Category category = null;
+        for (Category cat : catList)
+        {
+            if (cat.name.equals(categoryName))
+            {
+                category = cat;
+                break;
+            }
+        }
+        String uncategorized = "Uncategorized";
+        if (category == null)
+        {
+            for (Category cat : catList) {
+                if (cat.name.equals(uncategorized)) {
+                    category = cat;
+                    phraseExists = true;
+                    break;
+                }
+            }
+        }
+        Phrase phrase = null;
+        List<Object> phraseList = category.phraseList;
+        for (int i = 0; i < phraseList.size(); i++) {
+            Phrase phr = (Phrase) phraseList.get(i);
+            if (phr.name.equals(phraseName)) {
+                phrase = phr;
+                phraseExists = true;
+                break;
+            }
+        }
+        if(phraseExists){
+            Map<String,String> langList = fileSystem.getLangList();
+            if (langList.containsValue(language)){
+                //Then phrase / language combination exists
+                Snackbar snackbar = Snackbar
+                        .make(getView(), "This phrase already exists. Continuing will overwrite the old one. Continue anyways?", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("GO BACK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Snackbar snackbar1 = Snackbar.make(getView(), "Did not proceed to Save", Snackbar.LENGTH_SHORT);
+                                snackbar1.show();
+                            }
+                        });
+
+                snackbar.show();
+            }
+        }
+
+
+
+        fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
+        ((EditActivity) getActivity()).loadList();
+        getActivity().onBackPressed();
     }
 
 }
