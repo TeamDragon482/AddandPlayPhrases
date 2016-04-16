@@ -248,17 +248,15 @@ public class RecordingFragment extends Fragment {
             public void onClick(View v) {
                 if (recordStopped) {
                     Snackbar snackbar = Snackbar
-                            .make( view, "PLAYBACK", Snackbar.LENGTH_LONG);
+                            .make(view, "PLAYBACK", Snackbar.LENGTH_LONG);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
                             "OnClickListener : Recording should PLAYBACK now!",
                             Toast.LENGTH_SHORT).show();*/
-                }
-                else
-                {
+                } else {
                     Snackbar snackbar = Snackbar
-                            .make( view, "Finish Recording First", Snackbar.LENGTH_LONG);
+                            .make(view, "Finish Recording First", Snackbar.LENGTH_LONG);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -442,33 +440,35 @@ public class RecordingFragment extends Fragment {
 
                 //hide keyboard and save data
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                    if (!phraseSaved) {
-                        if (("" + newPhraseText.getText()).length() >= 2) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "New Phrase Saved", Snackbar.LENGTH_LONG);
+                    //if (!phraseSaved) {
+                    if (("" + newPhraseText.getText()).length() >= 2) {
+                        Snackbar snackbar = Snackbar
+                                .make(view, "New Phrase Saved", Snackbar.LENGTH_LONG);
 
-                            snackbar.show();
+                        snackbar.show();
                                 /*Toast.makeText(getActivity(),
                                         "OnClickListener : NEW PHRASE: "+newPhraseText.getText()+" should be saved now!",
                                         Toast.LENGTH_SHORT).show();*/
 
-                            addOneItemOnPhraseSpinner("" + newPhraseText.getText());
-                            newPhraseText.setVisibility(View.INVISIBLE);
-                            btnCancelPhrase.setVisibility(View.INVISIBLE);
-                            phraseSaved = true;
-                        } else {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                        //addOneItemOnPhraseSpinner("" + newPhraseText.getText());
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                        //newPhraseText.setVisibility(View.INVISIBLE);
+                        //btnCancelPhrase.setVisibility(View.INVISIBLE);
+                        phraseSaved = true;
+                    } else {
+                        Snackbar snackbar = Snackbar
+                                .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_LONG);
 
-                            snackbar.show();
+                        snackbar.show();
                                 /*Toast.makeText(getActivity(),
                                         "NEW PHRASE must have at least 2 characters!",
                                         Toast.LENGTH_SHORT).show();*/
-                        }
                     }
+                    //}
 
                     handled = true;
                 }
@@ -485,33 +485,35 @@ public class RecordingFragment extends Fragment {
 
                 //hide keyboard and save data
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                    if (!categorySaved) {
-                        if (("" + newCategoryText.getText()).length() >= 2) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "New Category Saved", Snackbar.LENGTH_LONG);
+                    //if (!categorySaved) {
+                    if (("" + newCategoryText.getText()).length() >= 2) {
+                        Snackbar snackbar = Snackbar
+                                .make(view, "New Category Saved", Snackbar.LENGTH_LONG);
 
-                            snackbar.show();
+                        snackbar.show();
                                 /*Toast.makeText(getActivity(),
                                         "OnClickListener : NEW CATEGORY: "+newCategoryText.getText()+" should be saved now!",
                                         Toast.LENGTH_SHORT).show();*/
 
-                            addOneItemOnCategorySpinner("" + newCategoryText.getText());
-                            newCategoryText.setVisibility(View.INVISIBLE);
-                            btnCancelCategory.setVisibility(View.INVISIBLE);
-                            categorySaved = true;
-                        } else {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                        //addOneItemOnCategorySpinner("" + newCategoryText.getText());
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                        //newCategoryText.setVisibility(View.INVISIBLE);
+                        //btnCancelCategory.setVisibility(View.INVISIBLE);
+                        categorySaved = true;
+                    } else {
+                        Snackbar snackbar = Snackbar
+                                .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_LONG);
 
-                            snackbar.show();
+                        snackbar.show();
                                 /*Toast.makeText(getActivity(),
                                         "NEW CATEGORY must have at least 2 characters!",
                                         Toast.LENGTH_SHORT).show();*/
-                        }
                     }
+                    //}
 
                     handled = true;
                 }
@@ -528,11 +530,11 @@ public class RecordingFragment extends Fragment {
 
                 //hide keyboard and save data
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                    if (!languageSaved || !abbrSaved) {
-                        if (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
+                    //if (!languageSaved || !abbrSaved) {
+                        if (("" + newLanguageText.getText()).length() >= 2 ) {
                             Snackbar snackbar = Snackbar
                                     .make(view, "New Language Saved", Snackbar.LENGTH_LONG);
 
@@ -542,10 +544,13 @@ public class RecordingFragment extends Fragment {
                                                     "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
                                     Toast.LENGTH_SHORT).show();*/
 
-                            addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                            newLanguageText.setVisibility(View.INVISIBLE);
-                            newLanguageAbbr.setVisibility(View.INVISIBLE);
-                            btnCancelLanguage.setVisibility(View.INVISIBLE);
+                            //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
+                            //newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                            //newLanguageText.setVisibility(View.INVISIBLE);
+                            //newLanguageAbbr.setVisibility(View.INVISIBLE);
+                            //btnCancelLanguage.setVisibility(View.INVISIBLE);
                             languageSaved = true;
                         } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
                             Snackbar snackbar = Snackbar
@@ -556,18 +561,8 @@ public class RecordingFragment extends Fragment {
                                     "NEW LANGUAGE must have at least 2 characters!\n" +
                                     "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
                                     Toast.LENGTH_SHORT).show();*/
-                        } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
-                        } else if (!(("" + newLanguageAbbr.getText()).length() <= 4)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
                         }
-                    }
+                    //}
 
 
                     handled = true;
@@ -585,11 +580,11 @@ public class RecordingFragment extends Fragment {
 
                 //hide keyboard and save data
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                    if (!languageSaved || !abbrSaved) {
-                        if (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
+                    //if (!languageSaved || !abbrSaved) {
+                        if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
                             Snackbar snackbar = Snackbar
                                     .make(view, "New Language Saved", Snackbar.LENGTH_LONG);
 
@@ -599,20 +594,14 @@ public class RecordingFragment extends Fragment {
                                                     "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
                                     Toast.LENGTH_SHORT).show();*/
 
-                            addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                            newLanguageText.setVisibility(View.INVISIBLE);
-                            newLanguageAbbr.setVisibility(View.INVISIBLE);
-                            btnCancelLanguage.setVisibility(View.INVISIBLE);
+                            //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
+                            newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+                            //newLanguageText.setVisibility(View.INVISIBLE);
+                            //newLanguageAbbr.setVisibility(View.INVISIBLE);
+                            //btnCancelLanguage.setVisibility(View.INVISIBLE);
                             languageSaved = true;
-                        } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
-                            /*Toast.makeText(getActivity(),
-                                    "NEW LANGUAGE must have at least 2 characters!\n" +
-                                    "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
-                                    Toast.LENGTH_SHORT).show();*/
                         } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
                             Snackbar snackbar = Snackbar
                                     .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
@@ -624,64 +613,7 @@ public class RecordingFragment extends Fragment {
 
                             snackbar.show();
                         }
-                    }
-
-
-                    handled = true;
-                }
-                return handled;
-            }
-        });
-
-        newLanguageAbbr.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent key) {
-                boolean handled = false;
-                //DO THE HANDLING
-
-
-                //hide keyboard and save data
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
-
-                    if (!languageSaved || !abbrSaved) {
-                        if (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "New Language Saved", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
-                            /*Toast.makeText(getActivity(),
-                                    "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
-                                                    "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                                    Toast.LENGTH_SHORT).show();*/
-
-                            addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                            newLanguageText.setVisibility(View.INVISIBLE);
-                            newLanguageAbbr.setVisibility(View.INVISIBLE);
-                            btnCancelLanguage.setVisibility(View.INVISIBLE);
-                            languageSaved = true;
-                        } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
-                            /*Toast.makeText(getActivity(),
-                                    "NEW LANGUAGE must have at least 2 characters!\n" +
-                                    "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
-                                    Toast.LENGTH_SHORT).show();*/
-                        } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
-                        } else if (!(("" + newLanguageAbbr.getText()).length() <= 4)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
-
-                            snackbar.show();
-                        }
-                    }
+                    //}
 
 
                     handled = true;
