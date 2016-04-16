@@ -25,6 +25,7 @@ public class FileAccessor
     public ArrayList<Category> informationList;
     public Map<String, String> languageList; //Name, ABV
     private Context context;
+    private String uncategorized = "Uncategorized";
 
     //constructor
     public FileAccessor(Context c) {
@@ -33,12 +34,93 @@ public class FileAccessor
         languageList = this.getLangList();
     }
 
+    private static Map<String, String> getEmptyLanguageFile() {
+        Map<String, String> defaultLanguages = new HashMap<>();
+        defaultLanguages.put("English", "ENG");
+        return defaultLanguages;
+    }
+
+    private static ArrayList<Category> getEmptyFileSystem() {
+        ArrayList<Category> defaultFileSystem = new ArrayList<>();
+        defaultFileSystem.add(new Category("Uncategorized"));
+
+        return defaultFileSystem;
+    }
+
+    private static JSONArray categoryToJSON(ArrayList<Category> categoryArrayList) {
+        try {
+            JSONArray result = new JSONArray();
+            for (Category category : categoryArrayList) {
+                JSONObject catJSON = new JSONObject();
+                catJSON.put("Name", category.name);
+                JSONArray phraseJSON_list = new JSONArray();
+
+                for (int i = 0; i < category.phraseList.size(); i++) {
+                    Phrase phrase = (Phrase) category.phraseList.get(i);
+                    JSONObject phraseJSON = new JSONObject();
+                    phraseJSON.put("Name", phrase.name);
+                    phraseJSON.put("Languages", new JSONObject(phrase.phraseLanguages));
+                    phraseJSON_list.put(phraseJSON);
+                }
+                catJSON.put("Phrases", phraseJSON_list);
+                result.put(catJSON);
+            }
+            return result;
+        } catch (JSONException e) {
+            Log.d("categoryToJSON", e.getMessage());
+            return new JSONArray();
+        }
+    }
+
+    //region Private Methods Exposed for Testing
+    public static ArrayList<Category> parseInfoJSON(JSONObject json) throws JSONException {
+        ArrayList<Category> result = new ArrayList<>();
+        JSONArray cats = json.getJSONArray("Categories");
+        if (cats == null)
+            return getEmptyFileSystem();
+
+        for (int i = 0; i < cats.length(); i++) {
+            JSONObject catJson = cats.getJSONObject(i);
+            Category catObj = new Category(catJson.getString("Name"));
+            JSONArray phrasesJson = catJson.getJSONArray("Phrases");
+            for (int j = 0; j < phrasesJson.length(); j++) {
+                JSONObject phraseJson = phrasesJson.getJSONObject(j);
+                Phrase phraseObj = new Phrase(phraseJson.getString("Name"));
+
+                JSONObject fileMap = phraseJson.getJSONObject("Languages");
+                Iterator<String> keyIt = fileMap.keys();
+                while (keyIt.hasNext()) {
+                    String lang = keyIt.next();
+                    phraseObj.addLanguage(lang, fileMap.getString(lang));
+                }
+                catObj.phraseList.add(phraseObj);
+            }
+            result.add(catObj);
+        }
+        return result;
+    }
+
+    public static Map<String, String> parseLangJSON(JSONObject json) throws JSONException {
+        Map<String, String> languageMap = new HashMap<>();
+        JSONObject languages = json.getJSONObject("Languages");
+        if (languages == null) {
+            return getEmptyLanguageFile();
+        }
+
+        Iterator<String> keyIt = languages.keys();
+        while (keyIt.hasNext()) {
+            String lang = keyIt.next();
+            languageMap.put(lang, languages.getString(lang));
+        }
+        return languageMap;
+    }
+    //endregion
+
     public ArrayList<Category> getInfoList() {
         ArrayList<Category> result = new ArrayList<>();
         InputStream input;
         JSONObject json;
-        try
-        {
+        try {
             input = context.openFileInput("fileLayout.json");
             int size = input.available();
             byte[] buffer = new byte[size];
@@ -48,10 +130,10 @@ public class FileAccessor
             String text = new String(buffer);
             json = new JSONObject(text);
             return parseInfoJSON(json);
-        } catch(IOException e){
+        } catch (IOException e) {
             Log.d("FileAccessor", e.getMessage());
             return getEmptyFileSystem();
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.d("FileAccessor2", e.getMessage());
             return getEmptyFileSystem();
         }
@@ -71,22 +153,23 @@ public class FileAccessor
             String text = new String(buffer);
             json = new JSONObject(text);
             return parseLangJSON(json);
-        } catch(IOException e){
+        } catch (IOException e) {
             return getEmptyLanguageFile();
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             return getEmptyLanguageFile();
         }
     }
 
     //region Language Manipulation
     public void addLanguage(String name, String abbreviation) {
-        if(!languageList.containsKey(name)) {
+        if (!languageList.containsKey(name)) {
             languageList.put(name, abbreviation);
         }
     }
+    //endregion
 
     public void removeLanguage(String name) {
-        if(languageList.containsKey(name)){
+        if (languageList.containsKey(name)) {
             languageList.remove(name);
         }
     }
@@ -95,18 +178,17 @@ public class FileAccessor
     public ArrayList<String> extractLangNames() {
         ArrayList<String> langNames = new ArrayList<>();
 
-        for(String key : languageList.keySet()){
+        for (String key : languageList.keySet()) {
             langNames.add(key);
         }
 
         return langNames;
     }
-    //endregion
 
     //region Phrase Manipulation
     public void addPhrase(String name, String language, String filePath, String categoryName) {
         String[] split = filePath.split("\\.");
-        String extension = split[split.length-1];
+        String extension = split[split.length - 1];
 
         String storageFileName = name + language.toUpperCase();
         File directory = context.getFilesDir();
@@ -127,20 +209,26 @@ public class FileAccessor
 
         //TODO make go to uncaterogized
         if (category == null)
-            category = informationList.get(informationList.size()-1);
+        {
+            for (Category cat : informationList) {
+                if (cat.name.equals(uncategorized)) {
+                    category = cat;
+                    break;
+                }
+            }
+        }
 
         Phrase phrase = null;
         List<Object> phraseList = category.phraseList;
         for (int i = 0; i < phraseList.size(); i++) {
-            Phrase phr = (Phrase)phraseList.get(i);
+            Phrase phr = (Phrase) phraseList.get(i);
             if (phr.name.equals(name)) {
                 phrase = phr;
                 break;
             }
         }
 
-        if (phrase == null)
-        {
+        if (phrase == null) {
             phrase = new Phrase(name);
             category.phraseList.add(phrase);
         }
@@ -148,13 +236,12 @@ public class FileAccessor
 
         saveInfoToFile(informationList);
     }
+    //endregion
 
     public void removePhrase(String name, String categoryName) {
         Category category = null;
-        for (Category cat : informationList)
-        {
-            if (cat.name.equals(categoryName))
-            {
+        for (Category cat : informationList) {
+            if (cat.name.equals(categoryName)) {
                 category = cat;
                 break;
             }
@@ -165,15 +252,14 @@ public class FileAccessor
         Phrase phrase = null;
         List<Object> phraseList = category.phraseList;
         for (int i = 0; i < phraseList.size(); i++) {
-            Phrase phr = (Phrase)phraseList.get(i);
+            Phrase phr = (Phrase) phraseList.get(i);
             if (phr.name.equals(name)) {
                 phrase = phr;
                 break;
             }
         }
 
-        if (phrase != null)
-        {
+        if (phrase != null) {
             category.phraseList.remove(phrase);
             saveInfoToFile(informationList);
         }
@@ -182,25 +268,22 @@ public class FileAccessor
     public ArrayList<Category> getLocalInformationList() {
         return informationList;
     }
-    //endregion
 
     //region Category Manipulation
     public ArrayList<Category> addCategory(String name) {
 
-        //TODO make unable to delete uncaterogized
         Category category = null;
-        for (Category cat : informationList)
-        {
-            if (cat.name.equals(name))
-            {
+        for (Category cat : informationList) {
+            if (cat.name.equals(name)) {
                 category = cat;
                 break;
             }
         }
-        if (category == null)
-        {
+        if (category == null) {
             Category newCat = new Category(name);
-            informationList.add(newCat);
+            // Adding a new category to the top will help keep Uncategorized at end
+            // Also provides right functionality for the AddCategory button
+            informationList.add(0, newCat);
             saveInfoToFile(informationList);
         }
         return informationList;
@@ -208,16 +291,31 @@ public class FileAccessor
 
     public ArrayList<Category> removeCategory(String name) {
         Category category = null;
-        for (Category cat : informationList)
-        {
-            if (cat.name.equals(name))
+        for (Category cat : informationList) {
+            if (cat.name.equals(name) && (name != uncategorized))
             {
                 category = cat;
                 break;
             }
         }
-        if (category != null)
-        {
+        if (category != null) {
+            //TODO check that this actually works...
+            List<Object> phraseList = category.phraseList;
+            if (phraseList.size() != 0) {
+                Category ucat = null;
+                for (Category cat : informationList) {
+                    if (cat.name.equals(uncategorized)) {
+                        ucat = cat;
+                        break;
+                    }
+                }
+                if (ucat != null) {
+                    List<Object> uPhraseList = ucat.phraseList;
+                    uPhraseList.addAll(phraseList);
+                    ucat.setChildItemList(uPhraseList);
+                }
+            }
+
             informationList.remove(category);
             saveInfoToFile(informationList);
         }
@@ -225,6 +323,7 @@ public class FileAccessor
     }
 
     public void moveCategory(String name, int pos) {
+        // TODO - move category backend code
     }
     //endregion
 
@@ -260,6 +359,7 @@ public class FileAccessor
         }
 
         try {
+            informationList = categoryArrayList;
             OutputStream outputStream = context.openFileOutput("fileLayout.json", Context.MODE_PRIVATE);
             PrintStream printStream = new PrintStream(outputStream);
             printStream.print(saveJSON.toString());
@@ -267,91 +367,6 @@ public class FileAccessor
             Log.d("saveInfoToFile", "FileNotFoundException " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private static Map<String, String> getEmptyLanguageFile(){
-        Map<String, String> defaultLanguages =  new HashMap<>();
-        defaultLanguages.put("English", "ENG");
-        return defaultLanguages;
-    }
-
-    private static ArrayList<Category> getEmptyFileSystem()
-    {
-        ArrayList<Category> defaultFileSystem = new ArrayList<>();
-        defaultFileSystem.add(new Category("Uncategorized"));
-        return defaultFileSystem;
-    }
-
-    private static JSONArray categoryToJSON(ArrayList<Category> categoryArrayList) {
-        try{
-            JSONArray result = new JSONArray();
-            for(Category category: categoryArrayList)
-            {
-                JSONObject catJSON = new JSONObject();
-                catJSON.put("Name", category.name);
-                JSONArray phraseJSON_list = new JSONArray();
-
-                for (int i = 0; i < category.phraseList.size(); i++) {
-                    Phrase phrase = (Phrase)category.phraseList.get(i);
-                    JSONObject phraseJSON = new JSONObject();
-                    phraseJSON.put("Name", phrase.name);
-                    phraseJSON.put("Languages", new JSONObject(phrase.phraseLanguages));
-                    phraseJSON_list.put(phraseJSON);
-                }
-                catJSON.put("Phrases", phraseJSON_list);
-                result.put(catJSON);
-            }
-            return result;
-        } catch(JSONException e) {
-            Log.d("categoryToJSON", e.getMessage());
-            return new JSONArray();
-        }
-    }
-    //endregion
-
-    //region Private Methods Exposed for Testing
-    public static ArrayList<Category> parseInfoJSON(JSONObject json) throws JSONException {
-        ArrayList<Category> result = new ArrayList<>();
-        JSONArray cats = json.getJSONArray("Categories");
-        if (cats == null)
-            return getEmptyFileSystem();
-
-        for (int i=0; i<cats.length(); i++)
-        {
-            JSONObject catJson = cats.getJSONObject(i);
-            Category catObj = new Category(catJson.getString("Name"));
-            JSONArray phrasesJson = catJson.getJSONArray("Phrases");
-            for (int j=0; j<phrasesJson.length(); j++)
-            {
-                JSONObject phraseJson = phrasesJson.getJSONObject(j);
-                Phrase phraseObj = new Phrase(phraseJson.getString("Name"));
-
-                JSONObject fileMap = phraseJson.getJSONObject("Languages");
-                Iterator<String> keyIt = fileMap.keys();
-                while (keyIt.hasNext()) {
-                    String lang = keyIt.next();
-                    phraseObj.addLanguage(lang, fileMap.getString(lang));
-                }
-                catObj.phraseList.add(phraseObj);
-            }
-            result.add(catObj);
-        }
-        return result;
-    }
-
-    public static Map<String, String> parseLangJSON(JSONObject json) throws JSONException {
-        Map<String, String> languageMap = new HashMap<>();
-        JSONObject languages = json.getJSONObject("Languages");
-        if(languages == null){
-            return getEmptyLanguageFile();
-        }
-
-        Iterator<String> keyIt = languages.keys();
-        while (keyIt.hasNext()) {
-            String lang = keyIt.next();
-            languageMap.put(lang, languages.getString(lang));
-        }
-        return languageMap;
     }
     //endregion
 }
