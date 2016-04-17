@@ -28,14 +28,17 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     public Fragment addPhraseFrag, addCategoryFrag;
     public Fragment recordingFragment;
     List<ParentListItem> mCategoryList; //List of categories
+
     RecyclerView listView;
     FileAccessor fileSystem;
+    private RecyclerListAdapter mAdapter;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
     private TextView addCat, addPhrase;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -264,12 +267,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     public void loadList()
     {
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
-        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        mAdapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(listView);
 
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
 
     }
 
@@ -279,6 +282,13 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             temp.add((Category) mCategoryList.get(i));
         }
         fileSystem.saveInfoToFile(temp);
+    }
+
+    public void addCategory(String catName) {
+        fileSystem.addCategory(catName);
+        mCategoryList.add(0, new Category(catName));
+        mAdapter.notifyParentItemInserted(0);
+
     }
 
 

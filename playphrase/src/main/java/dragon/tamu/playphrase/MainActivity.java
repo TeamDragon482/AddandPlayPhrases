@@ -32,6 +32,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
+
     //Main FileAccessor for Application
     FileAccessor fileSystem;
 
@@ -48,14 +49,11 @@ public class MainActivity extends AppCompatActivity
     List<ParentListItem> mCategoryList; //List of categories
 
     ArrayAdapter<String> adapter;
-
+    ArrayList<String> mLanguages;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
-
     private ArrayList<ParentListItem> searchList;
-
-    ArrayList<String> mLanguages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
