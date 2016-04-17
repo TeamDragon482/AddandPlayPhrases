@@ -217,6 +217,17 @@
             android:padding="20dp"
         />
         <ImageButton
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textPlaceholder"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_pause_green_700_48dp"
+            android:visibility="invisible"
+            android:background="#2693ff"
+            android:padding="20dp"
+        />
+        <ImageButton
             android:id="@+id/btnStartRecording"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
