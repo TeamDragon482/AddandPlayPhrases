@@ -26,11 +26,10 @@ import android.widget.TextView;
 public class AddCategoryFragment extends Fragment
 {
 
-    private TextView catText;
-    private EditText categoryName;
-
     FragmentActivity listener;
     FileAccessor fileSystem;
+    private TextView catText;
+    private EditText categoryName;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -138,9 +137,8 @@ public class AddCategoryFragment extends Fragment
 
     public void addCategory(String catName)
     {
-        fileSystem.addCategory(catName);
-        Log.d("Edit Activity", "Added Category");
-        ((EditActivity) getActivity()).loadList();
+        ((EditActivity) getActivity()).addCategory(catName);
+        Log.d("Add Category fragment", "Added Category");
         getActivity().onBackPressed();
 
     }
