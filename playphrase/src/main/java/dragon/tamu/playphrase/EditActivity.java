@@ -20,31 +20,33 @@ import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditActivity extends AppCompatActivity implements OnStartDragListener {
-
-
-    List<ParentListItem> mCategoryList; //List of categories
+public class EditActivity extends AppCompatActivity implements OnStartDragListener
+{
 
 
     //Members for fragments
     public Fragment addPhraseFrag, addCategoryFrag;
     public Fragment recordingFragment;
+    List<ParentListItem> mCategoryList; //List of categories
+
+    RecyclerView listView;
+    FileAccessor fileSystem;
+    private RecyclerListAdapter mAdapter;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
     private TextView addCat, addPhrase;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
-    RecyclerView listView;
 
-    FileAccessor fileSystem;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        listView = (RecyclerView)findViewById(R.id.edit_list_view);
+        listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setHasFixedSize(true);
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -56,9 +58,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         //Code for floating action buttons
         isFabOpen = false;
-        fab = (FloatingActionButton)findViewById(R.id.fab);
-        addPhraseButton = (FloatingActionButton)findViewById(R.id.fab1);
-        addCategoryButton = (FloatingActionButton)findViewById(R.id.fab2);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        addPhraseButton = (FloatingActionButton) findViewById(R.id.fab1);
+        addCategoryButton = (FloatingActionButton) findViewById(R.id.fab2);
         //Code for action button labels
         addPhrase = (TextView) findViewById(R.id.fab1_tView);
         addCat = (TextView) findViewById(R.id.fab2_tView);
@@ -70,22 +72,28 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         slide_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_appear);
         slide_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_disappear);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 animateFAB();
             }
         });
 
-        addPhraseButton.setOnClickListener(new View.OnClickListener() {
+        addPhraseButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 startFragmentFromButton(v, recordingFragment);
             }
         });
-        addCategoryButton.setOnClickListener(new View.OnClickListener() {
+        addCategoryButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 startFragmentFromButton(v, addCategoryFrag);
             }
         });
@@ -102,11 +110,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     }
 
     @Override
-    public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+    public void onBackPressed()
+    {
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+        {
             getFragmentManager().popBackStack();
             fab.show();
-        } else
+        }
+        else
             super.onBackPressed();
     }
 
@@ -134,7 +145,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         categoryList.add(new Category(shore, "Approaching Shore"));
         categoryList.add(new Category(spotted, "Recently Spotted"));
         categoryList.add(new Category(panic, "Displaying Panic"));
-        categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));*/
+        categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));
+
+        mCategoryList = categoryList;*/
 
         mCategoryList = new ArrayList<>();
         for (Category cat : fileSystem.getLocalInformationList()) {
@@ -150,7 +163,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
 
     }
@@ -168,18 +182,16 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         Log.d("Edit Activity", "OnStop");
     }
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
-        ArrayList<Category> temp = new ArrayList<>();
-        for (int i = 0; i < mCategoryList.size(); i++) {
-            temp.add((Category) mCategoryList.get(i));
-        }
-        fileSystem.saveInfoToFile(temp);
+        saveList();
         Log.d("Edit Activity", "OnPause");
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
         loadList();
     }
@@ -189,9 +201,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         touchHelper.startDrag(viewHolder);
     }
-    public void animateFAB(){
 
-        if(isFabOpen){
+    public void animateFAB()
+    {
+
+        if (isFabOpen)
+        {
 
             fab.startAnimation(rotate_backward);
             addPhraseButton.startAnimation(fab_close);
@@ -203,7 +218,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             isFabOpen = false;
 
 
-        } else {
+        }
+        else
+        {
             fab.startAnimation(rotate_forward);
             addPhraseButton.startAnimation(fab_open);
             addCategoryButton.startAnimation(fab_open);
@@ -215,7 +232,9 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         }
     }
 
-    private void startFragmentFromButton(View view, Fragment fragment) {
+    private void startFragmentFromButton(View view, Fragment fragment)
+    {
+        saveList();
         Bundle args = new Bundle();
         int originalPos[] = new int[2];
         view.getLocationOnScreen(originalPos);
@@ -243,16 +262,33 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         anim.setFillAfter(true);
         view.startAnimation(anim);
 */
-}
+    }
+
     public void loadList()
     {
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
-        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        mAdapter = new RecyclerListAdapter(this, generateList(), this);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(listView);
 
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
+
+    }
+
+    private void saveList() {
+        ArrayList<Category> temp = new ArrayList<>();
+        for (int i = 0; i < mCategoryList.size(); i++) {
+            temp.add((Category) mCategoryList.get(i));
+        }
+        fileSystem.saveInfoToFile(temp);
+    }
+
+    public void addCategory(String catName) {
+        fileSystem.addCategory(catName);
+        mCategoryList.add(0, new Category(catName));
+        mAdapter.notifyParentItemInserted(0);
+
     }
 
 

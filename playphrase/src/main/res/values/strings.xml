@@ -8,7 +8,7 @@
     <string name="drawer_title">Playback Languages</string>
     <string name="search_bar_title">Search Phrases</string>
     <string name="searchable_label">PlayPhrase</string>
-    <string name="searchable_hint">Enter phrase...</string>
+    <string name="searchable_hint">Search phrases</string>
     <string name="edit_title">Edit Menu</string>
     <string name="swipe_instr">Swipe right to delete...</string>
     <string name="add_category">Add Category</string>
