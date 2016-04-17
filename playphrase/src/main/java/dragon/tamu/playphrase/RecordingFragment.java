@@ -9,6 +9,7 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -89,6 +90,7 @@ public class RecordingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         setRetainInstance(true);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
     }
 
@@ -1020,6 +1022,7 @@ public class RecordingFragment extends Fragment {
         }
 
         mediaRecorder.start();
+
     }
 
     private void stopRecord(){
@@ -1034,6 +1037,12 @@ public class RecordingFragment extends Fragment {
             mediaPlayer.setDataSource(finalFilePath);
             mediaPlayer.prepare();
             mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp){
+                    btnPause.setVisibility(View.INVISIBLE);
+                    btnPlay.setVisibility(View.VISIBLE);
+                }
+            });
         } catch (IOException e) {
             Log.d("Playback Test", "prepare() failed");
         }
@@ -1050,7 +1059,6 @@ public class RecordingFragment extends Fragment {
 //
 //Themes -- properties
 //automatically populate category when existing phrase is chosen
-//START AND STOP RECORDING
 //FIX EXISTING PHRASE ALERT
 //Change XML back to linearlayout inside scrollview
 
