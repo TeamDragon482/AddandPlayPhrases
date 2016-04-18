@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -115,6 +116,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         if (getFragmentManager().getBackStackEntryCount() > 0)
         {
             getFragmentManager().popBackStack();
+            RecordingFragment recFrag = (RecordingFragment) getFragmentManager().findFragmentByTag("phrase_add_frag");
+            if(recFrag.getSnackbarStatus()) recFrag.dismissSnackbar();
             fab.show();
         }
         else

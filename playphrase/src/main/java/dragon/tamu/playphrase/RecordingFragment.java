@@ -67,6 +67,8 @@ public class RecordingFragment extends Fragment {
     private String finalCatName = "";
     private MediaPlayer mediaPlayer = null;
     private MediaRecorder mediaRecorder = null;
+    private Snackbar snackbar;
+    private Boolean snackbarShown = false;
 
 
     FragmentActivity listener;
@@ -290,10 +292,7 @@ public class RecordingFragment extends Fragment {
 
                     addPhrase(finalPhraseName, finalLangName, finalLangAbbr, finalFilePath, finalCatName);
 
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Saved!", Snackbar.LENGTH_LONG);
 
-                    snackbar.show();
                     /*Toast.makeText(getActivity(),
                             "OnClickListener : " +
                                     "\nPhrase Spinner : " + String.valueOf(phrase_spinner.getSelectedItem()) +
@@ -301,26 +300,26 @@ public class RecordingFragment extends Fragment {
                                     "\nLanguage Spinner : " + String.valueOf(language_spinner.getSelectedItem()),
                             Toast.LENGTH_SHORT).show();*/
                 } else if (phrase_spinner_pos == 0) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Phrase Not Selected", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "Phrase Not Selected", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
                             "You must select a Phrase, a Category, and a Language",
                             Toast.LENGTH_SHORT).show();*/
                 } else if (category_spinner_pos == 0) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Category Not Selected", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "Category Not Selected", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                 } else if (language_spinner_pos == 0) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Language Not Selected", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "Language Not Selected", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                 } else if (!recordStopped) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Finish Recording First", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                 }
@@ -331,8 +330,8 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (recordStopped) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "PLAYBACK", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "PLAYBACK", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -344,8 +343,8 @@ public class RecordingFragment extends Fragment {
                     btnPause.setVisibility(View.VISIBLE);
 
                 } else {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Finish Recording First", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -359,8 +358,8 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (recordStopped) {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "PAUSE PLAYBACK", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "PAUSE PLAYBACK", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -372,8 +371,8 @@ public class RecordingFragment extends Fragment {
                     btnPlay.setVisibility(View.VISIBLE);
 
                 } else {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "Finish Recording First", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -386,8 +385,8 @@ public class RecordingFragment extends Fragment {
         btnStartRecording.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v){
-                Snackbar snackbar = Snackbar
-                        .make( view, "Start Recording", Snackbar.LENGTH_LONG);
+                snackbar = Snackbar
+                        .make( view, "Start Recording", Snackbar.LENGTH_SHORT);
 
                 snackbar.show();
                 /*Toast.makeText(getActivity(),
@@ -419,8 +418,8 @@ public class RecordingFragment extends Fragment {
         btnStopRecording.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v){
-                Snackbar snackbar = Snackbar
-                        .make( view, "Stop Recording", Snackbar.LENGTH_LONG);
+                snackbar = Snackbar
+                        .make( view, "Stop Recording", Snackbar.LENGTH_SHORT);
 
                 snackbar.show();
                 /*Toast.makeText(getActivity(),
@@ -452,8 +451,8 @@ public class RecordingFragment extends Fragment {
                 imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 /*
                 if ((""+newPhraseText.getText()).length() >= 2) {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "New Phrase Saved", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "New Phrase Saved", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     //Toast.makeText(getActivity(),
@@ -466,8 +465,8 @@ public class RecordingFragment extends Fragment {
                     phraseSaved = true;
                 }
                 else {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     //Toast.makeText(getActivity(),
@@ -489,8 +488,8 @@ public class RecordingFragment extends Fragment {
                 imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 /*
                 if ((""+newCategoryText.getText()).length() >= 2) {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "New Category Saved", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "New Category Saved", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -503,8 +502,8 @@ public class RecordingFragment extends Fragment {
                     categorySaved = true;
                 }
                 else {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "Category Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -529,8 +528,8 @@ public class RecordingFragment extends Fragment {
 
                 /*
                 if ((""+newLanguageText.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() <= 4) {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "New Language Saved", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "New Language Saved", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -545,8 +544,8 @@ public class RecordingFragment extends Fragment {
                     languageSaved = true;
                 }
                 else if(!((""+newLanguageText.getText()).length() >= 2)) {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "Language Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                     /*Toast.makeText(getActivity(),
@@ -555,14 +554,14 @@ public class RecordingFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 }
                 else if(!((""+newLanguageAbbr.getText()).length() >= 2)) {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                 }
                 else if(!((""+newLanguageAbbr.getText()).length() <= 4)) {
-                    Snackbar snackbar = Snackbar
-                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
+                    snackbar = Snackbar
+                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                 }
@@ -587,8 +586,8 @@ public class RecordingFragment extends Fragment {
 
                     //if (!phraseSaved) {
                     if (("" + newPhraseText.getText()).length() >= 2) {
-                        Snackbar snackbar = Snackbar
-                                .make(view, "New Phrase Saved", Snackbar.LENGTH_LONG);
+                        snackbar = Snackbar
+                                .make(view, "New Phrase Saved", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
                                 /*Toast.makeText(getActivity(),
@@ -602,8 +601,8 @@ public class RecordingFragment extends Fragment {
                         //btnCancelPhrase.setVisibility(View.INVISIBLE);
                         phraseSaved = true;
                     } else {
-                        Snackbar snackbar = Snackbar
-                                .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                        snackbar = Snackbar
+                                .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
                                 /*Toast.makeText(getActivity(),
@@ -632,8 +631,8 @@ public class RecordingFragment extends Fragment {
 
                     //if (!categorySaved) {
                     if (("" + newCategoryText.getText()).length() >= 2) {
-                        Snackbar snackbar = Snackbar
-                                .make(view, "New Category Saved", Snackbar.LENGTH_LONG);
+                        snackbar = Snackbar
+                                .make(view, "New Category Saved", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
                                 /*Toast.makeText(getActivity(),
@@ -647,8 +646,8 @@ public class RecordingFragment extends Fragment {
                         //btnCancelCategory.setVisibility(View.INVISIBLE);
                         categorySaved = true;
                     } else {
-                        Snackbar snackbar = Snackbar
-                                .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                        snackbar = Snackbar
+                                .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
                                 /*Toast.makeText(getActivity(),
@@ -677,8 +676,8 @@ public class RecordingFragment extends Fragment {
 
                     //if (!languageSaved || !abbrSaved) {
                         if (("" + newLanguageText.getText()).length() >= 2 ) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "New Language Saved", Snackbar.LENGTH_LONG);
+                            snackbar = Snackbar
+                                    .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 
                             snackbar.show();
                             /*Toast.makeText(getActivity(),
@@ -701,8 +700,8 @@ public class RecordingFragment extends Fragment {
                             //btnCancelLanguage.setVisibility(View.INVISIBLE);
                             languageSaved = true;
                         } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_LONG);
+                            snackbar = Snackbar
+                                    .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                             snackbar.show();
                             /*Toast.makeText(getActivity(),
@@ -737,8 +736,8 @@ public class RecordingFragment extends Fragment {
 
                     //if (!languageSaved || !abbrSaved) {
                         if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "New Language Saved", Snackbar.LENGTH_LONG);
+                            snackbar = Snackbar
+                                    .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 
                             snackbar.show();
                             /*Toast.makeText(getActivity(),
@@ -755,13 +754,13 @@ public class RecordingFragment extends Fragment {
                             //btnCancelLanguage.setVisibility(View.INVISIBLE);
                             languageSaved = true;
                         } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
+                            snackbar = Snackbar
+                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
                             snackbar.show();
                         } else if (!(("" + newLanguageAbbr.getText()).length() <= 4)) {
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_LONG);
+                            snackbar = Snackbar
+                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
                             snackbar.show();
                         }
@@ -962,20 +961,41 @@ public class RecordingFragment extends Fragment {
 
 
         if(phraseExists){
-            Map<String,String> langList = fileSystem.getLangList();
-            if (langList.containsKey(language)){
+            cont = false;
+            Map<String,String> lang = fileSystem.getLangList();
+            if (lang.containsKey(language)){
                 //Then phrase / language combination exists
-                Snackbar snackbar = Snackbar
-                        .make(getView(), "This phrase already exists. Continuing will overwrite the old one. Continue anyways?", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("GO BACK", new View.OnClickListener() {
+                final String pName = phraseName;
+                final String lName = language;
+                final String lAbbr = abbr.toUpperCase();
+                final String fPath = filePath;
+                final String cName = categoryName;
+
+                snackbar = Snackbar
+                        .make(getView(), "Continuing will overwrite existing phrase. Continue anyways?", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("CONTINUE", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Snackbar snackbar1 = Snackbar.make(getView(), "Did not proceed to Save", Snackbar.LENGTH_SHORT);
-                                snackbar1.show();
+                                addCategory(finalCatName);
+                                addLanguage(finalLangName, finalLangAbbr);
+                                fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
+                                Log.d("Recording Fragment", "Added Phrase");
+                                //((EditActivity) getActivity()).loadList();
+                                getActivity().onBackPressed();
+                                Snackbar snackbar1 = Snackbar
+                                        .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
 
-                                cont = false;
+                                snackbar1.show();
+                            }
+                        })
+                        .setCallback(new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event){
+                                snackbarShown = false;
                             }
                         });
+                snackbarShown = true;
+                Log.d("Recording Fragment","Phrase already exists");
 
                 snackbar.show();
             }
@@ -983,26 +1003,42 @@ public class RecordingFragment extends Fragment {
 
 
         if(cont) {
-            fileSystem.addCategory(finalCatName);
-            fileSystem.addLanguage(finalLangName, finalLangAbbr);
+            addCategory(finalCatName);
+            addLanguage(finalLangName, finalLangAbbr);
             //TODO Find out why new languages aren't showing up on Language Pane despite calling addLanguage
             fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
             Log.d("Recording Fragment", "Added Phrase");
-            ((EditActivity) getActivity()).loadList();
+            //((EditActivity) getActivity()).loadList();
             getActivity().onBackPressed();
+            snackbar = Snackbar
+                    .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
+
+            snackbar.show();
         }
     }
 
     public void addCategory(String categoryName) {
-        fileSystem.addCategory(categoryName);
-        Log.d("Recording Fragment", "Added Category");
-        ((EditActivity) getActivity()).loadList();
+        Boolean exists = false;
+        for (Category cat : catList) {
+            if (cat.getCategoryTitle().equalsIgnoreCase(categoryName)) {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            ((EditActivity) getActivity()).addCategory(categoryName);
+            Log.d("Recording Fragment", "Added Category");
+        }
     }
 
     public void addLanguage(String languageName, String languageAbbr){
-        fileSystem.addLanguage(languageName, languageAbbr);
-        Log.d("Recording Fragment", "Added Language");
-        ((EditActivity) getActivity()).loadList();
+        if (!(fileSystem.getLangList().containsKey(languageName))) {
+
+            fileSystem.addLanguage(languageName, languageAbbr);
+            Log.d("Recording Fragment", "Added Language");
+            //((EditActivity) getActivity()).loadList();
+            Log.d("After Language Added", "");
+        }
     }
 
     private void startRecord(){
@@ -1053,12 +1089,21 @@ public class RecordingFragment extends Fragment {
         mediaPlayer = null;
     }
 
+    public Boolean getSnackbarStatus(){
+        return snackbarShown;
+    }
+
+    public void dismissSnackbar(){
+        snackbar.dismiss();
+    }
+
 }
 
 
 //
 //Themes -- properties
 //automatically populate category when existing phrase is chosen
-//FIX EXISTING PHRASE ALERT
+
 //Change XML back to linearlayout inside scrollview
+
 
