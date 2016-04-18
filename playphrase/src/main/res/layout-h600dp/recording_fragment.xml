@@ -7,7 +7,7 @@
     android:background="#2693ff"
     android:elevation="20dp"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="20dp"
     android:configChanges="keyboard|keyboardHidden|orientation">
 
     <RelativeLayout
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="New   Recording"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="30sp"
         />
 
     </RelativeLayout>
@@ -105,9 +105,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFFFF"
-            android:elevation="26dp"
             android:inputType="text|textCapSentences"
             android:imeOptions="actionDone"
+            android:elevation="26dp"
             android:padding="12dp"
             android:hint="Category..."
             android:visibility="invisible"
@@ -121,7 +121,7 @@
             android:background="#FFFFFFFF"
             android:text="Cancel"
             android:visibility="invisible"
-            />
+        />
     </RelativeLayout>
 
     <TextView
@@ -164,9 +164,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/newLanguageText"
-            android:background="#FFFFFFFF"
             android:inputType="text|textCapSentences"
             android:imeOptions="actionDone"
+            android:background="#FFFFFFFF"
             android:elevation="26dp"
             android:padding="12dp"
             android:hint="Abbreviation (4 Letters)"
@@ -204,7 +204,7 @@
             android:layout_height="100dp"
             android:background="@color/colorPrimary"
             android:textColor="#FFFFFF"
-            android:textSize="50dp"
+            android:textSize="60dp"
             android:text="Keith Smells\n"
             android:textAlignment="center"
         />
@@ -216,7 +216,7 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_play_arrow_green_700_48dp"
             android:background="#2693ff"
-            android:padding="10dp"
+            android:padding="20dp"
         />
         <ImageButton
             android:id="@+id/btnPause"
@@ -227,7 +227,7 @@
             android:src="@drawable/ic_pause_green_700_48dp"
             android:visibility="invisible"
             android:background="#2693ff"
-            android:padding="10dp"
+            android:padding="20dp"
         />
         <ImageButton
             android:id="@+id/btnStartRecording"
@@ -238,7 +238,7 @@
             android:src="@drawable/ic_fiber_manual_record_red_600_48dp"
             android:visibility="visible"
             android:background="#2693ff"
-            android:padding="10dp"
+            android:padding="20dp"
         />
         <ImageButton
             android:id="@+id/btnStopRecording"
@@ -249,7 +249,7 @@
             android:src="@drawable/ic_stop_red_600_48dp"
             android:visibility="invisible"
             android:background="#2693ff"
-            android:padding="10dp"
+            android:padding="20dp"
         />
         <ImageButton
             android:id="@+id/btnSubmit"
@@ -260,7 +260,7 @@
             android:src="@drawable/ic_save_black_48dp"
             android:text="Save"
             android:background="#2693ff"
-            android:padding="10dp"
+            android:padding="20dp"
         />
     </RelativeLayout>
 </RelativeLayout>
