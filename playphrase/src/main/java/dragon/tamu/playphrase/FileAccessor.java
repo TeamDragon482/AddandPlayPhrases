@@ -165,6 +165,7 @@ public class FileAccessor
         if (!languageList.containsKey(name)) {
             languageList.put(name, abbreviation);
         }
+        saveLangToFile(languageList);
     }
     //endregion
 
@@ -172,6 +173,7 @@ public class FileAccessor
         if (languageList.containsKey(name)) {
             languageList.remove(name);
         }
+        saveLangToFile(languageList);
     }
 
     //Get language names from map

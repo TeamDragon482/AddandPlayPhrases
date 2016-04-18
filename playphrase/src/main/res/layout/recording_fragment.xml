@@ -198,21 +198,15 @@
         android:layout_gravity="center_horizontal"
         android:layout_below="@+id/spacer3">
 
-        <TextView
-            android:id="@+id/textPlaceholder"
+        <dragon.tamu.playphrase.VisualizerView
+            android:id="@+id/visualizer_view"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@color/colorPrimary"
-            android:textColor="#FFFFFF"
-            android:textSize="50dp"
-            android:text="Keith Smells\n"
-            android:textAlignment="center"
-        />
+            android:layout_height="100dp" />
         <ImageButton
             android:id="@+id/btnPlay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textPlaceholder"
+            android:layout_below="@+id/visualizer_view"
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_play_arrow_green_700_48dp"
             android:background="#2693ff"
@@ -222,7 +216,7 @@
             android:id="@+id/btnPause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textPlaceholder"
+            android:layout_below="@+id/visualizer_view"
             android:layout_alignParentLeft="true"
             android:src="@drawable/ic_pause_green_700_48dp"
             android:visibility="invisible"
@@ -233,7 +227,7 @@
             android:id="@+id/btnStartRecording"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textPlaceholder"
+            android:layout_below="@+id/visualizer_view"
             android:layout_centerInParent="true"
             android:src="@drawable/ic_fiber_manual_record_red_600_48dp"
             android:visibility="visible"
@@ -244,7 +238,7 @@
             android:id="@+id/btnStopRecording"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textPlaceholder"
+            android:layout_below="@+id/visualizer_view"
             android:layout_centerInParent="true"
             android:src="@drawable/ic_stop_red_600_48dp"
             android:visibility="invisible"
@@ -255,7 +249,7 @@
             android:id="@+id/btnSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textPlaceholder"
+            android:layout_below="@+id/visualizer_view"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_save_black_48dp"
             android:text="Save"
