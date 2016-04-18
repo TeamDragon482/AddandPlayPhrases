@@ -116,8 +116,10 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         if (getFragmentManager().getBackStackEntryCount() > 0)
         {
             getFragmentManager().popBackStack();
-            RecordingFragment recFrag = (RecordingFragment) getFragmentManager().findFragmentByTag("phrase_add_frag");
-            if(recFrag.getSnackbarStatus()) recFrag.dismissSnackbar();
+            if(getFragmentManager().findFragmentByTag("phrase_add_frag") instanceof RecordingFragment) {
+                RecordingFragment recFrag = (RecordingFragment) getFragmentManager().findFragmentByTag("phrase_add_frag");
+                if (recFrag.getSnackbarStatus()) recFrag.dismissSnackbar();
+            }
             fab.show();
         }
         else

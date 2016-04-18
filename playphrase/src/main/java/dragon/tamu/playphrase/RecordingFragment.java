@@ -1,5 +1,35 @@
 package dragon.tamu.playphrase;
 
+import android.animation.Animator;
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.media.audiofx.Visualizer;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,43 +37,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.os.Bundle;
 //import android.support.v4.app.Fragment;
-import android.os.Environment;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.animation.Animator;
-import android.app.Fragment;
-import android.support.annotation.Nullable;
-import android.view.ViewAnimationUtils;
-import android.view.animation.LinearInterpolator;
 
 
 /**
  * Created by marky on 3/29/2016.
  */
 public class RecordingFragment extends Fragment {
+    FragmentActivity listener;
+    FileAccessor fileSystem;
     private Spinner phrase_spinner, category_spinner, language_spinner;
     private int phrase_spinner_pos, category_spinner_pos, language_spinner_pos;
     private ImageButton btnSubmit, btnPlay, btnPause, btnStartRecording, btnStopRecording;
@@ -67,12 +69,12 @@ public class RecordingFragment extends Fragment {
     private String finalCatName = "";
     private MediaPlayer mediaPlayer = null;
     private MediaRecorder mediaRecorder = null;
+    private Visualizer mVisualizer;
     private Snackbar snackbar;
     private Boolean snackbarShown = false;
-
-
-    FragmentActivity listener;
-    FileAccessor fileSystem;
+    private Boolean lockEdit = false;
+    //For visualization
+    private VisualizerView visualizerView;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -90,14 +92,14 @@ public class RecordingFragment extends Fragment {
     // The onCreate method is called when the Fragment instance is being created, or re-created.
     // Use onCreate for any standard setup that does not require the activity to be fully created
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         resumeSpinners();
         super.onResume();
     }
@@ -106,7 +108,7 @@ public class RecordingFragment extends Fragment {
     // either dynamically or via XML layout inflation.
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         //Inflate the layout for this fragment
         View recordingFragmentView = inflater.inflate(R.layout.recording_fragment, container, false);
 
@@ -138,6 +140,7 @@ public class RecordingFragment extends Fragment {
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
+        //Getting a handle of views from XML
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
         language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
@@ -146,7 +149,7 @@ public class RecordingFragment extends Fragment {
         btnPause = (ImageButton) getView().findViewById(R.id.btnPause);
         btnStartRecording = (ImageButton) getView().findViewById(R.id.btnStartRecording);
         btnStopRecording = (ImageButton) getView().findViewById(R.id.btnStopRecording);
-        textPlaceholder = (TextView) getView().findViewById(R.id.textPlaceholder);
+        //textPlaceholder = (TextView) getView().findViewById(R.id.textPlaceholder);
         newPhraseText = (EditText) getView().findViewById(R.id.newPhraseText);
         newCategoryText = (EditText) getView().findViewById(R.id.newCategoryText);
         newLanguageText = (EditText) getView().findViewById(R.id.newLanguageText);
@@ -154,6 +157,8 @@ public class RecordingFragment extends Fragment {
         btnCancelPhrase = (ImageButton) getView().findViewById(R.id.cancelPhrase); //save buttons are now Cancel
         btnCancelCategory = (ImageButton) getView().findViewById(R.id.cancelCategory);
         btnCancelLanguage = (ImageButton) getView().findViewById(R.id.cancelLanguage);
+        visualizerView = (VisualizerView) getView().findViewById(R.id.visualizer_view);
+
         phrase_spinner_pos = 0;
         category_spinner_pos = 0;
         language_spinner_pos = 0;
@@ -166,7 +171,7 @@ public class RecordingFragment extends Fragment {
         fileSystem = ((EditActivity) getActivity()).fileSystem;
         catList = fileSystem.getInfoList();
 
-        if(firstOpen) {
+        if (firstOpen) {
             addItemsOnPhraseSpinner();
             addItemsOnCategorySpinner();
             addItemsOnLanguageSpinner();
@@ -181,8 +186,19 @@ public class RecordingFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 phrase_spinner_pos = pos;
+
+                ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, category_list);
+                dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                category_spinner.setPrompt("Select Category...");
+                category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                        dataAdapter2,
+                        R.layout.contact_category_spinner_row_nothing_selected,
+                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                        getActivity()));
+
                 if (pos == 1) {
                     phraseSaved = false;
+                    lockEdit = false;
                     newPhraseText.setVisibility(View.VISIBLE);
 
                     newPhraseText.setFocusableInTouchMode(true);
@@ -191,11 +207,42 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelPhrase.setVisibility(View.VISIBLE);
-                }
-                else {
-                    //TODO Change Category list to match selected phrase
 
-                    //TODO Change Lang list to match selected phrase
+                } else {
+                    //Change Category list/selection to match selected phrase
+                    Category category = null;
+                    cont = true;
+                    for (Category cat : catList) {
+                        List<Object> phraseList = cat.phraseList;
+                        for (int i = 0; i < phraseList.size(); i++) {
+                            Phrase phr = (Phrase) phraseList.get(i);
+                            if (phr.getPhraseText().equalsIgnoreCase((String)phrase_spinner.getAdapter().getItem(pos))) {
+                                category = cat;
+                                break;
+                            }
+                        }
+                        if (category != null) break;
+                    }
+                    if (category != null) {
+                        for (int i = 1; i < category_spinner.getAdapter().getCount(); i++) {
+                            if (category_spinner.getAdapter().getItem(i).toString().equals(category.name)) {
+                                List<String> short_list = new ArrayList<String>();
+                                short_list.add(category.name);
+                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, short_list);
+                                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                //category_spinner.setPrompt("Select Category...");
+
+                                category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                                        dataAdapter,
+                                        R.layout.contact_category_spinner_row_nothing_selected,
+                                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                                        getActivity()));
+                                category_spinner.setSelection(1);
+                                lockEdit = true;
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -207,7 +254,7 @@ public class RecordingFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 category_spinner_pos = pos;
-                if (pos == 1) {
+                if (pos == 1 && !lockEdit) {
                     categorySaved = false;
                     newCategoryText.setVisibility(View.VISIBLE);
 
@@ -217,11 +264,10 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newCategoryText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelCategory.setVisibility(View.VISIBLE);
-                }
-                else{
-                    //TODO Change phrase list to match selected category
+                } else{
+                    //TODO Change phrase list to match selected category (might not be desired)
 
-                    //TODO Change Lang list to match selected category
+
                 }
             }
 
@@ -245,11 +291,6 @@ public class RecordingFragment extends Fragment {
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(newLanguageText, InputMethodManager.SHOW_IMPLICIT);
                 }
-                else{
-                    //TODO Change phrase list to match selected language
-
-                    //TODO Change category list to match selected language (spinnerpos+1 equals [0]th in language name list -- as implemented in addItemsOnLang...)
-                }
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -259,26 +300,23 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped) {
+                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4))) {
 
                     //Establish values to be saved and then call addPhrase
-                    if(phrase_spinner_pos == 1){
+                    if (phrase_spinner_pos == 1) {
                         finalPhraseName = newPhraseText.getText().toString();
-                    }
-                    else{
+                    } else {
                         finalPhraseName = phrase_spinner.getSelectedItem().toString();
                     }
-                    if(category_spinner_pos == 1){
+                    if (category_spinner_pos == 1 && !lockEdit) {
                         finalCatName = newCategoryText.getText().toString();
-                    }
-                    else{
+                    } else {
                         finalCatName = category_spinner.getSelectedItem().toString();
                     }
-                    if(language_spinner_pos == 1){
+                    if (language_spinner_pos == 1) {
                         finalLangName = newLanguageText.getText().toString();
                         finalLangAbbr = newLanguageAbbr.getText().toString();
-                    }
-                    else{
+                    } else {
                         String temp = language_spinner.getSelectedItem().toString();
                         temp.replace(" ","");
                         temp.replace("]","");
@@ -320,6 +358,26 @@ public class RecordingFragment extends Fragment {
                 } else if (!recordStopped) {
                     snackbar = Snackbar
                             .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
+
+                    snackbar.show();
+                } else if (!(("" + newPhraseText.getText()).length() >= 2)) {
+                    snackbar = Snackbar
+                            .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
+
+                    snackbar.show();
+                } else if (!(("" + newCategoryText.getText()).length() >= 2)) {
+                    snackbar = Snackbar
+                            .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
+
+                    snackbar.show();
+                } else if (!(("" + newLanguageText.getText()).length() >= 2 )) {
+                    snackbar = Snackbar
+                            .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
+
+                    snackbar.show();
+                } else if (!(("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4)) {
+                    snackbar = Snackbar
+                            .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
                 }
@@ -382,25 +440,23 @@ public class RecordingFragment extends Fragment {
             }
         });
 
-        btnStartRecording.setOnClickListener(new OnClickListener(){
+        btnStartRecording.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 snackbar = Snackbar
-                        .make( view, "Start Recording", Snackbar.LENGTH_SHORT);
+                        .make(view, "Start Recording", Snackbar.LENGTH_SHORT);
 
                 snackbar.show();
                 /*Toast.makeText(getActivity(),
                         "OnClickListener : Recording should START now!",
                         Toast.LENGTH_SHORT).show();*/
-                if(mediaPlayer == null){
+                if (mediaPlayer == null) {
 
-                }
-                else if(mediaPlayer.isPlaying()) {
+                } else if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                     mediaPlayer.release();
                     mediaPlayer = null;
-                }
-                else{
+                } else {
                     mediaPlayer.release();
                     mediaPlayer = null;
                 }
@@ -415,11 +471,11 @@ public class RecordingFragment extends Fragment {
             }
         });
 
-        btnStopRecording.setOnClickListener(new OnClickListener(){
+        btnStopRecording.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 snackbar = Snackbar
-                        .make( view, "Stop Recording", Snackbar.LENGTH_SHORT);
+                        .make(view, "Stop Recording", Snackbar.LENGTH_SHORT);
 
                 snackbar.show();
                 /*Toast.makeText(getActivity(),
@@ -440,9 +496,9 @@ public class RecordingFragment extends Fragment {
 
 
         //NOW A CANCEL
-        btnCancelPhrase.setOnClickListener(new OnClickListener(){
+        btnCancelPhrase.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 newPhraseText.setText("");
                 newPhraseText.setVisibility(View.INVISIBLE);
                 btnCancelPhrase.setVisibility(View.INVISIBLE);
@@ -477,9 +533,9 @@ public class RecordingFragment extends Fragment {
             }
         });
 
-        btnCancelCategory.setOnClickListener(new OnClickListener(){
+        btnCancelCategory.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 newCategoryText.setText("");
                 newCategoryText.setVisibility(View.INVISIBLE);
                 btnCancelCategory.setVisibility(View.INVISIBLE);
@@ -514,9 +570,9 @@ public class RecordingFragment extends Fragment {
             }
         });
 
-        btnCancelLanguage.setOnClickListener(new OnClickListener(){
+        btnCancelLanguage.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 newLanguageText.setText("");
                 newLanguageAbbr.setText("");
                 newLanguageText.setVisibility(View.INVISIBLE);
@@ -675,40 +731,42 @@ public class RecordingFragment extends Fragment {
                     //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
                     //if (!languageSaved || !abbrSaved) {
-                        if (("" + newLanguageText.getText()).length() >= 2 ) {
-                            snackbar = Snackbar
-                                    .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
+                    if (("" + newLanguageText.getText()).length() >= 2 ) {
+                        snackbar = Snackbar
+                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 
-                            snackbar.show();
-                            /*Toast.makeText(getActivity(),
-                                    "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
-                                                    "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                                    Toast.LENGTH_SHORT).show();*/
+                        snackbar.show();
+                        /*Toast.makeText(getActivity(),
+                                "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
+                                                "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
+                                Toast.LENGTH_SHORT).show();*/
 
-                            //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                            //newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
-                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(newLanguageText.getWindowToken(), 0);
+                        //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
+                        //newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(newLanguageText.getWindowToken(), 0);
 
 
-                            newLanguageAbbr.setFocusableInTouchMode(true);
-                            newLanguageAbbr.requestFocus();
-                            imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.showSoftInput(newLanguageAbbr, InputMethodManager.SHOW_IMPLICIT);
-                            //newLanguageText.setVisibility(View.INVISIBLE);
-                            //newLanguageAbbr.setVisibility(View.INVISIBLE);
-                            //btnCancelLanguage.setVisibility(View.INVISIBLE);
-                            languageSaved = true;
-                        } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
-                            snackbar = Snackbar
-                                    .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
+                        //newLanguageAbbr.setFocusableInTouchMode(true);
+                        //newLanguageAbbr.requestFocus();
+                        //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        //imm.showSoftInput(newLanguageAbbr, InputMethodManager.SHOW_IMPLICIT);
 
-                            snackbar.show();
-                            /*Toast.makeText(getActivity(),
-                                    "NEW LANGUAGE must have at least 2 characters!\n" +
-                                    "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
-                                    Toast.LENGTH_SHORT).show();*/
-                        }
+
+                        //newLanguageText.setVisibility(View.INVISIBLE);
+                        //newLanguageAbbr.setVisibility(View.INVISIBLE);
+                        //btnCancelLanguage.setVisibility(View.INVISIBLE);
+                        languageSaved = true;
+                    } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
+                        snackbar = Snackbar
+                                .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
+
+                        snackbar.show();
+                        /*Toast.makeText(getActivity(),
+                                "NEW LANGUAGE must have at least 2 characters!\n" +
+                                "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
+                                Toast.LENGTH_SHORT).show();*/
+                    }
                     //}
 
 
@@ -735,35 +793,35 @@ public class RecordingFragment extends Fragment {
                     //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
                     //if (!languageSaved || !abbrSaved) {
-                        if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
-                            snackbar = Snackbar
-                                    .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
+                    if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 4) {
+                        snackbar = Snackbar
+                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 
-                            snackbar.show();
-                            /*Toast.makeText(getActivity(),
-                                    "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
-                                                    "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                                    Toast.LENGTH_SHORT).show();*/
+                        snackbar.show();
+                        /*Toast.makeText(getActivity(),
+                                "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
+                                                "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
+                                Toast.LENGTH_SHORT).show();*/
 
-                            //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                            newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
-                            InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(newLanguageAbbr.getWindowToken(), 0);
-                            //newLanguageText.setVisibility(View.INVISIBLE);
-                            //newLanguageAbbr.setVisibility(View.INVISIBLE);
-                            //btnCancelLanguage.setVisibility(View.INVISIBLE);
-                            languageSaved = true;
-                        } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
-                            snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
+                        //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
+                        newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+                        InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm2.hideSoftInputFromWindow(newLanguageAbbr.getWindowToken(), 0);
+                        //newLanguageText.setVisibility(View.INVISIBLE);
+                        //newLanguageAbbr.setVisibility(View.INVISIBLE);
+                        //btnCancelLanguage.setVisibility(View.INVISIBLE);
+                        languageSaved = true;
+                    } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
+                        snackbar = Snackbar
+                                .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
-                            snackbar.show();
-                        } else if (!(("" + newLanguageAbbr.getText()).length() <= 4)) {
-                            snackbar = Snackbar
-                                    .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    } else if (!(("" + newLanguageAbbr.getText()).length() <= 4)) {
+                        snackbar = Snackbar
+                                .make(view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
 
-                            snackbar.show();
-                        }
+                        snackbar.show();
+                    }
                     //}
 
 
@@ -775,7 +833,7 @@ public class RecordingFragment extends Fragment {
 
     }
 
-    public void addOneItemOnPhraseSpinner(String newPhrase){
+    public void addOneItemOnPhraseSpinner(String newPhrase) {
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
         phrase_list.add(newPhrase);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
@@ -789,14 +847,13 @@ public class RecordingFragment extends Fragment {
         phrase_spinner.setSelection(phrase_list.size());
     }
 
-    public void addItemsOnPhraseSpinner(){
+    public void addItemsOnPhraseSpinner() {
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
 
         phrase_list.add("Add New Phrase");
         //phrase_list.add("Stay in the boat");
 
-        for (Category cat : catList)
-        {
+        for (Category cat : catList) {
             List<Object> phraseList = cat.phraseList;
             for (int i = 0; i < phraseList.size(); i++) {
                 String phr = ((Phrase) phraseList.get(i)).getPhraseText();
@@ -815,7 +872,22 @@ public class RecordingFragment extends Fragment {
                 this.getActivity()));
     }
 
-    public void resumeSpinners(){
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (isRemoving() && mediaPlayer != null) {
+            if (mVisualizer != null) mVisualizer.release();
+            mediaPlayer.release();
+            mediaPlayer = null;
+            if (mediaRecorder != null) {
+                mediaRecorder.release();
+                mediaRecorder = null;
+
+            }
+        }
+    }
+
+    public void resumeSpinners() {
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
         language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
@@ -848,7 +920,7 @@ public class RecordingFragment extends Fragment {
                 this.getActivity()));
     }
 
-    public void addOneItemOnCategorySpinner(String newCategory){
+    public void addOneItemOnCategorySpinner(String newCategory) {
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
         category_list.add(newCategory);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
@@ -862,14 +934,13 @@ public class RecordingFragment extends Fragment {
         category_spinner.setSelection(category_list.size());
     }
 
-    public void addItemsOnCategorySpinner(){
+    public void addItemsOnCategorySpinner() {
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
 
         category_list.add("Add New Category");
         //category_list.add("Entering Karaoke Zone");
 
-        for (Category cat : catList)
-        {
+        for (Category cat : catList) {
             category_list.add(cat.getCategoryTitle());
         }
 
@@ -885,7 +956,7 @@ public class RecordingFragment extends Fragment {
 
     }
 
-    public void addOneItemOnLanguageSpinner(String newLanguage, String newAbbr){
+    public void addOneItemOnLanguageSpinner(String newLanguage, String newAbbr) {
         language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
         String langAndAbbr = newLanguage + " [" + newAbbr.toUpperCase() + "]";
         language_list.add(langAndAbbr);
@@ -900,7 +971,7 @@ public class RecordingFragment extends Fragment {
         language_spinner.setSelection(language_list.size());
     }
 
-    public void addItemsOnLanguageSpinner(){
+    public void addItemsOnLanguageSpinner() {
         language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
         langList = fileSystem.getLangList().keySet();
         abbrList = fileSystem.getLangList().values();
@@ -928,42 +999,42 @@ public class RecordingFragment extends Fragment {
 
     }
 
-    public void addPhrase(String phraseName, String language, String abbr, String filePath, String categoryName){
+    public void addPhrase(String phraseName, String language, String abbr, String filePath, String categoryName) {
         Boolean phraseExists = false;
         Category category = null;
-        for (Category cat : catList)
-        {
-            if (cat.getCategoryTitle().equalsIgnoreCase(categoryName))
-            {
+        cont = true;
+        for (Category cat : catList) {
+            if (cat.getCategoryTitle().equalsIgnoreCase(categoryName)) {
                 category = cat;
                 break;
             }
         }
         String uncategorized = "Uncategorized";
-        if (category == null)
+        /*if (category == null)
         {
             for (Category cat : catList) {
                 if (cat.getCategoryTitle().equalsIgnoreCase(uncategorized)) {
                     category = cat;
+                    //phraseExists = true;
+                    break;
+                }
+            }
+        }*/
+        if (category != null) {
+            List<Object> phraseList = category.phraseList;
+            for (int i = 0; i < phraseList.size(); i++) {
+                Phrase phr = (Phrase) phraseList.get(i);
+                if (phr.getPhraseText().equalsIgnoreCase(phraseName)) {
                     phraseExists = true;
                     break;
                 }
             }
         }
-        List<Object> phraseList = category.phraseList;
-        for (int i = 0; i < phraseList.size(); i++) {
-            Phrase phr = (Phrase) phraseList.get(i);
-            if (phr.getPhraseText().equalsIgnoreCase(phraseName)) {
-                phraseExists = true;
-                break;
-            }
-        }
-
 
         if(phraseExists){
             cont = false;
             Map<String,String> lang = fileSystem.getLangList();
-            if (lang.containsKey(language)){
+            if (lang.containsKey(language)) {
                 //Then phrase / language combination exists
                 final String pName = phraseName;
                 final String lName = language;
@@ -977,7 +1048,9 @@ public class RecordingFragment extends Fragment {
                             @Override
                             public void onClick(View view) {
                                 addCategory(finalCatName);
+                                //((EditActivity) getActivity()).loadList();
                                 addLanguage(finalLangName, finalLangAbbr);
+                                //((EditActivity) getActivity()).loadList();
                                 fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
                                 Log.d("Recording Fragment", "Added Phrase");
                                 //((EditActivity) getActivity()).loadList();
@@ -1002,13 +1075,15 @@ public class RecordingFragment extends Fragment {
         }
 
 
-        if(cont) {
+        if (cont) {
             addCategory(finalCatName);
+            ((EditActivity) getActivity()).loadList();
             addLanguage(finalLangName, finalLangAbbr);
+            ((EditActivity) getActivity()).loadList();
             //TODO Find out why new languages aren't showing up on Language Pane despite calling addLanguage
             fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
             Log.d("Recording Fragment", "Added Phrase");
-            //((EditActivity) getActivity()).loadList();
+            ((EditActivity) getActivity()).loadList();
             getActivity().onBackPressed();
             snackbar = Snackbar
                     .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
@@ -1031,7 +1106,7 @@ public class RecordingFragment extends Fragment {
         }
     }
 
-    public void addLanguage(String languageName, String languageAbbr){
+    public void addLanguage(String languageName, String languageAbbr) {
         if (!(fileSystem.getLangList().containsKey(languageName))) {
 
             fileSystem.addLanguage(languageName, languageAbbr);
@@ -1041,7 +1116,7 @@ public class RecordingFragment extends Fragment {
         }
     }
 
-    private void startRecord(){
+    private void startRecord() {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -1061,49 +1136,70 @@ public class RecordingFragment extends Fragment {
 
     }
 
-    private void stopRecord(){
+    private void stopRecord() {
         mediaRecorder.stop();
         mediaRecorder.release();
         mediaRecorder = null;
     }
 
-    private void startPlay(){
+    private void startPlay() {
         mediaPlayer = new MediaPlayer();
         try{
             mediaPlayer.setDataSource(finalFilePath);
             mediaPlayer.prepare();
-            mediaPlayer.start();
+            setupVisualizerFxAndUI();
+            mVisualizer.setEnabled(true);
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mp){
+                public void onCompletion(MediaPlayer mp) {
                     btnPause.setVisibility(View.INVISIBLE);
                     btnPlay.setVisibility(View.VISIBLE);
+                    mVisualizer.setEnabled(false);
                 }
             });
+            mediaPlayer.start();
         } catch (IOException e) {
             Log.d("Playback Test", "prepare() failed");
         }
     }
 
-    private void stopPlay(){
+    private void stopPlay() {
         mediaPlayer.release();
         mediaPlayer = null;
     }
 
-    public Boolean getSnackbarStatus(){
+    public Boolean getSnackbarStatus() {
         return snackbarShown;
     }
 
-    public void dismissSnackbar(){
+    public void dismissSnackbar() {
         snackbar.dismiss();
     }
 
+    //Used to setup visualization
+    //http://android-er.blogspot.com/2015/02/create-audio-visualizer-for-mediaplayer.html
+    private void setupVisualizerFxAndUI() {
+
+        // Create the Visualizer object and attach it to our media player.
+        mVisualizer = new Visualizer(mediaPlayer.getAudioSessionId());
+        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        mVisualizer.setDataCaptureListener(
+                new Visualizer.OnDataCaptureListener() {
+                    public void onWaveFormDataCapture(Visualizer visualizer,
+                                                      byte[] bytes, int samplingRate) {
+                        visualizerView.updateVisualizer(bytes);
+                    }
+
+                    public void onFftDataCapture(Visualizer visualizer,
+                                                 byte[] bytes, int samplingRate) {
+                    }
+                }, Visualizer.getMaxCaptureRate() / 2, true, false);
+    }
 }
 
 
 //
 //Themes -- properties
-//automatically populate category when existing phrase is chosen
-
+//Deleting category immediately after it is made (by RecordingFragment) crashes app
 //Change XML back to linearlayout inside scrollview
 
 

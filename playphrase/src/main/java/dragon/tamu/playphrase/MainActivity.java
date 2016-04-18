@@ -132,6 +132,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextSubmit(String query)
             {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mListView.getWindowToken(), 0);
                 return true;
             }
 
