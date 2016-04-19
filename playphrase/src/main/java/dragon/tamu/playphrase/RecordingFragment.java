@@ -166,8 +166,8 @@ public class RecordingFragment extends Fragment {
         categorySaved = true;
         languageSaved = true;
         abbrSaved = true;
-
-        ((EditActivity) getActivity()).loadList();
+        /*//THIS WAS THE CULPRIT OF THE NON DELETING
+        ((EditActivity) getActivity()).loadList();*/
         fileSystem = ((EditActivity) getActivity()).fileSystem;
         catList = fileSystem.getInfoList();
 

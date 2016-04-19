@@ -309,6 +309,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addCategory(catName);
             catIndex = 0;
         }
+        Phrase pr = fileSystem.addPhrase(phraseText, langName, catName, filePath);
+        ((Category) mCategoryList.get(catIndex)).addPhrase(pr);
         mAdapter.notifyChildItemInserted(catIndex, 0);
 
     }

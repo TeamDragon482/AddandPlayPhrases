@@ -22,11 +22,6 @@ public class Category implements ParentListItem{
         name = title;
     }
 
-    public void setChildItemList(List<Object> list)
-    {
-        phraseList = list;
-    }
-
     public String getCategoryTitle() {
         return name;
     }
@@ -40,12 +35,16 @@ public class Category implements ParentListItem{
         return phraseList;
     }
 
+    public void setChildItemList(List<Object> list) {
+        phraseList = list;
+    }
+
     @Override
     public boolean isInitiallyExpanded() {
         return false;
     }
 	public void addPhrase(Phrase p){
-        phraseList.add(p);
+        phraseList.add(0, p);
 
     }
 
