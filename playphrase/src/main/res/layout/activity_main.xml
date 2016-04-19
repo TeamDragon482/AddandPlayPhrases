@@ -33,6 +33,90 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
             />
+
+        <SlidingDrawer
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:content="@+id/linearLayout"
+            android:handle="@+id/drawerButton"
+            android:id="@+id/mediaPane"
+            android:layout_alignBottom="@+id/expandableListView"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentEnd="false">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="#040d83">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/repeatButton"
+                        android:clickable="true"
+                        android:src="@drawable/repeat1"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toRightOf="@+id/stopButton"
+                        android:layout_toEndOf="@+id/stopButton"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginBottom="27dp" />
+
+                        <ImageButton
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/stopButton"
+                            android:src="@drawable/stop"
+                            android:clickable="true"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_alignTop="@+id/repeatButton"
+                            android:layout_centerHorizontal="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="Large Text"
+                            android:id="@+id/title"
+                            android:textColor="#ffffff"
+                            android:layout_centerHorizontal="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Medium Text"
+                            android:id="@+id/lang"
+                            android:layout_below="@+id/title"
+                            android:layout_centerHorizontal="true"
+                            android:textColor="#ffffff" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/drawerButton"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:layout_width="0px"
+                android:text="Handle" />
+        </SlidingDrawer>
+
+
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:layout_marginBottom="4dp"-->
+            <!--android:layout_above="@id/floating_button"-->
+            <!--android:background="@android:color/darker_gray"/>-->
     </RelativeLayout>
 
 

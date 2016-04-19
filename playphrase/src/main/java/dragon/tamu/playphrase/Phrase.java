@@ -3,6 +3,7 @@ package dragon.tamu.playphrase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Phrase
 {
@@ -22,6 +23,11 @@ public class Phrase
         phraseLanguages.put(langAbrv, fileLocation);
     }
 
+    public String getAbrv() {
+        Set keyset = phraseLanguages.keySet();
+        String stringSet = keyset.toString();
+        return stringSet;
+    }
 
     public String getPhraseText() {
         return name;
