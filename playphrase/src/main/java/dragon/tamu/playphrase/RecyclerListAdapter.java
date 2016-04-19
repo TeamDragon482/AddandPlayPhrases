@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +22,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     LayoutInflater mInflater;
     List<ParentListItem> mList;
     OnStartDragListener mOnStartDragListener;
+    private Snackbar snackbar;
 
     public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener) {
         super(parentItemList);
@@ -30,6 +32,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         mList = parentItemList;
 
         mOnStartDragListener = listener;
+
     }
 
     @Override
@@ -232,12 +235,39 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     }
 
     @Override
-    public boolean onItemSwiped(RecyclerView.ViewHolder viewHolder) {
+    public boolean onItemSwiped(RecyclerView.ViewHolder viewHolder)
+    {
         if(viewHolder instanceof CategoryViewHolder)
         {
+            View view = snackbar.getView();
             int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
-            mList.remove(parentIndex);
+            view.setTag(parentIndex);
+            // so here, the UI should remove the category, but the backend shouldn't yet.
+                // problem: children should go to uncategorized -> do we really want that????
             notifyParentItemRemoved(parentIndex);
+
+            Snackbar.make(view, "Deleted", Snackbar.LENGTH_LONG)
+                    .setCallback(new Snackbar.Callback()
+                    {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event)
+                        {
+                            int position = (int)snackbar.getView().getTag();
+                            mList.remove(position);
+                            //???
+                        }
+                    })
+                    .setAction("Undo", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+
+                        }
+                    })
+                    .show();
+
+            notifyItemRangeChanged(parentIndex, getItemCount());
             return true;
         }
         else if(viewHolder instanceof PhraseViewHolder)
@@ -262,6 +292,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
             return true;
         }
+
         return false;
     }
 
