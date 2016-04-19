@@ -100,6 +100,7 @@ public class RecordingFragment extends Fragment {
     @Override
     public void onResume() {
         clearText();
+        catList = fileSystem.getInfoList();
         resumeSpinners();
         super.onResume();
     }
@@ -1030,6 +1031,10 @@ public class RecordingFragment extends Fragment {
                 }
             }
         }
+        else
+        {
+            addOneItemOnCategorySpinner(categoryName);
+        }
 
         if(phraseExists){
             cont = false;
@@ -1075,6 +1080,7 @@ public class RecordingFragment extends Fragment {
             } else {
                 addLanguage(finalLangName, finalLangAbbr);
                 ((EditActivity) getActivity()).addPhrase(phraseName, categoryName, language, filePath);
+                addOneItemOnLanguageSpinner(language, abbr);
                 getActivity().onBackPressed();
             }
         }
@@ -1091,6 +1097,7 @@ public class RecordingFragment extends Fragment {
             ((EditActivity) getActivity()).loadList();*/
             addLanguage(finalLangName, finalLangAbbr);
             ((EditActivity) getActivity()).addPhrase(phraseName, finalCatName, finalLangName, filePath);
+            addOneItemOnPhraseSpinner(phraseName);
             getActivity().onBackPressed();
             snackbar = Snackbar
                     .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);

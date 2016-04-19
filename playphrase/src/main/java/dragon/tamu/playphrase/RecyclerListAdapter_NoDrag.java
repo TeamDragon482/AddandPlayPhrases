@@ -10,7 +10,7 @@ import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
 import java.util.List;
 
-public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<CategoryViewHolder, PhraseViewHolder>{
+public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<CategoryViewHolder_NoDrag, PhraseViewHolder_NoDrag> {
 
     LayoutInflater mInflater;
     List<ParentListItem> mList;
@@ -25,28 +25,30 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
     }
 
     @Override
-    public CategoryViewHolder onCreateParentViewHolder(ViewGroup viewGroup) {
+    public CategoryViewHolder_NoDrag onCreateParentViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.expandable_group_item, viewGroup, false);
-        return new CategoryViewHolder(view);
+        return new CategoryViewHolder_NoDrag(view);
     }
 
     @Override
-    public PhraseViewHolder onCreateChildViewHolder(ViewGroup viewGroup) {
+    public PhraseViewHolder_NoDrag onCreateChildViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.expandable_inner_item, viewGroup, false);
 
-        return new PhraseViewHolder(view);
+        return new PhraseViewHolder_NoDrag(view);
 
     }
 
     @Override
-    public void onBindParentViewHolder(final CategoryViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
+    public void onBindParentViewHolder(final CategoryViewHolder_NoDrag parentViewHolder, int position, ParentListItem parentListItem) {
         Category category = (Category) parentListItem;
         parentViewHolder.setCategory((Category) parentListItem);
         parentViewHolder.mCategoryTitle.setText(category.getCategoryTitle());
+        if (category.phraseList.size() == 0)
+            parentViewHolder.mArrow.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    public void onBindChildViewHolder(final PhraseViewHolder phraseViewHolder, int i, Object o)
+    public void onBindChildViewHolder(final PhraseViewHolder_NoDrag phraseViewHolder, int i, Object o)
     {
 
         Phrase phrase = (Phrase) o;

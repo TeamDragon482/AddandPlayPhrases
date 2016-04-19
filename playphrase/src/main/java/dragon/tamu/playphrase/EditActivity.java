@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -35,6 +37,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
+
     private TextView addCat, addPhrase;
     private View maskView;
     private boolean isFabOpen;
@@ -110,6 +113,20 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         listView.setAdapter(adapter);
         */
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.edit_screen_menu, menu);
+
+        menu.getItem(0).getActionView().findViewById(R.id.edit_back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
