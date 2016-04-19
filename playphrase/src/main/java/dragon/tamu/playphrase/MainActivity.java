@@ -101,6 +101,17 @@ public class MainActivity extends AppCompatActivity
                 super.onDrawerClosed(v);
                 mActionBar.setTitle(R.string.drawer_close_title);
                 invalidateOptionsMenu();
+
+                if (currentlySelectedLang.isEmpty())
+                {
+                    prepareListData();
+                    Log.d("MainActivityDrawerClose", "Non-Sorted List");
+                }
+                else
+                {
+                    prepareSelectedListData();
+                    Log.d("MainActivityDrawerClose", "Sorted List");
+                }
             }
 
             @Override
@@ -111,7 +122,8 @@ public class MainActivity extends AppCompatActivity
                 invalidateOptionsMenu();
 
                 //Re-populate Language Pane when switching back from Other Activities
-                for (int i = 0; i < currentlySelectedLang.size(); i++) {
+                for (int i = 0; i < currentlySelectedLang.size(); i++)
+                {
                     mDrawerList.setItemChecked(displayLanguages.indexOf(currentlySelectedLang.get(i)), true);
                 }
             }
@@ -307,8 +319,10 @@ public class MainActivity extends AppCompatActivity
         {
             List<Object> phraseList = cat.phraseList;
             List<Object> phraseListFinal = new ArrayList<>();
-            for (int i = 0; i < phraseList.size(); i++) {
-                for (int j = 0; j < currentlySelectedLang.size(); j++) {
+            for (int i = 0; i < phraseList.size(); i++)
+            {
+                for (int j = 0; j < currentlySelectedLang.size(); j++)
+                {
                     //If the current phrase has the language in its language map add it to the Final List. Only need one language
                     if (((Phrase) phraseList.get(i)).phraseLanguages.containsKey(currentlySelectedLang.get(j).substring(0, currentlySelectedLang.get(j).indexOf('[')))) {
                         phraseListFinal.add(phraseList.get(i));

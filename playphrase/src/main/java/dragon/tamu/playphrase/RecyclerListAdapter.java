@@ -66,6 +66,24 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 return false;
             }
         });
+        if (parentViewHolder.getCategory().getCategoryTitle().equalsIgnoreCase("uncategorized"))
+        {
+            parentViewHolder.itemView.setOnTouchListener(new View.OnTouchListener()
+            {
+                @Override
+                public boolean onTouch(View v, MotionEvent event)
+                {
+                    int action = event.getAction();
+                    switch (action)
+                    {
+                        case MotionEvent.ACTION_MOVE:
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
 
     }
 

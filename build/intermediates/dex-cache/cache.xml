@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="7d9d1197e85d7ed17245b6233be176cc33b2a1e0">
+        <dex dex="C:\Users\Seth\AndroidStudioProjects\AddandPlayPhrases\playphrase\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_97d4851eb53cf496575cb0642f877ee51739a766\classes.dex" />
+    </item>
+
+</items>
