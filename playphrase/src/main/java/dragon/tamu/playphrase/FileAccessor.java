@@ -188,7 +188,7 @@ public class FileAccessor
     }
 
     //region Phrase Manipulation
-    public void addPhrase(String name, String language, String filePath, String categoryName) {
+    public Phrase addPhrase(String name, String language, String filePath, String categoryName) {
         String[] split = filePath.split("\\.");
         String extension = split[split.length - 1];
 
@@ -237,6 +237,8 @@ public class FileAccessor
         phrase.addLanguage(language, soundFile.getPath());
 
         saveInfoToFile(informationList);
+
+        return phrase;
     }
     //endregion
 

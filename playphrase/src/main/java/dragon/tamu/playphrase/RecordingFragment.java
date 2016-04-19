@@ -166,8 +166,8 @@ public class RecordingFragment extends Fragment {
         categorySaved = true;
         languageSaved = true;
         abbrSaved = true;
-
-        ((EditActivity) getActivity()).loadList();
+        /*//THIS WAS THE CULPRIT OF THE NON DELETING
+        ((EditActivity) getActivity()).loadList();*/
         fileSystem = ((EditActivity) getActivity()).fileSystem;
         catList = fileSystem.getInfoList();
 
@@ -1047,13 +1047,16 @@ public class RecordingFragment extends Fragment {
                         .setAction("CONTINUE", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                addCategory(finalCatName);
-                                //((EditActivity) getActivity()).loadList();
+//                                addCategory(finalCatName);
+//                                //((EditActivity) getActivity()).loadList();
+//                                addLanguage(finalLangName, finalLangAbbr);
+//                                //((EditActivity) getActivity()).loadList();
+//                                fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
+//                                Log.d("Recording Fragment", "Added Phrase");
+//                                //((EditActivity) getActivity()).loadList();
                                 addLanguage(finalLangName, finalLangAbbr);
-                                //((EditActivity) getActivity()).loadList();
-                                fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
-                                Log.d("Recording Fragment", "Added Phrase");
-                                //((EditActivity) getActivity()).loadList();
+                                ((EditActivity) getActivity()).addPhrase(pName, cName, lName + lAbbr, fPath);
+
                                 getActivity().onBackPressed();
                                 Snackbar snackbar1 = Snackbar
                                         .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
@@ -1076,14 +1079,16 @@ public class RecordingFragment extends Fragment {
 
 
         if (cont) {
-            addCategory(finalCatName);
+            /*addCategory(finalCatName);
             ((EditActivity) getActivity()).loadList();
             addLanguage(finalLangName, finalLangAbbr);
             ((EditActivity) getActivity()).loadList();
             //TODO Find out why new languages aren't showing up on Language Pane despite calling addLanguage
             fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
             Log.d("Recording Fragment", "Added Phrase");
-            ((EditActivity) getActivity()).loadList();
+            ((EditActivity) getActivity()).loadList();*/
+            addLanguage(finalLangName, finalLangAbbr);
+            ((EditActivity) getActivity()).addPhrase(phraseName, finalCatName, finalLangName, filePath);
             getActivity().onBackPressed();
             snackbar = Snackbar
                     .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
