@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
@@ -247,14 +249,28 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
         ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
+        final SlidingDrawer draw = (SlidingDrawer)findViewById(R.id.mediaPane);
 
-        //stop
+        //stop player and close media window
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pm.stopPhrase();
+                if(draw.isOpened())
+                    ((SlidingDrawer) v).animateOpen();
             }
         });
+
+        //Open the draw by external button
+        if(findViewById(R.id.phrase_view) != null) {
+            (findViewById(R.id.phrase_view)).setOnClickListener(
+                    new Button.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            draw.animateOpen();
+                        }
+                    });
+        }
 
         //repeat
         repeatButton.setOnClickListener(new View.OnClickListener() {
