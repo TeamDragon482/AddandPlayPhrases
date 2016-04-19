@@ -22,12 +22,14 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -42,14 +44,17 @@ public class MainActivity extends AppCompatActivity
 
     //For Language Select Pane
     ArrayList<String> currentlySelectedLang;
+    Button deleteSelectedButton;
 
     //Variables for ListView
     RecyclerListAdapter_NoDrag mListAdapter;
     RecyclerView mListView;
     List<ParentListItem> mCategoryList; //List of categories
+    List<ParentListItem> mFullList; //List of categories
 
     ArrayAdapter<String> adapter;
-    ArrayList<String> mLanguages;
+    HashMap<String, String> mLanguages;
+    ArrayList<String> displayLanguages;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
@@ -96,14 +101,6 @@ public class MainActivity extends AppCompatActivity
                 super.onDrawerClosed(v);
                 mActionBar.setTitle(R.string.drawer_close_title);
                 invalidateOptionsMenu();
-
-                if (currentlySelectedLang.isEmpty()) {
-                    prepareListData();
-                    Log.d("MainActivityDrawerClose", "Non-Sorted List");
-                } else {
-                    prepareSelectedListData();
-                    Log.d("MainActivityDrawerClose", "Sorted List");
-                }
             }
 
             @Override
@@ -115,7 +112,7 @@ public class MainActivity extends AppCompatActivity
 
                 //Re-populate Language Pane when switching back from Other Activities
                 for (int i = 0; i < currentlySelectedLang.size(); i++) {
-                    mDrawerList.setItemChecked(mLanguages.indexOf(currentlySelectedLang.get(i)), true);
+                    mDrawerList.setItemChecked(displayLanguages.indexOf(currentlySelectedLang.get(i)), true);
                 }
             }
         };
@@ -168,15 +165,39 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 //If the language isn't in the current list add it
-                if (currentlySelectedLang.indexOf(mLanguages.get(position)) == -1)
+                if (!currentlySelectedLang.contains(displayLanguages.get(position)))
                 {
-                    currentlySelectedLang.add(mLanguages.get(position));
+                    currentlySelectedLang.add(displayLanguages.get(position));
+                    prepareSelectedListData();
                 }
                 //If it is it means its a deselecting so we remove it
                 else
                 {
-                    currentlySelectedLang.remove(mLanguages.get(position));
+                    currentlySelectedLang.remove(displayLanguages.get(position));
+                    if (currentlySelectedLang.size() == 0)
+                        loadList();
                 }
+            }
+        });
+
+
+        //Logic for deleting a language
+        deleteSelectedButton = (Button) findViewById(R.id.deleted_selected_lang_button);
+        deleteSelectedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = displayLanguages.size() - 1; i >= 0; i--)
+                    if (mDrawerList.isItemChecked(i)) {
+                        String s = displayLanguages.get(i);
+                        removeLangauge(s.substring(0, s.indexOf('[')), s.substring(s.indexOf('[') + 1, s.indexOf(']')));
+                        displayLanguages.remove(i);
+                        if (currentlySelectedLang.contains(s)) {
+                            currentlySelectedLang.remove(s);
+                            if (currentlySelectedLang.size() == 0)
+                                loadList();
+                        }
+                    }
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -269,11 +290,14 @@ public class MainActivity extends AppCompatActivity
     private void prepareListData()
     {
         mCategoryList = new ArrayList<>();
+        mFullList = new ArrayList<>();
         for (Category cat : fileSystem.getLocalInformationList())
         {
             List<Object> phraseList = cat.phraseList;
             mCategoryList.add(new Category(phraseList, cat.name));
         }
+        mFullList.addAll(mCategoryList);
+
     }
 
     private void prepareSelectedListData()
@@ -286,23 +310,30 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < phraseList.size(); i++) {
                 for (int j = 0; j < currentlySelectedLang.size(); j++) {
                     //If the current phrase has the language in its language map add it to the Final List. Only need one language
-                    if (((Phrase) phraseList.get(i)).phraseLanguages.containsKey(currentlySelectedLang.get(j))) {
+                    if (((Phrase) phraseList.get(i)).phraseLanguages.containsKey(currentlySelectedLang.get(j).substring(0, currentlySelectedLang.get(j).indexOf('[')))) {
                         phraseListFinal.add(phraseList.get(i));
                         break;
                     }
                 }
             }
-            mCategoryList.add(new Category(phraseListFinal, cat.name));
+            if (phraseListFinal.size() > 0)
+                mCategoryList.add(new Category(phraseListFinal, cat.name));
         }
+        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListView.setAdapter(mListAdapter);
+
     }
 
     private void prepareLanguageListData()
     {
-        mLanguages = new ArrayList<>();
-        for (String lang : fileSystem.extractLangNames())
+        displayLanguages = new ArrayList<>();
+        mLanguages = (HashMap<String, String>) fileSystem.getLangList();
+        for (String s : mLanguages.keySet())
         {
-            mLanguages.add(lang);
+            String abbrev = mLanguages.get(s);
+            displayLanguages.add(s + "[" + abbrev + "]");
         }
+
     }
 
     @Override
@@ -341,15 +372,33 @@ public class MainActivity extends AppCompatActivity
     public void loadList()
     {
         fileSystem = new FileAccessor(MainActivity.this.getBaseContext());
-        // if(currentlySelectedLang.isEmpty()) {
+        if (currentlySelectedLang.isEmpty()) {
         prepareListData();
-        // } else{
-        //     prepareSelectedListData();
-        // }
+        } else {
+            prepareSelectedListData();
+        }
         prepareLanguageListData();
         mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
         mListView.setAdapter(mListAdapter);
-        adapter = new ArrayAdapter<>(this, R.layout.drawer_item, mLanguages);
+        adapter = new ArrayAdapter<>(this, R.layout.drawer_item, displayLanguages);
         mDrawerList.setAdapter(adapter);
+    }
+
+    //Removes the language and any recordings involving the language
+    //Also deletes a phrase if that was the last language it contained
+    private void removeLangauge(String langName, String langAbbrv) {
+        fileSystem.removeLanguage(langName);
+        for (int i = 0; i < mFullList.size(); i++) {
+            Category cat = (Category) mFullList.get(i);
+            for (int j = 0; j < cat.phraseList.size(); j++) {
+                Phrase p = (Phrase) cat.phraseList.get(j);
+                if (p.phraseLanguages.containsKey(langName)) {
+                    p.phraseLanguages.remove(langName);
+                    if (p.phraseLanguages.size() == 0)
+                        fileSystem.removePhrase(p.getPhraseText(), cat.getCategoryTitle());
+                }
+            }
+        }
+
     }
 }

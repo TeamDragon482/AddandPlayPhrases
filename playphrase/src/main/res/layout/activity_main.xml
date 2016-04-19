@@ -16,46 +16,31 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_marginBottom="20dp"-->
-            <!--android:layout_marginRight="15dp"-->
-            <!--android:src="@drawable/ic_action_add"-->
-            <!--android:id="@+id/floating_button"/>-->
         <android.support.v7.widget.SearchView
             android:id="@+id/search_view"
-            android:layout_centerHorizontal="true"
-            app:queryHint="@string/searchable_hint"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="#ffffff"
             app:iconifiedByDefault="false"
-            android:background="#ffffff" />
+            app:queryHint="@string/searchable_hint" />
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/expandableListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/expandableListView"
-            android:layout_below="@id/search_view"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="10dp"
+            android:layout_below="@id/search_view"
             android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
             />
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:layout_marginBottom="4dp"-->
-            <!--android:layout_above="@id/floating_button"-->
-            <!--android:background="@android:color/darker_gray"/>-->
     </RelativeLayout>
 
 
     <!-- The navigation drawer -->
     <RelativeLayout
+        android:id="@+id/drawerPane"
         android:layout_width="280dp"
         android:layout_height="match_parent"
-        android:id="@+id/drawerPane"
         android:layout_gravity="start">
     <RelativeLayout
         android:id="@+id/languageTitle"
@@ -64,25 +49,38 @@
         android:background="@color/material_blue_grey_800"
         android:padding="8dp" >
         <TextView
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:text="@string/drawer_title"
-            android:textStyle="bold"
-            android:textSize="23sp"
             android:layout_marginTop="15dp"
             android:padding="8dp"
+            android:text="@string/drawer_title"
             android:textColor="#FFFFFF"
-            style="@style/TextAppearance.AppCompat.Title" /></RelativeLayout>
+            android:textSize="23sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
         <!-- List of Actions (pages) -->
         <ListView
-            android:layout_below="@id/languageTitle"
             android:id="@+id/navList"
             android:layout_width="280dp"
             android:layout_height="match_parent"
-            android:choiceMode="multipleChoice"
-            android:background="#ffffffff" />
+            android:layout_below="@id/languageTitle"
+            android:background="#ffffffff"
+            android:choiceMode="multipleChoice" />
 
+        <Button
+            android:id="@+id/deleted_selected_lang_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="15dp"
+            android:elevation="10dp"
+            android:padding="10dp"
+            android:text="@string/delete_lang_button"
+            android:textColor="@android:color/white"
+            android:theme="@style/MyRaisedButton" />
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

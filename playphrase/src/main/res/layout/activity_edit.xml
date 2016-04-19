@@ -7,23 +7,28 @@
     android:layout_height="match_parent"
     android:background="#a29f9f"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="dragon.tamu.playphrase.EditActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/edit_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="15dp"
 
         />
+
+    <View
+        android:id="@+id/dark_opaque_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#c0000000"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
+        android:layout_margin="15dp"
 
         >
     <android.support.design.widget.FloatingActionButton
@@ -75,7 +80,7 @@
             android:layout_toLeftOf="@id/fab2"
             android:gravity="center_vertical"
             android:text="@string/add_category"
-            android:textColor="#000000"
+            android:textColor="#FFFFFFFF"
             android:visibility="invisible" />
 
         <TextView
@@ -88,7 +93,7 @@
             android:layout_toLeftOf="@id/fab1"
             android:gravity="center_vertical"
             android:text="@string/add_phrase"
-            android:textColor="#000000"
+            android:textColor="#FFFFFFFF"
             android:visibility="invisible" />
     </RelativeLayout>
 
