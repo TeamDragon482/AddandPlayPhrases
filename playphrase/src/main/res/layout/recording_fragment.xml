@@ -167,7 +167,7 @@
             android:layout_below="@+id/newLanguageText"
             android:background="#FFFFFFFF"
             android:elevation="26dp"
-            android:hint="Abbreviation (4 Letters)"
+            android:hint="Abbreviation (3 Letters)"
             android:imeOptions="actionDone"
             android:inputType="text|textCapSentences"
             android:padding="12dp"
