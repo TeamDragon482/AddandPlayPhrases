@@ -17,8 +17,14 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder)
     {
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        int swipeflags = ItemTouchHelper.RIGHT;
-        return makeMovementFlags(dragFlags, swipeflags);
+        int swipeFlags;
+        if (viewHolder instanceof CategoryViewHolder && ((CategoryViewHolder) viewHolder).getCategory().getCategoryTitle().equalsIgnoreCase("uncategorized"))
+        {
+            swipeFlags = 0;
+        }
+        else
+            swipeFlags = ItemTouchHelper.RIGHT;
+        return makeMovementFlags(dragFlags, swipeFlags);
     }
 
     @Override

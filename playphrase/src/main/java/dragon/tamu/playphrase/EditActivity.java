@@ -50,6 +50,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
+        getSupportActionBar().setTitle("Edit Phrases");
+
         listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setHasFixedSize(true);
@@ -216,6 +218,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private void startFragmentFromButton(View view, Fragment fragment)
     {
         saveList();
+        mAdapter.collapseAllParents();
         Bundle args = new Bundle();
         int originalPos[] = new int[2];
         view.getLocationOnScreen(originalPos);
@@ -271,7 +274,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addCategory(catName);
             catIndex = 0;
         }
-        Phrase pr = fileSystem.addPhrase(phraseText, langName, filePath, catName);
         boolean phraseExists = false;
         for (int i = 0; i < mCategoryList.size(); i++) {
             Category c = (Category) mCategoryList.get(i);
@@ -284,9 +286,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             }
         }
         if (!phraseExists) {
-            ((Category) mCategoryList.get(catIndex)).addPhrase(pr);
+            fileSystem.addPhrase(phraseText, langName, filePath, catName);
             mAdapter.notifyChildItemInserted(catIndex, 0);
         }
+        else
+        {
+            fileSystem.addPhrase(phraseText, langName, filePath, catName);
+        }
+
 
     }
 
