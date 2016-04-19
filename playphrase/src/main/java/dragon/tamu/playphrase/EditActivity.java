@@ -280,7 +280,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    private void saveList() {
+    public void saveList() {
         ArrayList<Category> temp = new ArrayList<>();
         for (int i = 0; i < mCategoryList.size(); i++) {
             temp.add((Category) mCategoryList.get(i));

@@ -21,9 +21,12 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     LayoutInflater mInflater;
     List<ParentListItem> mList;
     OnStartDragListener mOnStartDragListener;
+    Context mContext;
 
     public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener) {
         super(parentItemList);
+
+        mContext = context;
 
         mInflater = LayoutInflater.from(context);
 
@@ -238,6 +241,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
             mList.remove(parentIndex);
             notifyParentItemRemoved(parentIndex);
+            ((EditActivity) mContext).saveList();
             return true;
         }
         else if(viewHolder instanceof PhraseViewHolder)
@@ -260,6 +264,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
             list.remove(fromPosition - 1 - parentIndex);
             notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
+            ((EditActivity) mContext).saveList();
             return true;
         }
         return false;
