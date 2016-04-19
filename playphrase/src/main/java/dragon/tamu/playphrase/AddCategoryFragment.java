@@ -128,7 +128,6 @@ public class AddCategoryFragment extends Fragment
     {
         categoryName.setText("");
         categoryName.requestFocus();
-
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(categoryName, InputMethodManager.SHOW_IMPLICIT);
 

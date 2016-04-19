@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,7 +27,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
     //Members for fragments
-    public Fragment addPhraseFrag, addCategoryFrag;
+    public Fragment addCategoryFrag;
     public Fragment recordingFragment;
     List<ParentListItem> mCategoryList; //List of categories
 
@@ -35,6 +37,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
+
     private TextView addCat, addPhrase;
     private View maskView;
     private boolean isFabOpen;
@@ -46,6 +49,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
+        getSupportActionBar().setTitle("Edit Phrases");
 
         listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
@@ -100,16 +105,20 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
                 startFragmentFromButton(v, addCategoryFrag);
             }
         });
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.edit_screen_menu, menu);
 
-        /*
-        RecyclerListAdapter adapter = new RecyclerListAdapter(this, generateList(), this);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-        touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(listView);
-
-        listView.setAdapter(adapter);
-        */
+        menu.getItem(0).getActionView().findViewById(R.id.edit_back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -128,30 +137,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     //temporary generator for demonstration purposes
     private List<ParentListItem> generateList()
     {
-        /*ArrayList<ParentListItem> categoryList = new ArrayList<>();
-
-        ArrayList<Object> shore = new ArrayList<>();
-        shore.add(new Phrase("Please sit your butt down"));
-        shore.add(new Phrase("Slow down your approach speed"));
-        shore.add(new Phrase("If you start to sink, push off the person next to you"));
-
-        ArrayList<Object> spotted = new ArrayList<>();
-        spotted.add(new Phrase("Follow the people who know what they're doing"));
-        spotted.add(new Phrase("Look for the guiding light"));
-        spotted.add(new Phrase("Beware of alligators"));
-
-        ArrayList<Object> panic = new ArrayList<>();
-        panic.add(new Phrase("This is no time to panic"));
-        panic.add(new Phrase("Everything will be fine"));
-        panic.add(new Phrase("Seriously though, there are alligators"));
-        panic.add(new Phrase("Keith smells"));
-
-        categoryList.add(new Category(shore, "Approaching Shore"));
-        categoryList.add(new Category(spotted, "Recently Spotted"));
-        categoryList.add(new Category(panic, "Displaying Panic"));
-        categoryList.add(new Category(new ArrayList<Object>(), "Uncategorized"));
-
-        mCategoryList = categoryList;*/
 
         mCategoryList = new ArrayList<>();
         for (Category cat : fileSystem.getLocalInformationList()) {
@@ -178,11 +163,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     {
         super.onStop();
-        /*ArrayList<Category> temp = new ArrayList<>();
-        for(int i = 0; i < mCategoryList.size(); i++){
-            temp.add((Category) mCategoryList.get(i));
-        }
-        fileSystem.saveInfoToFile(temp);*/
         Log.d("Edit Activity", "OnStop");
     }
     @Override
@@ -238,6 +218,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     private void startFragmentFromButton(View view, Fragment fragment)
     {
         saveList();
+        mAdapter.collapseAllParents();
         Bundle args = new Bundle();
         int originalPos[] = new int[2];
         view.getLocationOnScreen(originalPos);
@@ -250,22 +231,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         fab.hide();
         maskView.setVisibility(View.VISIBLE);
         getFragmentManager().beginTransaction().add(R.id.edit_coord_layout, fragment, "phrase_add_frag").addToBackStack(null).commit();
-        /* CoordinatorLayout root = (CoordinatorLayout) findViewById( R.id.edit_coord_layout );
-         DisplayMetrics dm = new DisplayMetrics();
-         this.getWindowManager().getDefaultDisplay().getMetrics( dm );
-
-         int originalPos[] = new int[2];
-         view.getLocationOnScreen( originalPos);
-
-         int xDest = dm.widthPixels/2;
-         xDest -= (view.getMeasuredWidth()/2);
-         int yDest = dm.heightPixels/2 - (view.getMeasuredHeight()/2);
-
-        TranslateAnimation anim = new TranslateAnimation( 0, xDest - originalPos[0] , 0, yDest - originalPos[1] );
-        anim.setDuration(1000);
-        anim.setFillAfter(true);
-        view.startAnimation(anim);
-*/
     }
 
     public void loadList()
@@ -280,7 +245,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    private void saveList() {
+    public void saveList() {
         ArrayList<Category> temp = new ArrayList<>();
         for (int i = 0; i < mCategoryList.size(); i++) {
             temp.add((Category) mCategoryList.get(i));
@@ -309,7 +274,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addCategory(catName);
             catIndex = 0;
         }
-        Phrase pr = fileSystem.addPhrase(phraseText, langName, filePath, catName);
         boolean phraseExists = false;
         for (int i = 0; i < mCategoryList.size(); i++) {
             Category c = (Category) mCategoryList.get(i);
@@ -322,9 +286,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             }
         }
         if (!phraseExists) {
-            ((Category) mCategoryList.get(catIndex)).addPhrase(pr);
+            fileSystem.addPhrase(phraseText, langName, filePath, catName);
             mAdapter.notifyChildItemInserted(catIndex, 0);
         }
+        else
+        {
+            fileSystem.addPhrase(phraseText, langName, filePath, catName);
+        }
+
 
     }
 

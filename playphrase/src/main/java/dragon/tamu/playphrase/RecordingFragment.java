@@ -49,7 +49,6 @@ public class RecordingFragment extends Fragment {
     private Spinner phrase_spinner, category_spinner, language_spinner;
     private int phrase_spinner_pos, category_spinner_pos, language_spinner_pos;
     private ImageButton btnSubmit, btnPlay, btnPause, btnStartRecording, btnStopRecording;
-    private TextView textPlaceholder;
     private List<String> phrase_list = new ArrayList<String>();
     private List<String> category_list = new ArrayList<String>();
     private List<String> language_list = new ArrayList<String>();
@@ -100,6 +99,11 @@ public class RecordingFragment extends Fragment {
 
     @Override
     public void onResume() {
+        clearText();
+        catList = fileSystem.getInfoList();
+        addItemsOnPhraseSpinner();
+        addItemsOnCategorySpinner();
+        addItemsOnLanguageSpinner();
         resumeSpinners();
         super.onResume();
     }
@@ -850,6 +854,7 @@ public class RecordingFragment extends Fragment {
     public void addItemsOnPhraseSpinner() {
         phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
 
+        phrase_list.clear();
         phrase_list.add("Add New Phrase");
         //phrase_list.add("Stay in the boat");
 
@@ -936,7 +941,7 @@ public class RecordingFragment extends Fragment {
 
     public void addItemsOnCategorySpinner() {
         category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
-
+        category_list.clear();
         category_list.add("Add New Category");
         //category_list.add("Entering Karaoke Zone");
 
@@ -979,6 +984,7 @@ public class RecordingFragment extends Fragment {
         String[] tempAbbrArray = new String[abbrList.size()];
         tempLangArray = langList.toArray(tempLangArray);
         tempAbbrArray = abbrList.toArray(tempAbbrArray);
+        language_list.clear();
 
         language_list.add("Add New Language");
         //language_list.add("Engrish");
@@ -1075,7 +1081,6 @@ public class RecordingFragment extends Fragment {
             } else {
                 addLanguage(finalLangName, finalLangAbbr);
                 ((EditActivity) getActivity()).addPhrase(phraseName, categoryName, language, filePath);
-
                 getActivity().onBackPressed();
             }
         }
@@ -1098,6 +1103,13 @@ public class RecordingFragment extends Fragment {
 
             snackbar.show();
         }
+    }
+
+    private void clearText() {
+        newCategoryText.getText().clear();
+        newPhraseText.getText().clear();
+        newLanguageAbbr.getText().clear();
+        newLanguageText.getText().clear();
     }
 
     public void addCategory(String categoryName) {

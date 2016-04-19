@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,9 +22,12 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     LayoutInflater mInflater;
     List<ParentListItem> mList;
     OnStartDragListener mOnStartDragListener;
+    Context mContext;
 
     public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener) {
         super(parentItemList);
+
+        mContext = context;
 
         mInflater = LayoutInflater.from(context);
 
@@ -232,25 +236,84 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     }
 
     @Override
-    public boolean onItemSwiped(RecyclerView.ViewHolder viewHolder) {
-        if(viewHolder instanceof CategoryViewHolder)
-        {
-            int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
-            mList.remove(parentIndex);
-            notifyParentItemRemoved(parentIndex);
-            return true;
-        }
-        else if(viewHolder instanceof PhraseViewHolder)
+    public boolean onItemSwiped(final RecyclerView.ViewHolder viewHolder)
+    {
+
+        int adapterPosition = viewHolder.getAdapterPosition();
+        if (viewHolder instanceof PhraseViewHolder)
         {
             //TODO give a warning before deleting.
             int fromPosition = viewHolder.getAdapterPosition();
             int parentIndex = -1;
             int parentListIndex = 0;
             List<?> list = null;
-            for(int i = 0; i < mList.size(); i++)
+            for (int i = 0; i < mList.size(); i++)
             {
                 list = mList.get(i).getChildItemList();
-                if(list.contains(((PhraseViewHolder) viewHolder).getPhrase()))
+                if (list.contains(((PhraseViewHolder) viewHolder).getPhrase()))
+                {
+                    int itemIndex = list.indexOf(((PhraseViewHolder) viewHolder).getPhrase());
+                    parentIndex = fromPosition - 1 - itemIndex;
+                    parentListIndex = i;
+                    break;
+                }
+            }
+            adapterPosition = parentListIndex;
+        }
+        final int finalAdapterPosition = adapterPosition;
+        Snackbar snackbar = Snackbar
+                .make(viewHolder.itemView, "Are you sure you want to delete?", Snackbar.LENGTH_LONG)
+                .setAction("Undo", new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        onUndo(viewHolder, finalAdapterPosition);
+
+                    }
+                });
+        snackbar.show();
+
+        return onDismiss(viewHolder);
+    }
+
+    public void onUndo(RecyclerView.ViewHolder viewHolder, int position)
+    {
+        if (viewHolder instanceof CategoryViewHolder)
+        {
+            Category c = ((CategoryViewHolder) viewHolder).getCategory();
+            mList.add(position, c);
+            notifyParentItemInserted(position);
+        }
+        if (viewHolder instanceof PhraseViewHolder)
+        {
+            List<Object> list = (List<Object>) mList.get(position).getChildItemList();
+            list.add(0, ((PhraseViewHolder) viewHolder).getPhrase());
+            notifyChildItemInserted(position, 0);
+        }
+    }
+
+    public boolean onDismiss(RecyclerView.ViewHolder viewHolder)
+    {
+        if (viewHolder instanceof CategoryViewHolder)
+        {
+            int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
+            mList.remove(parentIndex);
+            notifyParentItemRemoved(parentIndex);
+            ((EditActivity) mContext).saveList();
+            return true;
+        }
+        else if (viewHolder instanceof PhraseViewHolder)
+        {
+            //TODO give a warning before deleting.
+            int fromPosition = viewHolder.getAdapterPosition();
+            int parentIndex = -1;
+            int parentListIndex = 0;
+            List<?> list = null;
+            for (int i = 0; i < mList.size(); i++)
+            {
+                list = mList.get(i).getChildItemList();
+                if (list.contains(((PhraseViewHolder) viewHolder).getPhrase()))
                 {
                     int itemIndex = list.indexOf(((PhraseViewHolder) viewHolder).getPhrase());
                     parentIndex = fromPosition - 1 - itemIndex;
@@ -260,6 +323,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
             list.remove(fromPosition - 1 - parentIndex);
             notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
+            ((EditActivity) mContext).saveList();
             return true;
         }
         return false;
