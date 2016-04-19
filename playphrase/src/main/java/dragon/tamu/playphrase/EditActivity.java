@@ -36,6 +36,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
     private TextView addCat, addPhrase;
+    private View maskView;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
 
@@ -64,6 +65,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         //Code for action button labels
         addPhrase = (TextView) findViewById(R.id.fab1_tView);
         addCat = (TextView) findViewById(R.id.fab2_tView);
+        //Dark background
+        maskView = findViewById(R.id.dark_opaque_background);
         //Animations for fab
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
@@ -114,11 +117,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         if (getFragmentManager().getBackStackEntryCount() > 0)
         {
+            maskView.setVisibility(View.INVISIBLE);
             getFragmentManager().popBackStack();
-            if(getFragmentManager().findFragmentByTag("phrase_add_frag") instanceof RecordingFragment) {
-                RecordingFragment recFrag = (RecordingFragment) getFragmentManager().findFragmentByTag("phrase_add_frag");
-                if (recFrag.getSnackbarStatus()) recFrag.dismissSnackbar();
-            }
             fab.show();
         }
         else
@@ -211,7 +211,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
         if (isFabOpen)
         {
-
             fab.startAnimation(rotate_backward);
             addPhraseButton.startAnimation(fab_close);
             addCategoryButton.startAnimation(fab_close);
@@ -220,8 +219,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addPhraseButton.setClickable(false);
             addCategoryButton.setClickable(false);
             isFabOpen = false;
-
-
+            maskView.setVisibility(View.INVISIBLE);
         }
         else
         {
@@ -233,6 +231,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addPhraseButton.setClickable(true);
             addCategoryButton.setClickable(true);
             isFabOpen = true;
+            maskView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -249,6 +248,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         fragment.setArguments(args);
         animateFAB();
         fab.hide();
+        maskView.setVisibility(View.VISIBLE);
         getFragmentManager().beginTransaction().add(R.id.edit_coord_layout, fragment, "phrase_add_frag").addToBackStack(null).commit();
         /* CoordinatorLayout root = (CoordinatorLayout) findViewById( R.id.edit_coord_layout );
          DisplayMetrics dm = new DisplayMetrics();
@@ -309,9 +309,22 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             addCategory(catName);
             catIndex = 0;
         }
-        Phrase pr = fileSystem.addPhrase(phraseText, langName, catName, filePath);
-        ((Category) mCategoryList.get(catIndex)).addPhrase(pr);
-        mAdapter.notifyChildItemInserted(catIndex, 0);
+        Phrase pr = fileSystem.addPhrase(phraseText, langName, filePath, catName);
+        boolean phraseExists = false;
+        for (int i = 0; i < mCategoryList.size(); i++) {
+            Category c = (Category) mCategoryList.get(i);
+            for (int j = 0; j < c.phraseList.size(); j++) {
+                Phrase p = (Phrase) c.phraseList.get(j);
+                if (p.getPhraseText().equals(phraseText)) {
+                    phraseExists = true;
+                    break;
+                }
+            }
+        }
+        if (!phraseExists) {
+            ((Category) mCategoryList.get(catIndex)).addPhrase(pr);
+            mAdapter.notifyChildItemInserted(catIndex, 0);
+        }
 
     }
 
