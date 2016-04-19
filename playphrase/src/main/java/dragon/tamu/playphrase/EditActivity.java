@@ -115,6 +115,10 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         if (getFragmentManager().getBackStackEntryCount() > 0)
         {
             getFragmentManager().popBackStack();
+            if(getFragmentManager().findFragmentByTag("phrase_add_frag") instanceof RecordingFragment) {
+                RecordingFragment recFrag = (RecordingFragment) getFragmentManager().findFragmentByTag("phrase_add_frag");
+                if (recFrag.getSnackbarStatus()) recFrag.dismissSnackbar();
+            }
             fab.show();
         }
         else
@@ -288,6 +292,26 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         fileSystem.addCategory(catName);
         mCategoryList.add(0, new Category(catName));
         mAdapter.notifyParentItemInserted(0);
+
+    }
+
+    public int containsCategoryName(String categoryName) {
+        for (int i = 0; i < mCategoryList.size(); i++) {
+            if (((Category) mCategoryList.get(i)).getCategoryTitle().equals(categoryName))
+                return i;
+        }
+        return -1;
+    }
+
+    public void addPhrase(String phraseText, String catName, String langName, String filePath) {
+        int catIndex;
+        if ((catIndex = containsCategoryName(catName)) == -1) {
+            addCategory(catName);
+            catIndex = 0;
+        }
+        Phrase pr = fileSystem.addPhrase(phraseText, langName, catName, filePath);
+        ((Category) mCategoryList.get(catIndex)).addPhrase(pr);
+        mAdapter.notifyChildItemInserted(catIndex, 0);
 
     }
 

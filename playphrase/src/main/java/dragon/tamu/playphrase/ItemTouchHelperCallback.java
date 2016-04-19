@@ -2,6 +2,7 @@ package dragon.tamu.playphrase;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback
 {
@@ -32,11 +33,20 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        if (!((CategoryViewHolder) viewHolder).getCategory().name.equals("Uncategorized")) {
+
+        if(viewHolder instanceof CategoryViewHolder) {
+            if (!((CategoryViewHolder) viewHolder).getCategory().name.equals("Uncategorized")) {
+                if (direction == ItemTouchHelper.RIGHT) {
+                    mAdapter.onItemSwiped(viewHolder);
+                }
+            }
+        }
+        else if(viewHolder instanceof PhraseViewHolder) {
             if (direction == ItemTouchHelper.RIGHT) {
                 mAdapter.onItemSwiped(viewHolder);
             }
         }
+
     }
 
 
