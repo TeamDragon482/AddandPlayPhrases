@@ -1042,6 +1042,8 @@ public class RecordingFragment extends Fragment {
                 final String fPath = filePath;
                 final String cName = categoryName;
 
+
+                //TODO get this portion of code working
                 snackbar = Snackbar
                         .make(getView(), "Continuing will overwrite existing phrase. Continue anyways?", Snackbar.LENGTH_INDEFINITE)
                         .setAction("CONTINUE", new View.OnClickListener() {
@@ -1054,10 +1056,6 @@ public class RecordingFragment extends Fragment {
 //                                fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
 //                                Log.d("Recording Fragment", "Added Phrase");
 //                                //((EditActivity) getActivity()).loadList();
-                                addLanguage(finalLangName, finalLangAbbr);
-                                ((EditActivity) getActivity()).addPhrase(pName, cName, lName + lAbbr, fPath);
-
-                                getActivity().onBackPressed();
                                 Snackbar snackbar1 = Snackbar
                                         .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
 
@@ -1074,6 +1072,11 @@ public class RecordingFragment extends Fragment {
                 Log.d("Recording Fragment","Phrase already exists");
 
                 snackbar.show();
+            } else {
+                addLanguage(finalLangName, finalLangAbbr);
+                ((EditActivity) getActivity()).addPhrase(phraseName, categoryName, language, filePath);
+
+                getActivity().onBackPressed();
             }
         }
 
