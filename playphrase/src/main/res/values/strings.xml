@@ -13,6 +13,7 @@
     <string name="swipe_instr">Swipe right to delete...</string>
     <string name="add_category">Add Category</string>
     <string name="add_phrase">Add Phrase</string>
+    <string name="delete_lang_button">Deleted Selected</string>
 
     <string name = "Choose_Phrase_prompt">Select Phrase...</string>
     <string-array name = "Phrase_choices">
