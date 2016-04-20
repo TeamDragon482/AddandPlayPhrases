@@ -18,27 +18,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SlidingDrawer;
-import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements PhraseViewHolder_NoDrag.OnItemClickListener
 {
 
     //Main FileAccessor for Application
@@ -65,6 +59,9 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
     private ArrayList<ParentListItem> searchList;
+
+    //For playback
+    private PlayManager playManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -185,9 +182,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //On Click?
-        setMediaPlayer();
-
         //Logic for deleting a language
         deleteSelectedButton = (Button) findViewById(R.id.deleted_selected_lang_button);
         deleteSelectedButton.setOnClickListener(new View.OnClickListener() {
@@ -207,6 +201,8 @@ public class MainActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         });
+
+        playManager = new PlayManager();
 
     }
 
@@ -243,6 +239,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         mListAdapter = new RecyclerListAdapter_NoDrag(this, searchList);
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
         mListAdapter.expandAllParents();
         mListAdapter.notifyDataSetChanged();
@@ -324,6 +321,7 @@ public class MainActivity extends AppCompatActivity
                 mCategoryList.add(new Category(phraseListFinal, cat.name));
         }
         mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
 
     }
@@ -381,6 +379,7 @@ public class MainActivity extends AppCompatActivity
         }
         prepareLanguageListData();
         mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
         adapter = new ArrayAdapter<>(this, R.layout.drawer_item, displayLanguages);
         mDrawerList.setAdapter(adapter);
@@ -404,7 +403,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    //Media Controls and Display
+    /*//Media Controls and Display
     public void setMediaPlayer() {
 
         final PlayManager pm = new PlayManager();
@@ -449,7 +448,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-    }
+    }*/
 
     public ArrayList<String> getselectAbrv(){
         ArrayList<String> selectedAbrv = new ArrayList<>();
@@ -457,5 +456,10 @@ public class MainActivity extends AppCompatActivity
             selectedAbrv.add(fileSystem.languageList.get(currentlySelectedLang.get(i)));
         }
         return selectedAbrv;
+    }
+
+    @Override
+    public void onItemCLick(View v, Phrase p) {
+        List<ParentListItem> list = mListAdapter.mList;
     }
 }

@@ -10,36 +10,35 @@ public class PhraseViewHolder_NoDrag extends ChildViewHolder implements View.OnC
 
     public TextView mPhraseText;
     public Phrase mPhrase;
-    public MainActivity mainActivity;
+    public OnItemClickListener mListener;
 
-    public PhraseViewHolder_NoDrag(View itemView, MainActivity activity)
+    public PhraseViewHolder_NoDrag(View itemView, OnItemClickListener listener)
     {
         super(itemView);
 
         mPhraseText = (TextView) itemView.findViewById(R.id.phrase_view);
-        mainActivity = activity;
+
+        mListener = listener;
+
+        itemView.setOnClickListener(this);
+    }
+
+    public Phrase getPhrase() {
+        return mPhrase;
     }
 
     public void setPhrase(Phrase phrase)
     {
         mPhrase = phrase;
     }
-    public Phrase getPhrase()
-    {
-        return mPhrase;
-    }
 
     @Override
     public void onClick(View v) {
-        PlayManager pm = new PlayManager();
-        pm.playPhrase(mPhrase, mainActivity.getselectAbrv());
+        if (mListener != null)
+            mListener.onItemCLick(v, mPhrase);
+    }
 
-        TextView tx4;
-        TextView tx5;
-
-        tx4 = (TextView) mainActivity.findViewById(R.id.title);
-        tx4.setText(mPhrase.getPhraseText()); //Modify to take current phrase name string
-        tx5 = (TextView) mainActivity.findViewById(R.id.lang);
-        tx5.setText(mainActivity.getselectAbrv().toString());
+    public interface OnItemClickListener {
+        void onItemCLick(View v, Phrase p);
     }
 }
