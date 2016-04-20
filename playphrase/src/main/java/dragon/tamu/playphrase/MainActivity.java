@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -210,6 +211,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 adapter.notifyDataSetChanged();
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
 
