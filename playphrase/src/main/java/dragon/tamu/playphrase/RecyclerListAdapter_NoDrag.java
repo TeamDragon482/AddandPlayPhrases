@@ -14,6 +14,7 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
 
     LayoutInflater mInflater;
     List<ParentListItem> mList;
+    PhraseViewHolder_NoDrag.OnItemClickListener mListener;
 
     public RecyclerListAdapter_NoDrag(Context context, List<ParentListItem> parentItemList) {
         super(parentItemList);
@@ -34,7 +35,7 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
     public PhraseViewHolder_NoDrag onCreateChildViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.expandable_inner_item, viewGroup, false);
 
-        return new PhraseViewHolder_NoDrag(view);
+        return new PhraseViewHolder_NoDrag(view, mListener);
 
     }
 
@@ -55,5 +56,9 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
         phraseViewHolder.setPhrase((Phrase) o);
         phraseViewHolder.mPhraseText.setText(phrase.getPhraseText());
 
+    }
+
+    public void setOnItemClickListener(PhraseViewHolder_NoDrag.OnItemClickListener listener) {
+        mListener = listener;
     }
 }

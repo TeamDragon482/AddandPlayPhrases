@@ -33,6 +33,13 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
             />
+
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:layout_marginBottom="4dp"-->
+            <!--android:layout_above="@id/floating_button"-->
+            <!--android:background="@android:color/darker_gray"/>-->
     </RelativeLayout>
 
 

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements PhraseViewHolder_NoDrag.OnItemClickListener
 {
 
     //Main FileAccessor for Application
@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
     private ArrayList<ParentListItem> searchList;
+
+    //For playback
+    private PlayManager playManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -94,8 +97,7 @@ public class MainActivity extends AppCompatActivity
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mActionBar.setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close)
-        {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View v)
             {
@@ -193,7 +195,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         //Logic for deleting a language
         deleteSelectedButton = (Button) findViewById(R.id.deleted_selected_lang_button);
         deleteSelectedButton.setOnClickListener(new View.OnClickListener() {
@@ -214,6 +215,8 @@ public class MainActivity extends AppCompatActivity
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
+
+        playManager = new PlayManager();
 
     }
 
@@ -250,6 +253,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         mListAdapter = new RecyclerListAdapter_NoDrag(this, searchList);
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
         mListAdapter.expandAllParents();
         mListAdapter.notifyDataSetChanged();
@@ -282,7 +286,6 @@ public class MainActivity extends AppCompatActivity
     protected void onStart()
     {
         super.onStart();
-
     }
 
     @Override
@@ -299,10 +302,8 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(mListView.getWindowToken(), 0);
     }
 
-
     //Sets up phrases and Categories
-    private void prepareListData()
-    {
+    private void prepareListData() {
         mCategoryList = new ArrayList<>();
         mFullList = new ArrayList<>();
         for (Category cat : fileSystem.getLocalInformationList())
@@ -336,6 +337,7 @@ public class MainActivity extends AppCompatActivity
                 mCategoryList.add(new Category(phraseListFinal, cat.name));
         }
         mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
 
     }
@@ -353,8 +355,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPostCreate(Bundle b)
-    {
+    protected void onPostCreate(Bundle b) {
         super.onPostCreate(b);
         mDrawerToggle.syncState();
     }
@@ -368,8 +369,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         mDrawerToggle.onOptionsItemSelected(item);
         switch (item.getItemId())
         {
@@ -395,6 +395,7 @@ public class MainActivity extends AppCompatActivity
         }
         prepareLanguageListData();
         mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
         adapter = new ArrayAdapter<>(this, R.layout.drawer_item, displayLanguages);
         mDrawerList.setAdapter(adapter);
@@ -416,5 +417,65 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+    }
+
+    /*//Media Controls and Display
+    public void setMediaPlayer() {
+
+        final PlayManager pm = new PlayManager();
+
+
+        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        ImageButton repeatButton = (ImageButton) findViewById(R.id.repeatButton);
+        final SlidingDrawer draw = (SlidingDrawer)findViewById(R.id.mediaPane);
+
+        //stop player and close media window
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pm.stopPhrase();
+                if(draw.isOpened())
+                    ((SlidingDrawer) v).animateOpen();
+            }
+        });
+
+        //Open the draw by external button
+        if(findViewById(R.id.phrase_view) != null) {
+            (findViewById(R.id.phrase_view)).setOnClickListener(
+                    new Button.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            draw.animateOpen();
+                        }
+                    });
+        }
+
+        //repeat
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            int n = 0;
+            @Override
+            public void onClick(View v) {
+                if ((n % 2) == 0) {
+                    pm.toggleRepeat(true);
+                    ++n;
+                } else {
+                    pm.toggleRepeat(false);
+                    ++n;
+                }
+            }
+        });
+    }*/
+
+    public ArrayList<String> getselectAbrv(){
+        ArrayList<String> selectedAbrv = new ArrayList<>();
+        for(int i = 0; i < currentlySelectedLang.size(); i++){
+            selectedAbrv.add(fileSystem.languageList.get(currentlySelectedLang.get(i)));
+        }
+        return selectedAbrv;
+    }
+
+    @Override
+    public void onItemCLick(View v, Phrase p) {
+        List<ParentListItem> list = mListAdapter.mList;
     }
 }

@@ -17,9 +17,6 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     public PlayManager(){
         repeat = false;
-        mp.setOnPreparedListener(this);
-        mp.setOnCompletionListener(this);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
 
     public void toggleRepeat(boolean b)
@@ -34,29 +31,39 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
                 phraseFiles.add(languages.get(i));
         }
         curPosition = 0;
-        playQueue();
         mp = new MediaPlayer();
+        mp.setOnPreparedListener(this);
+        mp.setOnCompletionListener(this);
+        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        playQueue();
     }
 
     public void stopPhrase(){
-        mp.stop();
-        mp.release();
-        mp = null;
+        if (mp!= null) {
+            mp.stop();
+            mp.release();
+            mp = null;
+        }
     }
 
     private void playQueue() {
-        if(curPosition >= phraseFiles.size())
+        if(curPosition >= phraseFiles.size() && repeat){
             curPosition = 0;
+        }
+        else {
+            mp.release();
+        }
         try {
             mp.setDataSource(phraseFiles.get(curPosition));
             mp.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();
-            /* Left out for now because I want error
-            curPosition++;
-            playQueue();
-             */
+             /* Left out for now because I want error
+             curPosition++;
+              playQueue();
+               */
         }
+        curPosition++;
     }
 
     @Override
@@ -66,13 +73,6 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if(curPosition < phraseFiles.size() || repeat)
-        {
-            curPosition++;
-            playQueue();
-        }
-        else{
-            mp.release();
-        }
+        playQueue();
     }
 }
