@@ -38,23 +38,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//import android.support.v4.app.Fragment;
 
-
-/**
- * Created by marky on 3/29/2016.
- */
 public class RecordingFragment extends Fragment {
+
+    View view;
     FragmentActivity listener;
     FileAccessor fileSystem;
     private Spinner phrase_spinner, category_spinner, language_spinner;
     private int phrase_spinner_pos, category_spinner_pos, language_spinner_pos;
     private ImageButton btnSubmit, btnPlay, btnPause, btnStartRecording, btnStopRecording;
-    private List<String> phrase_list = new ArrayList<String>();
-    private List<String> category_list = new ArrayList<String>();
-    private List<String> language_list = new ArrayList<String>();
-    private List<String> abbreviation_list = new ArrayList<String>();
-    private ArrayList<Category> catList = new ArrayList<Category>();
+    private List<String> phrase_list = new ArrayList<>();
+    private List<String> category_list = new ArrayList<>();
+    private List<String> language_list = new ArrayList<>();
+    private ArrayList<Category> catList = new ArrayList<>();
     private Set<String> langList;
     private Collection<String> abbrList;
     private EditText newPhraseText, newCategoryText, newLanguageText, newLanguageAbbr;
@@ -85,7 +81,7 @@ public class RecordingFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
+        if (context instanceof Activity) {
             this.listener = (FragmentActivity) context;
         }
 
@@ -152,30 +148,27 @@ public class RecordingFragment extends Fragment {
         return recordingFragmentView;
     }
 
-
-    // This event is triggered soon after onCreateView().
-    // onViewCreated() is only called if the view returned from onCreateView() is non-null.
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         //Getting a handle of views from XML
-        phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
-        category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
-        language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
-        btnSubmit = (ImageButton) getView().findViewById(R.id.btnSubmit);
-        btnPlay = (ImageButton) getView().findViewById(R.id.btnPlay);
-        btnPause = (ImageButton) getView().findViewById(R.id.btnPause);
-        btnStartRecording = (ImageButton) getView().findViewById(R.id.btnStartRecording);
-        btnStopRecording = (ImageButton) getView().findViewById(R.id.btnStopRecording);
-        //textPlaceholder = (TextView) getView().findViewById(R.id.textPlaceholder);
-        newPhraseText = (EditText) getView().findViewById(R.id.newPhraseText);
-        newCategoryText = (EditText) getView().findViewById(R.id.newCategoryText);
-        newLanguageText = (EditText) getView().findViewById(R.id.newLanguageText);
-        newLanguageAbbr = (EditText) getView().findViewById(R.id.newLanguageAbbr);
-        btnCancelPhrase = (ImageButton) getView().findViewById(R.id.cancelPhrase); //save buttons are now Cancel
-        btnCancelCategory = (ImageButton) getView().findViewById(R.id.cancelCategory);
-        btnCancelLanguage = (ImageButton) getView().findViewById(R.id.cancelLanguage);
-        visualizerView = (VisualizerView) getView().findViewById(R.id.visualizer_view);
+        this.view = view;
+        phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
+        category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
+        language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
+        btnSubmit = (ImageButton) view.findViewById(R.id.btnSubmit);
+        btnPlay = (ImageButton) view.findViewById(R.id.btnPlay);
+        btnPause = (ImageButton) view.findViewById(R.id.btnPause);
+        btnStartRecording = (ImageButton) view.findViewById(R.id.btnStartRecording);
+        btnStopRecording = (ImageButton) view.findViewById(R.id.btnStopRecording);
+
+        newPhraseText = (EditText) view.findViewById(R.id.newPhraseText);
+        newCategoryText = (EditText) view.findViewById(R.id.newCategoryText);
+        newLanguageText = (EditText) view.findViewById(R.id.newLanguageText);
+        newLanguageAbbr = (EditText) view.findViewById(R.id.newLanguageAbbr);
+        btnCancelPhrase = (ImageButton) view.findViewById(R.id.cancelPhrase); //save buttons are now Cancel
+        btnCancelCategory = (ImageButton) view.findViewById(R.id.cancelCategory);
+        btnCancelLanguage = (ImageButton) view.findViewById(R.id.cancelLanguage);
+        visualizerView = (VisualizerView) view.findViewById(R.id.visualizer_view);
 
         phrase_spinner_pos = 0;
         category_spinner_pos = 0;
@@ -184,8 +177,7 @@ public class RecordingFragment extends Fragment {
         categorySaved = true;
         languageSaved = true;
         abbrSaved = true;
-        /*//THIS WAS THE CULPRIT OF THE NON DELETING
-        ((EditActivity) getActivity()).loadList();*/
+
         fileSystem = ((EditActivity) getActivity()).fileSystem;
         catList = fileSystem.getInfoList();
 
@@ -195,17 +187,14 @@ public class RecordingFragment extends Fragment {
             addItemsOnLanguageSpinner();
         }
         firstOpen = false;
-
-        //btnPlay.setEnabled(false);
-        //btnSubmit.setEnabled(false);
-        //textPlaceholder.setBackgroundColor(0xFFFFFFFF);
+        
 
         phrase_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 phrase_spinner_pos = pos;
 
-                ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, category_list);
+                ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, category_list);
                 dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 category_spinner.setPrompt("Select Category...");
                 category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
@@ -236,7 +225,7 @@ public class RecordingFragment extends Fragment {
                         List<Object> phraseList = cat.phraseList;
                         for (int i = 0; i < phraseList.size(); i++) {
                             Phrase phr = (Phrase) phraseList.get(i);
-                            if (phr.getPhraseText().equalsIgnoreCase((String)phrase_spinner.getAdapter().getItem(pos))) {
+                            if (phr.getPhraseText().equalsIgnoreCase((String) phrase_spinner.getAdapter().getItem(pos))) {
                                 category = cat;
                                 break;
                             }
@@ -246,11 +235,11 @@ public class RecordingFragment extends Fragment {
                     if (category != null) {
                         for (int i = 1; i < category_spinner.getAdapter().getCount(); i++) {
                             if (category_spinner.getAdapter().getItem(i).toString().equals(category.name)) {
-                                List<String> short_list = new ArrayList<String>();
+                                List<String> short_list = new ArrayList<>();
                                 short_list.add(category.name);
-                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, short_list);
+                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, short_list);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                //category_spinner.setPrompt("Select Category...");
+
 
                                 category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
                                         dataAdapter,
@@ -344,33 +333,25 @@ public class RecordingFragment extends Fragment {
                         finalLangAbbr = newLanguageAbbr.getText().toString();
                     } else {
                         String temp = language_spinner.getSelectedItem().toString();
-                        temp.replace(" ","");
-                        temp.replace("]","");
-                        String delimiter = "\\W";
+                        temp = temp.replace(" ", "");
+                        temp = temp.replace("]", "");
+                        temp = temp.replace('[', '_');
+                        String delimiter = "_";
                         String[] parts = temp.split(delimiter);
                         finalLangName = parts[0];
                         finalLangAbbr = parts[1];
                     }
-                    //ONLY EXISTING ONE IS catname_langname_phrasename.mp3
-                    //finalFilePath = "C:\\Users\\Marc\\Studio Projects\\new\\AddandPlayPhrases\\playphrase\\src\\main\\res\\raw\\" + finalCatName + "_" + finalLangName + "_" + finalPhraseName + ".mp3";
+
 
                     addPhrase(finalPhraseName, finalLangName, finalLangAbbr, finalFilePath, finalCatName);
 
 
-                    /*Toast.makeText(getActivity(),
-                            "OnClickListener : " +
-                                    "\nPhrase Spinner : " + String.valueOf(phrase_spinner.getSelectedItem()) +
-                                    "\nCategory Spinner : " + String.valueOf(category_spinner.getSelectedItem()) +
-                                    "\nLanguage Spinner : " + String.valueOf(language_spinner.getSelectedItem()),
-                            Toast.LENGTH_SHORT).show();*/
                 } else if (phrase_spinner_pos == 0) {
                     snackbar = Snackbar
                             .make(view, "Phrase Not Selected", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "You must select a Phrase, a Category, and a Language",
-                            Toast.LENGTH_SHORT).show();*/
+
                 } else if (category_spinner_pos == 0) {
                     snackbar = Snackbar
                             .make(view, "Category Not Selected", Snackbar.LENGTH_SHORT);
@@ -423,9 +404,7 @@ public class RecordingFragment extends Fragment {
                             .make(view, "PLAYBACK", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "OnClickListener : Recording should PLAYBACK now!",
-                            Toast.LENGTH_SHORT).show();*/
+
 
                     startPlay();
                     btnPlay.setVisibility(View.INVISIBLE);
@@ -436,9 +415,7 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "Cannot playback until recording has stopped!",
-                            Toast.LENGTH_SHORT).show();*/
+
                 }
             }
         });
@@ -451,9 +428,7 @@ public class RecordingFragment extends Fragment {
                             .make(view, "PAUSE PLAYBACK", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "OnClickListener : Recording should PLAYBACK now!",
-                            Toast.LENGTH_SHORT).show();*/
+
 
                     mediaPlayer.pause();
                     btnPause.setVisibility(View.INVISIBLE);
@@ -464,9 +439,7 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "Cannot playback until recording has stopped!",
-                            Toast.LENGTH_SHORT).show();*/
+
                 }
             }
         });
@@ -478,18 +451,15 @@ public class RecordingFragment extends Fragment {
                         .make(view, "Start Recording", Snackbar.LENGTH_SHORT);
 
                 snackbar.show();
-                /*Toast.makeText(getActivity(),
-                        "OnClickListener : Recording should START now!",
-                        Toast.LENGTH_SHORT).show();*/
-                if (mediaPlayer == null) {
-
-                } else if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-                } else {
-                    mediaPlayer.release();
-                    mediaPlayer = null;
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    } else {
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
                 }
 
                 startRecord();
@@ -509,9 +479,7 @@ public class RecordingFragment extends Fragment {
                         .make(view, "Stop Recording", Snackbar.LENGTH_SHORT);
 
                 snackbar.show();
-                /*Toast.makeText(getActivity(),
-                        "OnClickListener : Recording should STOP now!",
-                        Toast.LENGTH_SHORT).show();*/
+
 
                 stopRecord();
 
@@ -536,31 +504,7 @@ public class RecordingFragment extends Fragment {
                 phrase_spinner.setSelection(0);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
-                /*
-                if ((""+newPhraseText.getText()).length() >= 2) {
-                    snackbar = Snackbar
-                            .make( view, "New Phrase Saved", Snackbar.LENGTH_SHORT);
 
-                    snackbar.show();
-                    //Toast.makeText(getActivity(),
-                    //        "OnClickListener : NEW PHRASE: "+newPhraseText.getText()+" should be saved now!",
-                    //        Toast.LENGTH_SHORT).show();
-
-                    addOneItemOnPhraseSpinner("" + newPhraseText.getText());
-                    newPhraseText.setVisibility(View.INVISIBLE);
-                    btnCancelPhrase.setVisibility(View.INVISIBLE);
-                    phraseSaved = true;
-                }
-                else {
-                    snackbar = Snackbar
-                            .make( view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
-
-                    snackbar.show();
-                    //Toast.makeText(getActivity(),
-                    //        "NEW PHRASE must have at least 2 characters!",
-                    //        Toast.LENGTH_SHORT).show();
-                }
-                */
             }
         });
 
@@ -573,31 +517,7 @@ public class RecordingFragment extends Fragment {
                 category_spinner.setSelection(0);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
-                /*
-                if ((""+newCategoryText.getText()).length() >= 2) {
-                    snackbar = Snackbar
-                            .make( view, "New Category Saved", Snackbar.LENGTH_SHORT);
 
-                    snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "OnClickListener : NEW CATEGORY: "+newCategoryText.getText()+" should be saved now!",
-                            Toast.LENGTH_SHORT).show();
-
-                    addOneItemOnCategorySpinner("" + newCategoryText.getText());
-                    newCategoryText.setVisibility(View.INVISIBLE);
-                    btnCancelCategory.setVisibility(View.INVISIBLE);
-                    categorySaved = true;
-                }
-                else {
-                    snackbar = Snackbar
-                            .make( view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
-
-                    snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "NEW CATEGORY must have at least 2 characters!",
-                            Toast.LENGTH_SHORT).show();
-                }
-                */
             }
         });
 
@@ -613,46 +533,7 @@ public class RecordingFragment extends Fragment {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                /*
-                if ((""+newLanguageText.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() >= 2 && (""+newLanguageAbbr.getText()).length() <= 4) {
-                    snackbar = Snackbar
-                            .make( view, "New Language Saved", Snackbar.LENGTH_SHORT);
 
-                    snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
-                                            "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                            Toast.LENGTH_SHORT).show();
-
-                    addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                    newLanguageText.setVisibility(View.INVISIBLE);
-                    newLanguageAbbr.setVisibility(View.INVISIBLE);
-                    btnCancelLanguage.setVisibility(View.INVISIBLE);
-                    languageSaved = true;
-                }
-                else if(!((""+newLanguageText.getText()).length() >= 2)) {
-                    snackbar = Snackbar
-                            .make( view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
-
-                    snackbar.show();
-                    /*Toast.makeText(getActivity(),
-                            "NEW LANGUAGE must have at least 2 characters!\n" +
-                            "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else if(!((""+newLanguageAbbr.getText()).length() >= 2)) {
-                    snackbar = Snackbar
-                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
-
-                    snackbar.show();
-                }
-                else if(!((""+newLanguageAbbr.getText()).length() <= 4)) {
-                    snackbar = Snackbar
-                            .make( view, "Abbreviation Must Have 2-4 Characters", Snackbar.LENGTH_SHORT);
-
-                    snackbar.show();
-                }
-                */
             }
         });
 
@@ -677,9 +558,7 @@ public class RecordingFragment extends Fragment {
 //                                .make(view, "New Phrase Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-                                /*Toast.makeText(getActivity(),
-                                        "OnClickListener : NEW PHRASE: "+newPhraseText.getText()+" should be saved now!",
-                                        Toast.LENGTH_SHORT).show();*/
+
 
                         //addOneItemOnPhraseSpinner("" + newPhraseText.getText());
                         InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -692,9 +571,7 @@ public class RecordingFragment extends Fragment {
                                 .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
-                                /*Toast.makeText(getActivity(),
-                                        "NEW PHRASE must have at least 2 characters!",
-                                        Toast.LENGTH_SHORT).show();*/
+
                     }
                     //}
 
@@ -722,9 +599,7 @@ public class RecordingFragment extends Fragment {
 //                                .make(view, "New Category Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-                                /*Toast.makeText(getActivity(),
-                                        "OnClickListener : NEW CATEGORY: "+newCategoryText.getText()+" should be saved now!",
-                                        Toast.LENGTH_SHORT).show();*/
+
 
                         //addOneItemOnCategorySpinner("" + newCategoryText.getText());
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -737,11 +612,9 @@ public class RecordingFragment extends Fragment {
                                 .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
-                                /*Toast.makeText(getActivity(),
-                                        "NEW CATEGORY must have at least 2 characters!",
-                                        Toast.LENGTH_SHORT).show();*/
+
                     }
-                    //}
+
 
                     handled = true;
                 }
@@ -758,47 +631,27 @@ public class RecordingFragment extends Fragment {
 
                 //hide keyboard and save data
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                    //if (!languageSaved || !abbrSaved) {
-                    if (("" + newLanguageText.getText()).length() >= 2 ) {
+
+                    if (("" + newLanguageText.getText()).length() >= 2) {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-                        /*Toast.makeText(getActivity(),
-                                "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
-                                                "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                                Toast.LENGTH_SHORT).show();*/
 
-                        //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
-                        //newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(newLanguageText.getWindowToken(), 0);
 
 
-                        //newLanguageAbbr.setFocusableInTouchMode(true);
-                        //newLanguageAbbr.requestFocus();
-                        //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        //imm.showSoftInput(newLanguageAbbr, InputMethodManager.SHOW_IMPLICIT);
-
-
-                        //newLanguageText.setVisibility(View.INVISIBLE);
-                        //newLanguageAbbr.setVisibility(View.INVISIBLE);
-                        //btnCancelLanguage.setVisibility(View.INVISIBLE);
                         languageSaved = true;
                     } else if (!(("" + newLanguageText.getText()).length() >= 2)) {
                         snackbar = Snackbar
                                 .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
-                        /*Toast.makeText(getActivity(),
-                                "NEW LANGUAGE must have at least 2 characters!\n" +
-                                "LANGUAGE ABBREVIATION must have between 2 and 4 characters",
-                                Toast.LENGTH_SHORT).show();*/
+
                     }
-                    //}
 
 
                     handled = true;
@@ -818,8 +671,6 @@ public class RecordingFragment extends Fragment {
                 final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(newLanguageAbbr, InputMethodManager.SHOW_IMPLICIT);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
                     //Check if the abbreviation exists for another language
                     String[] tempAbbrArray = new String[abbrList.size()];
@@ -839,13 +690,11 @@ public class RecordingFragment extends Fragment {
 //
 //                        snackbar.show();
 
-                        //addOneItemOnLanguageSpinner("" + newLanguageText.getText(), "" + newLanguageAbbr.getText());
                         newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
                         InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(newLanguageAbbr.getWindowToken(), 0);
-                        //newLanguageText.setVisibility(View.INVISIBLE);
-                        //newLanguageAbbr.setVisibility(View.INVISIBLE);
-                        //btnCancelLanguage.setVisibility(View.INVISIBLE);
+
+
                         languageSaved = true;
                     } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
                         snackbar = Snackbar
@@ -863,7 +712,6 @@ public class RecordingFragment extends Fragment {
 
                         snackbar.show();
                     }
-                    //}
 
 
                     handled = true;
@@ -875,11 +723,11 @@ public class RecordingFragment extends Fragment {
     }
 
     public void addOneItemOnPhraseSpinner(String newPhrase) {
-        phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
+        phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
         phrase_list.add(newPhrase);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //phrase_spinner.setAdapter(dataAdapter);
+
         phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
                 dataAdapter,
                 R.layout.contact_phrase_spinner_row_nothing_selected,
@@ -889,11 +737,11 @@ public class RecordingFragment extends Fragment {
     }
 
     public void addItemsOnPhraseSpinner() {
-        phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
+        phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
 
         phrase_list.clear();
         phrase_list.add("Add New Phrase");
-        //phrase_list.add("Stay in the boat");
+
 
         for (Category cat : catList) {
             List<Object> phraseList = cat.phraseList;
@@ -903,14 +751,14 @@ public class RecordingFragment extends Fragment {
             }
         }
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         phrase_spinner.setPrompt("Select Phrase...");
 
         phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
                 dataAdapter,
                 R.layout.contact_phrase_spinner_row_nothing_selected,
-                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+
                 this.getActivity()));
     }
 
@@ -931,11 +779,11 @@ public class RecordingFragment extends Fragment {
     }
 
     public void resumeSpinners() {
-        phrase_spinner = (Spinner) getView().findViewById(R.id.phrase_spinner);
-        category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
-        language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
+        phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
+        category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
+        language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
 
-        ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
+        ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         phrase_spinner.setPrompt("Select Phrase...");
         phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
@@ -944,7 +792,8 @@ public class RecordingFragment extends Fragment {
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
 
-        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
+        ArrayAdapter<String> dataAdapter2;
+        dataAdapter2 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category_spinner.setPrompt("Select Category...");
         category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
@@ -953,7 +802,7 @@ public class RecordingFragment extends Fragment {
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
 
-        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
+        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
         dataAdapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         language_spinner.setPrompt("Select Language...");
         language_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
@@ -964,9 +813,9 @@ public class RecordingFragment extends Fragment {
     }
 
     public void addOneItemOnCategorySpinner(String newCategory) {
-        category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
+        category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
         category_list.add(newCategory);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //phrase_spinner.setAdapter(dataAdapter);
         category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
@@ -978,16 +827,16 @@ public class RecordingFragment extends Fragment {
     }
 
     public void addItemsOnCategorySpinner() {
-        category_spinner = (Spinner) getView().findViewById(R.id.category_spinner);
+        category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
         category_list.clear();
         category_list.add("Add New Category");
-        //category_list.add("Entering Karaoke Zone");
+
 
         for (Category cat : catList) {
             category_list.add(cat.getCategoryTitle());
         }
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category_spinner.setPrompt("Select Category...");
 
@@ -1000,10 +849,10 @@ public class RecordingFragment extends Fragment {
     }
 
     public void addOneItemOnLanguageSpinner(String newLanguage, String newAbbr) {
-        language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
+        language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
         String langAndAbbr = newLanguage + " [" + newAbbr.toUpperCase() + "]";
         language_list.add(langAndAbbr);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         language_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
@@ -1015,7 +864,7 @@ public class RecordingFragment extends Fragment {
     }
 
     public void addItemsOnLanguageSpinner() {
-        language_spinner = (Spinner) getView().findViewById(R.id.language_spinner);
+        language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
         langList = fileSystem.getLangList().keySet();
         abbrList = fileSystem.getLangList().values();
         String[] tempLangArray = new String[langList.size()];
@@ -1025,22 +874,22 @@ public class RecordingFragment extends Fragment {
         language_list.clear();
 
         language_list.add("Add New Language");
-        //language_list.add("Engrish");
 
-        for (int i=0; i < tempLangArray.length && i < tempAbbrArray.length; i++) {
+
+        for (int i = 0; i < tempLangArray.length && i < tempAbbrArray.length; i++) {
             language_list.add(tempLangArray[i] + " [" + tempAbbrArray[i] + "]");
             abbreviation_list.add(tempAbbrArray[i]);
         }
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         language_spinner.setPrompt("Select Language...");
         //language_spinner.setAdapter(dataAdapter);
         language_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                                      dataAdapter,
-                                      R.layout.contact_language_spinner_row_nothing_selected,
-                                      // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                                      this.getActivity()));
+                dataAdapter,
+                R.layout.contact_language_spinner_row_nothing_selected,
+                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                this.getActivity()));
 
     }
 
@@ -1055,17 +904,7 @@ public class RecordingFragment extends Fragment {
             }
         }
         String uncategorized = "Uncategorized";
-        /*if (category == null)
-        {
-            for (Category cat : catList) {
-                if (cat.getCategoryTitle().equalsIgnoreCase(uncategorized)) {
-                    category = cat;
-                    //phraseExists = true;
-                    break;
-                }
-            }
-        }*/
-        Phrase phr = null;
+
         if (category != null) {
             List<Object> phraseList = category.phraseList;
             for (int i = 0; i < phraseList.size(); i++) {
@@ -1077,7 +916,7 @@ public class RecordingFragment extends Fragment {
             }
         }
 
-        if(phraseExists && phr != null){
+        if (phraseExists && phr != null) {
             cont = false;
             Map<String,String> lang = phr.phraseLanguages;
             if (lang.containsKey(language)) {
@@ -1089,22 +928,15 @@ public class RecordingFragment extends Fragment {
                 final String cName = categoryName;
 
 
-                //TODO get this portion of code working
                 snackbar = Snackbar
-                        .make(getView(), "Continuing will overwrite existing phrase. Continue anyways?", Snackbar.LENGTH_INDEFINITE)
+                        .make(view, "Continuing will overwrite existing phrase. Continue anyways?", Snackbar.LENGTH_INDEFINITE)
                         .setAction("CONTINUE", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-//                                addCategory(finalCatName);
-//                                //((EditActivity) getActivity()).loadList();
-//                                addLanguage(finalLangName, finalLangAbbr);
-//                                //((EditActivity) getActivity()).loadList();
-//                                fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
-//                                Log.d("Recording Fragment", "Added Phrase");
-//                                //((EditActivity) getActivity()).loadList();
-                                ((EditActivity) getActivity()).addPhrase(pName, cName, lName + lAbbr, fPath);
+                                ((EditActivity) getActivity()).addPhrase(pName, cName, lName, fPath);
+//                                getActivity().onBackPressed();
                                 Snackbar snackbar1 = Snackbar
-                                        .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
+                                        .make(view, "Saved!", Snackbar.LENGTH_SHORT);
 
                                 snackbar1.show();
                                 onResume();
@@ -1112,12 +944,12 @@ public class RecordingFragment extends Fragment {
                         })
                         .setCallback(new Snackbar.Callback() {
                             @Override
-                            public void onDismissed(Snackbar snackbar, int event){
+                            public void onDismissed(Snackbar snackbar, int event) {
                                 snackbarShown = false;
                             }
                         });
                 snackbarShown = true;
-                Log.d("Recording Fragment","Phrase already exists");
+                Log.d("Recording Fragment", "Phrase already exists");
 
                 snackbar.show();
             } else {
@@ -1134,19 +966,11 @@ public class RecordingFragment extends Fragment {
 
 
         if (cont) {
-            /*addCategory(finalCatName);
-            ((EditActivity) getActivity()).loadList();
-            addLanguage(finalLangName, finalLangAbbr);
-            ((EditActivity) getActivity()).loadList();
-            //TODO Find out why new languages aren't showing up on Language Pane despite calling addLanguage
-            fileSystem.addPhrase(phraseName, language + abbr.toUpperCase(), filePath, categoryName);
-            Log.d("Recording Fragment", "Added Phrase");
-            ((EditActivity) getActivity()).loadList();*/
             addLanguage(finalLangName, finalLangAbbr);
             ((EditActivity) getActivity()).addPhrase(phraseName, finalCatName, finalLangName, filePath);
             //getActivity().onBackPressed();
             snackbar = Snackbar
-                    .make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
+                    .make(view, "Saved!", Snackbar.LENGTH_SHORT);
 
             snackbar.show();
         }
@@ -1178,7 +1002,7 @@ public class RecordingFragment extends Fragment {
 
             fileSystem.addLanguage(languageName, languageAbbr);
             Log.d("Recording Fragment", "Added Language");
-            //((EditActivity) getActivity()).loadList();
+
             Log.d("After Language Added", "");
         }
     }
@@ -1188,7 +1012,7 @@ public class RecordingFragment extends Fragment {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
-        //mediaRecorder.setAudioEncoder(MediaRecorder.getAudioSourceMax());
+
         mediaRecorder.setAudioEncodingBitRate(128000);
         mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(finalFilePath);
@@ -1211,7 +1035,7 @@ public class RecordingFragment extends Fragment {
 
     private void startPlay() {
         mediaPlayer = new MediaPlayer();
-        try{
+        try {
             mediaPlayer.setDataSource(finalFilePath);
             mediaPlayer.prepare();
             setupVisualizerFxAndUI();
@@ -1264,8 +1088,9 @@ public class RecordingFragment extends Fragment {
 }
 
 
-//
-//Themes -- properties
-//Change XML back to linearlayout inside scrollview
+
+
+
+
 
 

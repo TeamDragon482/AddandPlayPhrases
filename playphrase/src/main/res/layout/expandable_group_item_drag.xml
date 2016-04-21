@@ -3,21 +3,22 @@
     android:id="@+id/recycler_inner_item"
     android:layout_width="match_parent"
     android:layout_height="?listPreferredItemHeight"
+    android:background="#00695c"
     android:clickable="true"
     android:focusable="true"
-    android:padding="8dp"
-    android:background="#00695c"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
     >
     <TextView
         android:id="@+id/category_view"
+        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        style="@style/Base.TextAppearance.AppCompat.Large"
-        android:textColor="#FFFFFF"
-        android:layout_gravity="center_vertical|start"
+        android:layout_gravity="center_vertical|left"
         android:elevation="15dp"
-        />
+        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:textColor="#FFFFFF" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -59,6 +60,13 @@
                 />
         </RelativeLayout>
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="8dp"
+        android:background="#000000" />
 
 
 </FrameLayout>

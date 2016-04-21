@@ -8,20 +8,25 @@ import android.view.ViewGroup;
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<CategoryViewHolder_NoDrag, PhraseViewHolder_NoDrag> {
 
     LayoutInflater mInflater;
     List<ParentListItem> mList;
     PhraseViewHolder_NoDrag.OnItemClickListener mListener;
+    FileAccessor fileSystem;
+    ArrayList<String> currentlySelectedLangs;
 
-    public RecyclerListAdapter_NoDrag(Context context, List<ParentListItem> parentItemList) {
+    public RecyclerListAdapter_NoDrag(Context context, List<ParentListItem> parentItemList, FileAccessor fileSystem, ArrayList<String> selectedLangNames) {
         super(parentItemList);
 
         mInflater = LayoutInflater.from(context);
-
+        this.fileSystem = fileSystem;
         mList = parentItemList;
+        currentlySelectedLangs = selectedLangNames;
 
     }
 
@@ -55,6 +60,26 @@ public class RecyclerListAdapter_NoDrag extends ExpandableRecyclerAdapter<Catego
         Phrase phrase = (Phrase) o;
         phraseViewHolder.setPhrase((Phrase) o);
         phraseViewHolder.mPhraseText.setText(phrase.getPhraseText());
+        String abbrevText = "";
+        Map<String, String> langToAbbrev = fileSystem.getLangList();
+        for (String s : phrase.phraseLanguages.keySet()) {
+            if (langToAbbrev.containsKey(s)) {
+                if (currentlySelectedLangs.size() > 0) {
+                    if (currentlySelectedLangs.contains(s)) {
+                        if (abbrevText.length() == 0) {
+                            abbrevText += langToAbbrev.get(s);
+                        } else
+                            abbrevText += ", " + langToAbbrev.get(s);
+                    }
+                } else {
+                    if (abbrevText.length() == 0) {
+                        abbrevText += langToAbbrev.get(s);
+                    } else
+                        abbrevText += ", " + langToAbbrev.get(s);
+                }
+            }
+        }
+        phraseViewHolder.mAbbrevs.setText(abbrevText);
 
     }
 

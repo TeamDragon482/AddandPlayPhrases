@@ -197,21 +197,8 @@ public class FileAccessor
         File directory = new File(context.getFilesDir().getAbsolutePath() + "/recordings");
         File soundFile = new File(filePath);
         File newName = new File(directory.getAbsolutePath() + "/" + storageFileName + "." + extension);
-        newName.setExecutable(true);
-        newName.setWritable(true);
-        newName.setReadable(true);
 
         directory.setWritable(true);
-
-        Log.d("directory", "Can Write" + directory.canWrite());
-        Log.d("Sound File", "Can Read " + soundFile.canRead());
-        Log.d("Sound File", "Can Write " + soundFile.canWrite());
-        Log.d("Sound File", "Can Execute " + soundFile.canExecute());
-
-        //newname permissions are all false
-        Log.d("Newname", "Can Read " + newName.canRead());
-        Log.d("Newname", "Can Write " + newName.canWrite());
-        Log.d("Newname", "Can Execute " + newName.canExecute());
 
         //TODO no error checking here, might need it.
         if (!soundFile.renameTo(newName)) {
@@ -316,7 +303,7 @@ public class FileAccessor
     public ArrayList<Category> removeCategory(String name) {
         Category category = null;
         for (Category cat : informationList) {
-            if (cat.name.equals(name) && (name != uncategorized))
+            if (cat.name.equals(name) && (!name.equals(uncategorized)))
             {
                 category = cat;
                 break;
