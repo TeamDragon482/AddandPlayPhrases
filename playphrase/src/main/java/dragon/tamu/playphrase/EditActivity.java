@@ -50,7 +50,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        getSupportActionBar().setTitle("Edit Phrases");
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle("Edit Phrases");
 
         listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
@@ -270,28 +271,33 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     public void addPhrase(String phraseText, String catName, String langName, String filePath) {
         int catIndex;
+        boolean categoryAdded = false;
+        boolean phraseExists = false;
         if ((catIndex = containsCategoryName(catName)) == -1) {
+            categoryAdded = true;
             addCategory(catName);
             catIndex = 0;
         }
-        boolean phraseExists = false;
-        for (int i = 0; i < mCategoryList.size(); i++) {
-            Category c = (Category) mCategoryList.get(i);
-            for (int j = 0; j < c.phraseList.size(); j++) {
-                Phrase p = (Phrase) c.phraseList.get(j);
-                if (p.getPhraseText().equals(phraseText)) {
-                    phraseExists = true;
-                    break;
+        if (!categoryAdded) {
+            for (int i = 0; i < mCategoryList.size(); i++) {
+                Category c = (Category) mCategoryList.get(i);
+                for (int j = 0; j < c.phraseList.size(); j++) {
+                    Phrase p = (Phrase) c.phraseList.get(j);
+                    if (p.getPhraseText().equals(phraseText)) {
+                        phraseExists = true;
+                        break;
+                    }
                 }
             }
         }
-        if (!phraseExists) {
-            fileSystem.addPhrase(phraseText, langName, filePath, catName);
-            mAdapter.notifyChildItemInserted(catIndex, 0);
+        Phrase p = fileSystem.addPhrase(phraseText, langName, filePath, catName);
+        if (categoryAdded) {
+            List<Object> temp = (List<Object>) mCategoryList.get(0).getChildItemList();
+            temp.add(p);
         }
-        else
-        {
-            fileSystem.addPhrase(phraseText, langName, filePath, catName);
+        if (!phraseExists) {
+
+            mAdapter.notifyChildItemInserted(catIndex, 0);
         }
 
 
