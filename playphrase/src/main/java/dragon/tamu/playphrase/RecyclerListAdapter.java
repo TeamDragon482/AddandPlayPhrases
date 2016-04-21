@@ -16,6 +16,7 @@ import com.bignerdranch.expandablerecyclerview.Model.ParentWrapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewHolder, PhraseViewHolder> implements ItemTouchHelperAdapter{
 
@@ -23,8 +24,9 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     List<ParentListItem> mList;
     OnStartDragListener mOnStartDragListener;
     Context mContext;
+    FileAccessor mFileSystem;
 
-    public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener) {
+    public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener, FileAccessor fileSystem) {
         super(parentItemList);
 
         mContext = context;
@@ -34,6 +36,8 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         mList = parentItemList;
 
         mOnStartDragListener = listener;
+
+        mFileSystem = fileSystem;
     }
 
     @Override
@@ -77,7 +81,17 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         Phrase phrase = (Phrase) o;
         phraseViewHolder.setPhrase((Phrase) o);
         phraseViewHolder.mPhraseText.setText(phrase.getPhraseText());
-
+        String abbrevText = "";
+        Map<String, String> langToAbbrev = mFileSystem.getLangList();
+        for (String s : phrase.phraseLanguages.keySet()) {
+            if (langToAbbrev.containsKey(s)) {
+                if (abbrevText.length() == 0) {
+                    abbrevText += langToAbbrev.get(s);
+                } else
+                    abbrevText += ", " + langToAbbrev.get(s);
+            }
+        }
+        phraseViewHolder.mAbbrevs.setText(abbrevText);
         phraseViewHolder.mDragIcon.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -87,6 +101,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 return false;
             }
         });
+
 
     }
     public void notifyChildItemAdopted(int fromParentIndex, int toParentIndex, int fromParentSize)

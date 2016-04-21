@@ -8,7 +8,7 @@ import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 
 public class PhraseViewHolder_NoDrag extends ChildViewHolder implements View.OnClickListener {
 
-    public TextView mPhraseText;
+    public TextView mPhraseText, mAbbrevs;
     public Phrase mPhrase;
     public OnItemClickListener mListener;
 
@@ -17,6 +17,7 @@ public class PhraseViewHolder_NoDrag extends ChildViewHolder implements View.OnC
         super(itemView);
 
         mPhraseText = (TextView) itemView.findViewById(R.id.phrase_view);
+        mAbbrevs = (TextView) itemView.findViewById(R.id.phrase_abbrevs);
 
         mListener = listener;
 
