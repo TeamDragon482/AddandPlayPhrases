@@ -193,11 +193,31 @@ public class FileAccessor
         String extension = split[split.length - 1];
 
         String storageFileName = name + language.toUpperCase();
-        File directory = context.getFilesDir();
+        storageFileName = storageFileName.replace(' ', '_');
+        File directory = new File(context.getFilesDir().getAbsolutePath() + "/recordings");
         File soundFile = new File(filePath);
-        File newName = new File(directory, storageFileName + "." + extension);
+        File newName = new File(directory.getAbsolutePath() + "/" + storageFileName + "." + extension);
+        newName.setExecutable(true);
+        newName.setWritable(true);
+        newName.setReadable(true);
+
+        directory.setWritable(true);
+
+        Log.d("directory", "Can Write" + directory.canWrite());
+        Log.d("Sound File", "Can Read " + soundFile.canRead());
+        Log.d("Sound File", "Can Write " + soundFile.canWrite());
+        Log.d("Sound File", "Can Execute " + soundFile.canExecute());
+
+        //newname permissions are all false
+        Log.d("Newname", "Can Read " + newName.canRead());
+        Log.d("Newname", "Can Write " + newName.canWrite());
+        Log.d("Newname", "Can Execute " + newName.canExecute());
+
         //TODO no error checking here, might need it.
-        soundFile.renameTo(newName);
+        if (!soundFile.renameTo(newName)) {
+            Log.d("Rename", "False");
+        } else
+            Log.d("Rename", "True");
 
         Category category = null;
         for (Category cat : informationList)
@@ -234,7 +254,7 @@ public class FileAccessor
             phrase = new Phrase(name);
             category.phraseList.add(phrase);
         }
-        phrase.addLanguage(language, soundFile.getPath());
+        phrase.addLanguage(language, newName.getPath());
 
         saveInfoToFile(informationList);
 

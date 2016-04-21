@@ -9,7 +9,7 @@ import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 
 public class PhraseViewHolder extends ChildViewHolder{
 
-    public TextView mPhraseText;
+    public TextView mPhraseText, mAbbrevs;
     public ImageView mDragIcon;
     public Phrase mPhrase;
 
@@ -18,15 +18,16 @@ public class PhraseViewHolder extends ChildViewHolder{
         super(itemView);
 
         mPhraseText = (TextView) itemView.findViewById(R.id.phrase_view);
+        mAbbrevs = (TextView) itemView.findViewById(R.id.phrase_abbrevs);
         mDragIcon = (ImageView) itemView.findViewById(R.id.handle);
+    }
+
+    public Phrase getPhrase() {
+        return mPhrase;
     }
 
     public void setPhrase(Phrase phrase)
     {
         mPhrase = phrase;
-    }
-    public Phrase getPhrase()
-    {
-        return mPhrase;
     }
 }

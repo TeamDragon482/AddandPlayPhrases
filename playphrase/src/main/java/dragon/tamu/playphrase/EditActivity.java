@@ -236,7 +236,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     public void loadList()
     {
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
-        mAdapter = new RecyclerListAdapter(this, generateList(), this);
+        mAdapter = new RecyclerListAdapter(this, generateList(), this, fileSystem);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(listView);

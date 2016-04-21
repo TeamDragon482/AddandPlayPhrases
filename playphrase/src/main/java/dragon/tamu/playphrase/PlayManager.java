@@ -1,6 +1,5 @@
 package dragon.tamu.playphrase;
 
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import java.io.IOException;
@@ -8,71 +7,112 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener{
+public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
 
     private MediaPlayer mp;
-    private boolean repeat;
+    private boolean repeat, paused;
     private int curPosition;
     private List<String> phraseFiles;
+    private MainActivity.OnPausePlayClickListener listener;
+    private MainActivity.OnStopPlayClickListener stopListener;
 
-    public PlayManager(){
+    public PlayManager() {
         repeat = false;
-        mp.setOnPreparedListener(this);
-        mp.setOnCompletionListener(this);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        paused = false;
     }
 
-    public void toggleRepeat(boolean b)
-    {
-        repeat = b;
+    public boolean toggleRepeat() {
+        repeat = !repeat;
+        return repeat;
     }
 
     public void playPhrase(Phrase p, ArrayList<String> languages) {
-        phraseFiles = new LinkedList<String>();
+        phraseFiles = new LinkedList<>();
         for (int i = 0; i < languages.size(); i++) {
-            if(p.phraseLanguages.containsKey(languages.get(i)))
-                phraseFiles.add(languages.get(i));
+            if (p.phraseLanguages.containsKey(languages.get(i)))
+                phraseFiles.add(p.phraseLanguages.get(languages.get(i)));
         }
         curPosition = 0;
-        playQueue();
         mp = new MediaPlayer();
+        mp.setOnPreparedListener(this);
+        mp.setOnCompletionListener(this);
+        playQueue();
     }
 
-    public void stopPhrase(){
-        mp.stop();
-        mp.release();
-        mp = null;
+    public void stopPhrase() {
+        if (mp != null) {
+            mp.stop();
+            mp.release();
+            mp = null;
+            paused = false;
+        }
+        if (stopListener != null) {
+            stopListener.onStopPlayClick();
+            listener.OnPausePlayClick();
+        }
+    }
+
+    public void setOnPausePlayClickListener(MainActivity.OnPausePlayClickListener listener) {
+        this.listener = listener;
+    }
+
+    public void setOnStopPlayClickListener(MainActivity.OnStopPlayClickListener listener) {
+        stopListener = listener;
     }
 
     private void playQueue() {
-        if(curPosition >= phraseFiles.size())
-            curPosition = 0;
-        try {
-            mp.setDataSource(phraseFiles.get(curPosition));
-            mp.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
-            /* Left out for now because I want error
+        paused = false;
+        if (curPosition >= phraseFiles.size() && !repeat) {
+            stopPhrase();
+        } else {
+            // mp.release();
+            try {
+                mp.setDataSource(phraseFiles.get(curPosition));
+                mp.prepare();
+                mp.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             curPosition++;
-            playQueue();
-             */
         }
+    }
+
+    public void pausePlayer() {
+        if (mp != null && !paused && mp.isPlaying()) {
+            paused = true;
+            mp.pause();
+            if (listener != null)
+                listener.OnPausePlayClick();
+        }
+    }
+
+    public void resumePlayer() {
+        if (paused) {
+            paused = false;
+            mp.start();
+        } else {
+            curPosition = 0;
+            mp.reset();
+            playQueue();
+        }
+        if (listener != null)
+            listener.OnPausePlayClick();
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        mp.start();
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if(curPosition < phraseFiles.size() || repeat)
-        {
-            curPosition++;
-            playQueue();
+        if (mp != null) {
+            mp.stop();
+            mp.reset();
+            paused = false;
         }
-        else{
-            mp.release();
+        if (curPosition >= phraseFiles.size() && repeat) {
+            curPosition = 0;
         }
+        playQueue();
     }
 }

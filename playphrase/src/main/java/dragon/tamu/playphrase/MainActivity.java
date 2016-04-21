@@ -15,16 +15,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
@@ -32,7 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements PhraseViewHolder_NoDrag.OnItemClickListener
 {
 
     //Main FileAccessor for Application
@@ -59,6 +64,21 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private ActionBar mActionBar;
     private ArrayList<ParentListItem> searchList;
+
+    //For playback
+    private PlayManager playManager;
+    private Animation slideUp, slideDown;
+    private ImageButton playButton, stopButton, pauseButton, repeatButton;
+    private RelativeLayout playBackLayout;
+    private TextView playBackText;
+    private boolean playbackVisible;
+    private Runnable hidePlayback = new Runnable() {
+        @Override
+        public void run() {
+            playBackLayout.startAnimation(slideDown);
+            playbackVisible = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,8 +113,7 @@ public class MainActivity extends AppCompatActivity
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mActionBar.setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close)
-        {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View v)
             {
@@ -192,7 +211,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         //Logic for deleting a language
         deleteSelectedButton = (Button) findViewById(R.id.deleted_selected_lang_button);
         deleteSelectedButton.setOnClickListener(new View.OnClickListener() {
@@ -210,6 +228,63 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 adapter.notifyDataSetChanged();
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+
+
+        //Setup for anything having to do with playback
+        playManager = new PlayManager();
+        playManager.setOnPausePlayClickListener(new OnPausePlayClickListener() {
+            @Override
+            public void OnPausePlayClick() {
+                togglePausePlay();
+            }
+        });
+        playManager.setOnStopPlayClickListener(new OnStopPlayClickListener() {
+            @Override
+            public void onStopPlayClick() {
+                playBackLayout.removeCallbacks(hidePlayback);
+                playBackLayout.postDelayed(hidePlayback, 5000);
+            }
+        });
+        playBackLayout = (RelativeLayout) findViewById(R.id.playback_layout);
+        playButton = (ImageButton) findViewById(R.id.play_button);
+        pauseButton = (ImageButton) findViewById(R.id.pause_button);
+        repeatButton = (ImageButton) findViewById(R.id.repeat_button);
+        stopButton = (ImageButton) findViewById(R.id.stop_button);
+        playBackText = (TextView) findViewById(R.id.currently_playing_phrase);
+
+        slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
+        slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+
+        playbackVisible = false;
+
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playManager.resumePlayer();
+            }
+        });
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playManager.pausePlayer();
+            }
+        });
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (playManager.toggleRepeat())
+                    repeatButton.setImageResource(R.drawable.ic_repeat_green_700_48dp);
+                else
+                    repeatButton.setImageResource(R.drawable.ic_repeat_black_48dp);
+            }
+        });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playManager.stopPhrase();
             }
         });
 
@@ -247,7 +322,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-        mListAdapter = new RecyclerListAdapter_NoDrag(this, searchList);
+        mListAdapter = new RecyclerListAdapter_NoDrag(this, searchList, fileSystem, getLangNamesFromConcat(currentlySelectedLang));
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
         mListAdapter.expandAllParents();
         mListAdapter.notifyDataSetChanged();
@@ -280,7 +356,6 @@ public class MainActivity extends AppCompatActivity
     protected void onStart()
     {
         super.onStart();
-
     }
 
     @Override
@@ -297,10 +372,8 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(mListView.getWindowToken(), 0);
     }
 
-
     //Sets up phrases and Categories
-    private void prepareListData()
-    {
+    private void prepareListData() {
         mCategoryList = new ArrayList<>();
         mFullList = new ArrayList<>();
         for (Category cat : fileSystem.getLocalInformationList())
@@ -333,7 +406,8 @@ public class MainActivity extends AppCompatActivity
             if (phraseListFinal.size() > 0)
                 mCategoryList.add(new Category(phraseListFinal, cat.name));
         }
-        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList, fileSystem, getLangNamesFromConcat(currentlySelectedLang));
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
 
     }
@@ -351,8 +425,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPostCreate(Bundle b)
-    {
+    protected void onPostCreate(Bundle b) {
         super.onPostCreate(b);
         mDrawerToggle.syncState();
     }
@@ -366,8 +439,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         mDrawerToggle.onOptionsItemSelected(item);
         switch (item.getItemId())
         {
@@ -392,7 +464,8 @@ public class MainActivity extends AppCompatActivity
             prepareSelectedListData();
         }
         prepareLanguageListData();
-        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList);
+        mListAdapter = new RecyclerListAdapter_NoDrag(this, mCategoryList, fileSystem, getLangNamesFromConcat(currentlySelectedLang));
+        mListAdapter.setOnItemClickListener(this);
         mListView.setAdapter(mListAdapter);
         adapter = new ArrayAdapter<>(this, R.layout.drawer_item, displayLanguages);
         mDrawerList.setAdapter(adapter);
@@ -414,5 +487,53 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+    }
+
+    public ArrayList<String> getselectAbrv() {
+        ArrayList<String> selectedAbrv = new ArrayList<>();
+        for (int i = 0; i < currentlySelectedLang.size(); i++) {
+            selectedAbrv.add(fileSystem.languageList.get(currentlySelectedLang.get(i)));
+        }
+        return selectedAbrv;
+    }
+
+    public void togglePausePlay() {
+        if (playButton.getVisibility() == View.VISIBLE) {
+            playButton.setVisibility(View.INVISIBLE);
+            pauseButton.setVisibility(View.VISIBLE);
+        } else {
+            playButton.setVisibility(View.VISIBLE);
+            pauseButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private ArrayList<String> getLangNamesFromConcat(List<String> langList) {
+        ArrayList<String> langaugeList = new ArrayList<>();
+        for (String s : langList) {
+            langaugeList.add(s.substring(0, s.indexOf('[')));
+        }
+        return langaugeList;
+    }
+    @Override
+    public void onItemCLick(View v, Phrase p) {
+        List<ParentListItem> list = mListAdapter.mList;
+        ArrayList<String> langaugeList = getLangNamesFromConcat(currentlySelectedLang);
+        if (currentlySelectedLang.size() > 0) {
+            playBackText.setText(p.getPhraseText());
+            playManager.playPhrase(p, langaugeList);
+            if (!playbackVisible) {
+                togglePausePlay();
+                playBackLayout.startAnimation(slideUp);
+                playbackVisible = true;
+            }
+        }
+    }
+
+    interface OnPausePlayClickListener {
+        void OnPausePlayClick();
+    }
+
+    interface OnStopPlayClickListener {
+        void onStopPlayClick();
     }
 }
