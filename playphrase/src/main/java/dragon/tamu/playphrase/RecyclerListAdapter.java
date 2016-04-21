@@ -1,9 +1,13 @@
 package dragon.tamu.playphrase;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,6 +28,8 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     OnStartDragListener mOnStartDragListener;
     Context mContext;
 
+    public Fragment renameCategoryFrag;
+
     public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener) {
         super(parentItemList);
 
@@ -39,6 +45,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     @Override
     public CategoryViewHolder onCreateParentViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.expandable_group_item_drag, viewGroup, false);
+
         return new CategoryViewHolder(view);
     }
 
@@ -51,7 +58,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     }
 
     @Override
-    public void onBindParentViewHolder(final CategoryViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
+    public void onBindParentViewHolder(final CategoryViewHolder parentViewHolder, final int position, final ParentListItem parentListItem) {
         Category category = (Category) parentListItem;
         parentViewHolder.setCategory((Category) parentListItem);
         parentViewHolder.mCategoryTitle.setText(category.getCategoryTitle());
@@ -64,6 +71,24 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                     mOnStartDragListener.onStartDrag(parentViewHolder);
 
                 }
+                return false;
+            }
+        });
+
+        parentViewHolder.rename.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                renameCategoryFrag = new RenameCategoryFragment();
+                Bundle args = new Bundle();
+                int originalPos[] = new int[2];
+                v.getLocationOnScreen(originalPos);
+                DisplayMetrics dm = new DisplayMetrics();
+                ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
+                args.putInt("xCoor", originalPos[0]);
+                args.putInt("yCoor", originalPos[1]);
+                args.putString("cat", ((Category) parentListItem).getCategoryTitle());
+                renameCategoryFrag.setArguments(args);
+                ((Activity) mContext).getFragmentManager().beginTransaction().add(R.id.edit_coord_layout, renameCategoryFrag, "cat_rename_frag").addToBackStack(null).commit();
                 return false;
             }
         });
@@ -327,6 +352,10 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             return true;
         }
         return false;
+    }
+
+    public void rename_Category(String origName, String newName) {
+
     }
 
 }
