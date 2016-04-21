@@ -196,8 +196,8 @@ public class RecordingFragment extends Fragment {
         }
         firstOpen = false;
 
-        btnPlay.setEnabled(false);
-        btnSubmit.setEnabled(false);
+        //btnPlay.setEnabled(false);
+        //btnSubmit.setEnabled(false);
         //textPlaceholder.setBackgroundColor(0xFFFFFFFF);
 
         phrase_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -221,6 +221,8 @@ public class RecordingFragment extends Fragment {
 
                     newPhraseText.setFocusableInTouchMode(true);
                     newPhraseText.requestFocus();
+
+                    //TODO doesn't seem to do anything
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
 
@@ -256,6 +258,10 @@ public class RecordingFragment extends Fragment {
                                         // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                                         getActivity()));
                                 category_spinner.setSelection(1);
+
+                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
+
                                 lockEdit = true;
                             }
                         }
@@ -282,10 +288,9 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newCategoryText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelCategory.setVisibility(View.VISIBLE);
-                } else{
-                    //TODO Change phrase list to match selected category (might not be desired)
-
-
+                } else {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
             }
 
@@ -308,6 +313,9 @@ public class RecordingFragment extends Fragment {
                     newLanguageText.requestFocus();
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(newLanguageText, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
             }
 
@@ -1258,7 +1266,6 @@ public class RecordingFragment extends Fragment {
 
 //
 //Themes -- properties
-//Deleting category immediately after it is made (by RecordingFragment) crashes app
 //Change XML back to linearlayout inside scrollview
 
 
