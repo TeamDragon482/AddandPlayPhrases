@@ -1,6 +1,5 @@
 package dragon.tamu.playphrase;
 
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import java.io.IOException;
@@ -28,18 +27,17 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
         phraseFiles = new LinkedList<String>();
         for (int i = 0; i < languages.size(); i++) {
             if(p.phraseLanguages.containsKey(languages.get(i)))
-                phraseFiles.add(languages.get(i));
+                phraseFiles.add(p.phraseLanguages.get(languages.get(i)));
         }
         curPosition = 0;
         mp = new MediaPlayer();
         mp.setOnPreparedListener(this);
         mp.setOnCompletionListener(this);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
         playQueue();
     }
 
     public void stopPhrase(){
-        if (mp!= null) {
+        if (mp != null) {
             mp.stop();
             mp.release();
             mp = null;
@@ -47,23 +45,23 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     private void playQueue() {
-        if(curPosition >= phraseFiles.size() && repeat){
-            curPosition = 0;
-        }
-        else {
+        if (curPosition >= phraseFiles.size() && !repeat) {
             mp.release();
-        }
-        try {
-            mp.setDataSource(phraseFiles.get(curPosition));
-            mp.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            // mp.release();
+            try {
+                mp.setDataSource(phraseFiles.get(curPosition));
+                mp.prepare();
+                mp.start();
+            } catch (IOException e) {
+                e.printStackTrace();
              /* Left out for now because I want error
              curPosition++;
               playQueue();
                */
+            }
+            curPosition++;
         }
-        curPosition++;
     }
 
     @Override

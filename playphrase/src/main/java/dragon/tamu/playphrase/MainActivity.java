@@ -466,9 +466,9 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         });
     }*/
 
-    public ArrayList<String> getselectAbrv(){
+    public ArrayList<String> getselectAbrv() {
         ArrayList<String> selectedAbrv = new ArrayList<>();
-        for(int i = 0; i < currentlySelectedLang.size(); i++){
+        for (int i = 0; i < currentlySelectedLang.size(); i++) {
             selectedAbrv.add(fileSystem.languageList.get(currentlySelectedLang.get(i)));
         }
         return selectedAbrv;
@@ -477,5 +477,12 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
     @Override
     public void onItemCLick(View v, Phrase p) {
         List<ParentListItem> list = mListAdapter.mList;
+        ArrayList<String> langaugeList = new ArrayList<>();
+        for (String s : currentlySelectedLang) {
+            langaugeList.add(s.substring(0, s.indexOf('[')));
+        }
+        if (currentlySelectedLang.size() > 0)
+            playManager.playPhrase(p, langaugeList);
+
     }
 }

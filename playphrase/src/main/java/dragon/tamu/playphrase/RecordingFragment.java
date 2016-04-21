@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +65,7 @@ public class RecordingFragment extends Fragment {
     private String finalPhraseName = "";
     private String finalLangName = "";
     private String finalLangAbbr = "";
-    private String finalFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/temp.mp4";
+    private String finalFilePath;
     private String finalCatName = "";
     private MediaPlayer mediaPlayer = null;
     private MediaRecorder mediaRecorder = null;
@@ -78,14 +79,25 @@ public class RecordingFragment extends Fragment {
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
     // This does not mean the Activity is fully initialized.
+    @TargetApi(23)
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof Activity){
             this.listener = (FragmentActivity) context;
         }
+
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        File f = new File(activity.getFilesDir().getAbsolutePath() + "/recordings");
+        boolean exists = (f.mkdir() || f.isDirectory());
+        Log.d("direcitory exists", exists + "");
+        finalFilePath = f.getAbsolutePath() + "/temp.mp4";
+    }
 
     // This event fires 2nd, before views are created for the fragment
     // The onCreate method is called when the Fragment instance is being created, or re-created.
@@ -881,7 +893,8 @@ public class RecordingFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (isRemoving() && mediaPlayer != null) {
-            if (mVisualizer != null) mVisualizer.release();
+            if (mVisualizer != null)
+                mVisualizer.release();
             mediaPlayer.release();
             mediaPlayer = null;
             if (mediaRecorder != null) {
