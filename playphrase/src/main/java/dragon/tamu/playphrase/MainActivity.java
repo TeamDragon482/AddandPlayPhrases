@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             @Override
             public void onClick(View v) {
                 playManager.resumePlayer();
+                playBackLayout.removeCallbacks(hidePlayback);
             }
         });
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -279,6 +280,9 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
                     repeatButton.setImageResource(R.drawable.ic_repeat_green_700_48dp);
                 else
                     repeatButton.setImageResource(R.drawable.ic_repeat_black_48dp);
+                playBackLayout.removeCallbacks(hidePlayback);
+                if (!playManager.isPlaying())
+                    playBackLayout.postDelayed(hidePlayback, 5000);
             }
         });
         stopButton.setOnClickListener(new View.OnClickListener() {
@@ -516,17 +520,15 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
     }
     @Override
     public void onItemCLick(View v, Phrase p) {
+        playBackLayout.removeCallbacks(hidePlayback);
         List<ParentListItem> list = mListAdapter.mList;
         ArrayList<String> langaugeList = getLangNamesFromConcat(currentlySelectedLang);
-        if (currentlySelectedLang.size() > 0) {
             playBackText.setText(p.getPhraseText());
             playManager.playPhrase(p, langaugeList);
             if (!playbackVisible) {
-                togglePausePlay();
                 playBackLayout.startAnimation(slideUp);
                 playbackVisible = true;
             }
-        }
     }
 
     interface OnPausePlayClickListener {

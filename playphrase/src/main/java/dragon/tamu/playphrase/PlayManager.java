@@ -27,16 +27,37 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     public void playPhrase(Phrase p, ArrayList<String> languages) {
+
+        if (mp != null) {
+            mp.stop();
+            mp.reset();
+            if (paused && listener != null)
+                listener.OnPausePlayClick();
+        } else {
+            if (listener != null)
+                listener.OnPausePlayClick();
+            mp = new MediaPlayer();
+            mp.setOnPreparedListener(this);
+            mp.setOnCompletionListener(this);
+        }
         phraseFiles = new LinkedList<>();
-        for (int i = 0; i < languages.size(); i++) {
-            if (p.phraseLanguages.containsKey(languages.get(i)))
-                phraseFiles.add(p.phraseLanguages.get(languages.get(i)));
+        if (languages.isEmpty()) {
+            for (String s : p.phraseLanguages.keySet()) {
+                phraseFiles.add(p.phraseLanguages.get(s));
+            }
+        } else {
+            for (int i = 0; i < languages.size(); i++) {
+                if (p.phraseLanguages.containsKey(languages.get(i)))
+                    phraseFiles.add(p.phraseLanguages.get(languages.get(i)));
+            }
         }
         curPosition = 0;
-        mp = new MediaPlayer();
-        mp.setOnPreparedListener(this);
-        mp.setOnCompletionListener(this);
         playQueue();
+
+    }
+
+    public boolean isPlaying() {
+        return mp != null && mp.isPlaying();
     }
 
     public void stopPhrase() {
@@ -44,11 +65,13 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
             mp.stop();
             mp.release();
             mp = null;
+            if (listener != null && !paused)
+                listener.OnPausePlayClick();
             paused = false;
+
         }
         if (stopListener != null) {
             stopListener.onStopPlayClick();
-            listener.OnPausePlayClick();
         }
     }
 
@@ -90,9 +113,15 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
         if (paused) {
             paused = false;
             mp.start();
-        } else {
+        } else if (mp != null) {
             curPosition = 0;
             mp.reset();
+            playQueue();
+        } else {
+            curPosition = 0;
+            mp = new MediaPlayer();
+            mp.setOnPreparedListener(this);
+            mp.setOnCompletionListener(this);
             playQueue();
         }
         if (listener != null)
