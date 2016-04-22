@@ -321,9 +321,12 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3)) && !abbrExists)
-                {
 
+                String pattern = "(\\s+)";
+                String abbreviation = newLanguageAbbr.getText().toString().toUpperCase().replaceAll(pattern, "");
+
+                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && abbreviation.length() >= 2 && abbreviation.length() <= 3)) && !abbrExists)
+                {
                     //Establish values to be saved and then call addPhrase
                     if (phrase_spinner_pos == 1) {
                         finalPhraseName = newPhraseText.getText().toString();
@@ -337,7 +340,7 @@ public class RecordingFragment extends Fragment {
                     }
                     if (language_spinner_pos == 1) {
                         finalLangName = newLanguageText.getText().toString();
-                        finalLangAbbr = newLanguageAbbr.getText().toString();
+                        finalLangAbbr = abbreviation;
                     } else {
                         String temp = language_spinner.getSelectedItem().toString();
                         temp = temp.replace(" ", "");
@@ -403,7 +406,7 @@ public class RecordingFragment extends Fragment {
 
                     snackbar.show();
                 }
-                else if (!(("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3))
+                else if (!(abbreviation.length() >= 2 && abbreviation.length() <= 3))
                 {
                     snackbar = Snackbar
                             .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
@@ -694,9 +697,11 @@ public class RecordingFragment extends Fragment {
                     String[] tempAbbrArray = new String[abbrList.size()];
                     tempAbbrArray = abbrList.toArray(tempAbbrArray);
                     abbrExists = false;
+                    String pattern = "(\\s+)";
+                    String abbrev = newLanguageAbbr.getText().toString().toUpperCase().replaceAll(pattern, "");
                     for (int i = 0; i < tempAbbrArray.length; i++)
                     {
-                        if (newLanguageAbbr.getText().toString().equalsIgnoreCase(tempAbbrArray[i]))
+                        if (abbrev.equalsIgnoreCase(tempAbbrArray[i]))
                         {
                             abbrExists = true;
                             break;
@@ -704,26 +709,26 @@ public class RecordingFragment extends Fragment {
                     }
 
                     //if (!languageSaved || !abbrSaved) {
-                    if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3 && !abbrExists)
+                    if (abbrev.length() >= 2 && abbrev.length() <= 3 && !abbrExists)
                     {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
 
-                        newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+                        newLanguageAbbr.setText(abbrev);
                         InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(newLanguageAbbr.getWindowToken(), 0);
 
 
                         languageSaved = true;
-                    } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
+                    } else if (!(abbrev.length() >= 2)) {
                         snackbar = Snackbar
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
                     }
-                    else if (!(("" + newLanguageAbbr.getText()).length() <= 3))
+                    else if (!((abbrev).length() <= 3))
                     {
                         snackbar = Snackbar
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
