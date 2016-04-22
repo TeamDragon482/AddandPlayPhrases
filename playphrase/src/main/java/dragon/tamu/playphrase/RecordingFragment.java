@@ -50,6 +50,7 @@ public class RecordingFragment extends Fragment {
     private List<String> phrase_list = new ArrayList<>();
     private List<String> category_list = new ArrayList<>();
     private List<String> language_list = new ArrayList<>();
+    private List<String> abbreviation_list = new ArrayList<>();
     private ArrayList<Category> catList = new ArrayList<>();
     private Set<String> langList;
     private Collection<String> abbrList;
@@ -71,6 +72,7 @@ public class RecordingFragment extends Fragment {
     private Boolean snackbarShown = false;
     private Boolean lockEdit = false;
     private Boolean abbrExists = false;
+    private Phrase phr = null;
     //For visualization
     private VisualizerView visualizerView;
 
@@ -782,6 +784,13 @@ public class RecordingFragment extends Fragment {
         phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
         category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
         language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
+        newPhraseText.setVisibility(View.INVISIBLE);
+        newCategoryText.setVisibility(View.INVISIBLE);
+        newLanguageText.setVisibility(View.INVISIBLE);
+        newLanguageAbbr.setVisibility(View.INVISIBLE);
+        btnCancelPhrase.setVisibility(View.INVISIBLE);
+        btnCancelCategory.setVisibility(View.INVISIBLE);
+        btnCancelLanguage.setVisibility(View.INVISIBLE);
 
         ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -810,6 +819,10 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_language_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
+
+        phrase_spinner.setSelection(0);
+        category_spinner.setSelection(0);
+        language_spinner.setSelection(0);
     }
 
     public void addOneItemOnCategorySpinner(String newCategory) {
@@ -934,12 +947,12 @@ public class RecordingFragment extends Fragment {
                             @Override
                             public void onClick(View view) {
                                 ((EditActivity) getActivity()).addPhrase(pName, cName, lName, fPath);
-//                                getActivity().onBackPressed();
+                                onResume();
                                 Snackbar snackbar1 = Snackbar
                                         .make(view, "Saved!", Snackbar.LENGTH_SHORT);
 
                                 snackbar1.show();
-                                onResume();
+                                //getActivity().onBackPressed();
                             }
                         })
                         .setCallback(new Snackbar.Callback() {
@@ -968,11 +981,12 @@ public class RecordingFragment extends Fragment {
         if (cont) {
             addLanguage(finalLangName, finalLangAbbr);
             ((EditActivity) getActivity()).addPhrase(phraseName, finalCatName, finalLangName, filePath);
-            //getActivity().onBackPressed();
+            onResume();
             snackbar = Snackbar
                     .make(view, "Saved!", Snackbar.LENGTH_SHORT);
 
             snackbar.show();
+            //getActivity().onBackPressed();
         }
     }
 

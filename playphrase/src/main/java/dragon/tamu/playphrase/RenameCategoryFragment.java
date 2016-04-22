@@ -142,6 +142,7 @@ public class RenameCategoryFragment extends Fragment
     {
         ((EditActivity) getActivity()).renameCategory(oldTitle, newTitle);
         Log.d("Rename Category frag", "Renamed Category");
+
         getActivity().onBackPressed();
 
     }
