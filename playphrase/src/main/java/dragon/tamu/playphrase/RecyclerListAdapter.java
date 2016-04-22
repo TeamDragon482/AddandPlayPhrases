@@ -29,6 +29,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     OnStartDragListener mOnStartDragListener;
     Context mContext;
     FileAccessor mFileSystem;
+    EditActivity.RenameCategoryClickListener mListener;
 
     public Fragment renameCategoryFrag;
 
@@ -49,6 +50,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     @Override
     public CategoryViewHolder onCreateParentViewHolder(ViewGroup viewGroup) {
         View view = mInflater.inflate(R.layout.expandable_group_item_drag, viewGroup, false);
+
         return new CategoryViewHolder(view);
     }
 
@@ -78,9 +80,11 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 return false;
             }
         });
-
-        parentViewHolder.rename.setOnTouchListener(new View.OnTouchListener()
-        {
+        if (category.getCategoryTitle().equalsIgnoreCase("Uncategorized")) {
+            parentViewHolder.rename.setVisibility(View.GONE);
+            parentViewHolder.arrow.setVisibility(View.VISIBLE);
+        }
+        parentViewHolder.rename.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event)
             {
@@ -95,6 +99,9 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 args.putString("cat", ((Category) parentListItem).getCategoryTitle());
                 renameCategoryFrag.setArguments(args);
                 ((Activity) mContext).getFragmentManager().beginTransaction().add(R.id.edit_coord_layout, renameCategoryFrag, "cat_rename_frag").addToBackStack(null).commit();
+                if (mListener != null) {
+                    mListener.onRenameCategoryClick();
+                }
                 return false;
             }
         });
@@ -315,6 +322,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                     }
                 });
         snackbar.show();
+
         return onDismiss(viewHolder);
     }
 
@@ -369,4 +377,9 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         }
         return false;
     }
+
+    public void setRenameCategoryClickListener(EditActivity.RenameCategoryClickListener listener) {
+        mListener = listener;
+    }
+
 }

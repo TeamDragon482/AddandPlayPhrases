@@ -72,6 +72,7 @@ public class RecordingFragment extends Fragment {
     private Boolean snackbarShown = false;
     private Boolean lockEdit = false;
     private Boolean abbrExists = false;
+    private Phrase phr = null;
     //For visualization
     private VisualizerView visualizerView;
 
@@ -189,6 +190,7 @@ public class RecordingFragment extends Fragment {
         }
         firstOpen = false;
 
+
         phrase_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
@@ -277,9 +279,7 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newCategoryText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelCategory.setVisibility(View.VISIBLE);
-                }
-                else
-                {
+                } else {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
@@ -393,9 +393,7 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                }
-                else if (!(("" + newLanguageText.getText()).length() >= 2) && language_spinner_pos == 1)
-                {
+                } else if (!(("" + newLanguageText.getText()).length() >= 2) && language_spinner_pos == 1) {
                     snackbar = Snackbar
                             .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
@@ -573,9 +571,7 @@ public class RecordingFragment extends Fragment {
 //                                .make(view, "New Phrase Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-                                /*Toast.makeText(getActivity(),
-                                        "OnClickListener : NEW PHRASE: "+newPhraseText.getText()+" should be saved now!",
-                                        Toast.LENGTH_SHORT).show();*/
+
 
                         //addOneItemOnPhraseSpinner("" + newPhraseText.getText());
                         InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -616,9 +612,7 @@ public class RecordingFragment extends Fragment {
 //                                .make(view, "New Category Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-                                /*Toast.makeText(getActivity(),
-                                        "OnClickListener : NEW CATEGORY: "+newCategoryText.getText()+" should be saved now!",
-                                        Toast.LENGTH_SHORT).show();*/
+
 
                         //addOneItemOnCategorySpinner("" + newCategoryText.getText());
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -651,17 +645,12 @@ public class RecordingFragment extends Fragment {
                 //hide keyboard and save data
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                    //if (!languageSaved || !abbrSaved) {
-                    if (("" + newLanguageText.getText()).length() >= 2)
-                    {
+
+                    if (("" + newLanguageText.getText()).length() >= 2) {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-                        /*Toast.makeText(getActivity(),
-                                "OnClickListener : NEW LANGUAGE: "+newLanguageText.getText()+ '\n' +
-                                                "with ABBR: "+newLanguageAbbr.getText()+" should be saved now!",
-                                Toast.LENGTH_SHORT).show();*/
 
 
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -716,7 +705,6 @@ public class RecordingFragment extends Fragment {
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
-
 
                         newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
                         InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -814,6 +802,13 @@ public class RecordingFragment extends Fragment {
         phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
         category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
         language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
+        newPhraseText.setVisibility(View.INVISIBLE);
+        newCategoryText.setVisibility(View.INVISIBLE);
+        newLanguageText.setVisibility(View.INVISIBLE);
+        newLanguageAbbr.setVisibility(View.INVISIBLE);
+        btnCancelPhrase.setVisibility(View.INVISIBLE);
+        btnCancelCategory.setVisibility(View.INVISIBLE);
+        btnCancelLanguage.setVisibility(View.INVISIBLE);
 
         ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -842,6 +837,10 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_language_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
+
+        phrase_spinner.setSelection(0);
+        category_spinner.setSelection(0);
+        language_spinner.setSelection(0);
     }
 
     public void addOneItemOnCategorySpinner(String newCategory) {
@@ -936,17 +935,7 @@ public class RecordingFragment extends Fragment {
             }
         }
         String uncategorized = "Uncategorized";
-        /*if (category == null)
-        {
-            for (Category cat : catList) {
-                if (cat.getCategoryTitle().equalsIgnoreCase(uncategorized)) {
-                    category = cat;
-                    //phraseExists = true;
-                    break;
-                }
-            }
-        }*/
-        Phrase phr = null;
+
         if (category != null) {
             List<Object> phraseList = category.phraseList;
             for (int i = 0; i < phraseList.size(); i++) {
@@ -958,10 +947,9 @@ public class RecordingFragment extends Fragment {
             }
         }
 
-        if (phraseExists && phr != null)
-        {
+        if (phraseExists && phr != null) {
             cont = false;
-            Map<String, String> lang = phr.phraseLanguages;
+            Map<String,String> lang = phr.phraseLanguages;
             if (lang.containsKey(language)) {
                 //Then phrase / language combination exists
                 final String pName = phraseName;
@@ -976,19 +964,13 @@ public class RecordingFragment extends Fragment {
                         .setAction("CONTINUE", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-//                                addCategory(finalCatName);
-//                                //((EditActivity) getActivity()).loadList();
-//                                addLanguage(finalLangName, finalLangAbbr);
-//                                //((EditActivity) getActivity()).loadList();
-//                                fileSystem.addPhrase(pName, lName + lAbbr, fPath, cName);
-//                                Log.d("Recording Fragment", "Added Phrase");
-//                                //((EditActivity) getActivity()).loadList();
-                                ((EditActivity) getActivity()).addPhrase(pName, cName, lName + lAbbr, fPath);
+                                ((EditActivity) getActivity()).addPhrase(pName, cName, lName, fPath);
+                                onResume();
                                 Snackbar snackbar1 = Snackbar
                                         .make(view, "Saved!", Snackbar.LENGTH_SHORT);
 
                                 snackbar1.show();
-                                onResume();
+                                //getActivity().onBackPressed();
                             }
                         })
                         .setCallback(new Snackbar.Callback() {
@@ -1017,11 +999,12 @@ public class RecordingFragment extends Fragment {
         if (cont) {
             addLanguage(finalLangName, finalLangAbbr);
             ((EditActivity) getActivity()).addPhrase(phraseName, finalCatName, finalLangName, filePath);
-            //getActivity().onBackPressed();
+            onResume();
             snackbar = Snackbar
                     .make(view, "Saved!", Snackbar.LENGTH_SHORT);
 
             snackbar.show();
+            //getActivity().onBackPressed();
         }
     }
 
@@ -1137,8 +1120,9 @@ public class RecordingFragment extends Fragment {
 }
 
 
-//
-//Themes -- properties
-//Change XML back to linearlayout inside scrollview
+
+
+
+
 
 
