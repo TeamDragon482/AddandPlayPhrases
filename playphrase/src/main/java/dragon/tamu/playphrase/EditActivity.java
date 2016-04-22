@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
@@ -136,7 +135,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             imm.hideSoftInputFromWindow(maskView.getWindowToken(), 0);
             fab.show();
         }
-        else {
+        else
+        {
             super.onBackPressed();
         }
     }
@@ -243,9 +243,11 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
         mAdapter = new RecyclerListAdapter(this, generateList(), this, fileSystem);
-        mAdapter.setRenameCategoryClickListener(new RenameCategoryClickListener() {
+        mAdapter.setRenameCategoryClickListener(new RenameCategoryClickListener()
+        {
             @Override
-            public void onRenameCategoryClick() {
+            public void onRenameCategoryClick()
+            {
                 fab.hide();
                 maskView.setVisibility(View.VISIBLE);
             }
@@ -273,10 +275,13 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    public void renameCategory(String oldCatName, String newCatName) {
+    public void renameCategory(String oldCatName, String newCatName)
+    {
         Category cat = null;
-        for (int i = 0; i < mCategoryList.size(); i++) {
-            if (((Category) mCategoryList.get(i)).getCategoryTitle().equals(oldCatName)) {
+        for (int i = 0; i < mCategoryList.size(); i++)
+        {
+            if (((Category) mCategoryList.get(i)).getCategoryTitle().equals(oldCatName))
+            {
                 ((Category) mCategoryList.get(i)).setCategoryTitle(newCatName);
                 mAdapter.notifyParentItemChanged(i);
                 break;
@@ -328,7 +333,8 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    public interface RenameCategoryClickListener {
+    public interface RenameCategoryClickListener
+    {
 
         void onRenameCategoryClick();
     }

@@ -279,7 +279,9 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newCategoryText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelCategory.setVisibility(View.VISIBLE);
-                } else {
+                }
+                else
+                {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
@@ -393,7 +395,9 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                } else if (!(("" + newLanguageText.getText()).length() >= 2) && language_spinner_pos == 1) {
+                }
+                else if (!(("" + newLanguageText.getText()).length() >= 2) && language_spinner_pos == 1)
+                {
                     snackbar = Snackbar
                             .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
@@ -646,7 +650,8 @@ public class RecordingFragment extends Fragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
 
-                    if (("" + newLanguageText.getText()).length() >= 2) {
+                    if (("" + newLanguageText.getText()).length() >= 2)
+                    {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
@@ -947,9 +952,10 @@ public class RecordingFragment extends Fragment {
             }
         }
 
-        if (phraseExists && phr != null) {
+        if (phraseExists && phr != null)
+        {
             cont = false;
-            Map<String,String> lang = phr.phraseLanguages;
+            Map<String, String> lang = phr.phraseLanguages;
             if (lang.containsKey(language)) {
                 //Then phrase / language combination exists
                 final String pName = phraseName;
