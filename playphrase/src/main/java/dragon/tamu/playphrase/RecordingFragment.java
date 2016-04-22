@@ -277,7 +277,9 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newCategoryText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelCategory.setVisibility(View.VISIBLE);
-                } else {
+                }
+                else
+                {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
@@ -302,7 +304,9 @@ public class RecordingFragment extends Fragment {
                     newLanguageText.requestFocus();
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(newLanguageText, InputMethodManager.SHOW_IMPLICIT);
-                } else {
+                }
+                else
+                {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
@@ -315,7 +319,8 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3)) && !abbrExists) {
+                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3)) && !abbrExists)
+                {
 
                     //Establish values to be saved and then call addPhrase
                     if (phrase_spinner_pos == 1) {
@@ -367,22 +372,30 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Finish Recording First", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                } else if (abbrExists) {
+                }
+                else if (abbrExists)
+                {
                     snackbar = Snackbar
                             .make(view, "Abbreviation Already Exists", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                } else if (!(("" + newPhraseText.getText()).length() >= 2) && phrase_spinner_pos == 1) {
+                }
+                else if (!(("" + newPhraseText.getText()).length() >= 2) && phrase_spinner_pos == 1)
+                {
                     snackbar = Snackbar
                             .make(view, "Phrase Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                } else if (!(("" + newCategoryText.getText()).length() >= 2) && category_spinner_pos == 1 && !lockEdit) {
+                }
+                else if (!(("" + newCategoryText.getText()).length() >= 2) && category_spinner_pos == 1 && !lockEdit)
+                {
                     snackbar = Snackbar
                             .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                } else if (!(("" + newLanguageText.getText()).length() >= 2) && language_spinner_pos == 1) {
+                }
+                else if (!(("" + newLanguageText.getText()).length() >= 2) && language_spinner_pos == 1)
+                {
                     snackbar = Snackbar
                             .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
@@ -639,7 +652,8 @@ public class RecordingFragment extends Fragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
                     //if (!languageSaved || !abbrSaved) {
-                    if (("" + newLanguageText.getText()).length() >= 2 ) {
+                    if (("" + newLanguageText.getText()).length() >= 2)
+                    {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
@@ -686,15 +700,18 @@ public class RecordingFragment extends Fragment {
                     String[] tempAbbrArray = new String[abbrList.size()];
                     tempAbbrArray = abbrList.toArray(tempAbbrArray);
                     abbrExists = false;
-                    for (int i=0; i < tempAbbrArray.length; i++) {
-                        if (newLanguageAbbr.getText().toString().equalsIgnoreCase(tempAbbrArray[i])) {
+                    for (int i = 0; i < tempAbbrArray.length; i++)
+                    {
+                        if (newLanguageAbbr.getText().toString().equalsIgnoreCase(tempAbbrArray[i]))
+                        {
                             abbrExists = true;
                             break;
                         }
                     }
 
                     //if (!languageSaved || !abbrSaved) {
-                    if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3 && !abbrExists) {
+                    if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3 && !abbrExists)
+                    {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
@@ -719,7 +736,9 @@ public class RecordingFragment extends Fragment {
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
-                    } else if (abbrExists) {
+                    }
+                    else if (abbrExists)
+                    {
                         snackbar = Snackbar
                                 .make(view, "Abbreviation Already Exists", Snackbar.LENGTH_SHORT);
 
@@ -939,9 +958,10 @@ public class RecordingFragment extends Fragment {
             }
         }
 
-        if(phraseExists && phr != null){
+        if (phraseExists && phr != null)
+        {
             cont = false;
-            Map<String,String> lang = phr.phraseLanguages;
+            Map<String, String> lang = phr.phraseLanguages;
             if (lang.containsKey(language)) {
                 //Then phrase / language combination exists
                 final String pName = phraseName;

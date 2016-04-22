@@ -61,7 +61,8 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     }
 
     @Override
-    public void onBindParentViewHolder(final CategoryViewHolder parentViewHolder, final int position, final ParentListItem parentListItem) {
+    public void onBindParentViewHolder(final CategoryViewHolder parentViewHolder, final int position, final ParentListItem parentListItem)
+    {
         Category category = (Category) parentListItem;
         parentViewHolder.setCategory((Category) parentListItem);
         parentViewHolder.mCategoryTitle.setText(category.getCategoryTitle());
@@ -78,9 +79,11 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
         });
 
-        parentViewHolder.rename.setOnTouchListener(new View.OnTouchListener() {
+        parentViewHolder.rename.setOnTouchListener(new View.OnTouchListener()
+        {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public boolean onTouch(View v, MotionEvent event)
+            {
                 renameCategoryFrag = new RenameCategoryFragment();
                 Bundle args = new Bundle();
                 int originalPos[] = new int[2];

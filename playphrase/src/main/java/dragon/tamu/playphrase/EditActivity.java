@@ -260,9 +260,11 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    public void renameCategory(String oldCatName, String newCatName) {
+    public void renameCategory(String oldCatName, String newCatName)
+    {
         Category cat = null;
-        for (int i = 0; i < mCategoryList.size(); i++) {
+        for (int i = 0; i < mCategoryList.size(); i++)
+        {
             if (((Category) mCategoryList.get(i)).getCategoryTitle().equals(oldCatName))
                 cat = (Category) mCategoryList.get(i);
             break;
