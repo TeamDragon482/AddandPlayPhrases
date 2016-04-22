@@ -11,6 +11,8 @@ public class CategoryViewHolder extends ParentViewHolder
     public Category mCategory;
     public TextView mCategoryTitle;
     public ImageView handle;
+    public ImageView rename;
+    public ImageView arrow;
 
     public CategoryViewHolder(View itemView)
     {
@@ -18,6 +20,10 @@ public class CategoryViewHolder extends ParentViewHolder
 
         mCategoryTitle = (TextView) itemView.findViewById(R.id.category_view);
         handle = (ImageView) itemView.findViewById(R.id.handle);
+        rename = (ImageView) itemView.findViewById(R.id.category_name_edit_pencil);
+        rename.setVisibility(View.VISIBLE);
+        arrow = (ImageView) itemView.findViewById(R.id.parent_list_item_expand_arrow);
+        arrow.setVisibility(View.INVISIBLE);
     }
     public void setCategory(Category category)
     {
@@ -32,4 +38,5 @@ public class CategoryViewHolder extends ParentViewHolder
     {
         return mCategory;
     }
+
 }
