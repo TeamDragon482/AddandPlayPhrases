@@ -20,16 +20,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 /**
- * Created by Elizabeth on 4/12/2016.
- * Meant to be used for inputting data on category.
+ * Created by Marc on 4/21/2016.
  */
-public class AddCategoryFragment extends Fragment
+public class RenameCategoryFragment extends Fragment
 {
 
     FragmentActivity listener;
     FileAccessor fileSystem;
     private TextView catText;
     private EditText categoryName;
+    private String oldName;
+    private String newName;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -95,8 +96,9 @@ public class AddCategoryFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
+        fileSystem = ((EditActivity) getActivity()).fileSystem;
+
         //catText = (TextView) getView().findViewById(R.id.cat_text);
-        //TODO add hint text "New Category"
         categoryName = (EditText) getView().findViewById(R.id.category_name);
 
         categoryName.setOnEditorActionListener(new TextView.OnEditorActionListener()
@@ -107,7 +109,11 @@ public class AddCategoryFragment extends Fragment
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                 {
-                    addCategory(categoryName.getText().toString());
+                    //TODO oldName = ??? HOW TO GET FROM RECYCLER LIST ADAPTER
+                    Bundle ofJoy = getArguments();
+                    oldName = ofJoy.getString("cat");
+                    newName = categoryName.getText().toString();
+                    renameCategory(oldName, newName);
 
                     // hide keyboard
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -132,10 +138,10 @@ public class AddCategoryFragment extends Fragment
         super.onResume();
     }
 
-    public void addCategory(String catName)
+    public void renameCategory(String oldTitle, String newTitle)
     {
-        ((EditActivity) getActivity()).addCategory(catName);
-        Log.d("Add Category fragment", "Added Category");
+        ((EditActivity) getActivity()).renameCategory(oldTitle, newTitle);
+        Log.d("Rename Category frag", "Renamed Category");
         getActivity().onBackPressed();
 
     }
