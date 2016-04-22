@@ -305,7 +305,8 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3))) {
+                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3)))
+                {
 
                     //Establish values to be saved and then call addPhrase
                     if (phrase_spinner_pos == 1) {
@@ -372,7 +373,9 @@ public class RecordingFragment extends Fragment {
                             .make(view, "Language Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
-                } else if (!(("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3)) {
+                }
+                else if (!(("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3))
+                {
                     snackbar = Snackbar
                             .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
 
@@ -678,7 +681,9 @@ public class RecordingFragment extends Fragment {
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
-                    } else if (!(("" + newLanguageAbbr.getText()).length() <= 3)) {
+                    }
+                    else if (!(("" + newLanguageAbbr.getText()).length() <= 3))
+                    {
                         snackbar = Snackbar
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
 

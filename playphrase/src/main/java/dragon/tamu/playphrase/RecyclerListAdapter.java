@@ -26,6 +26,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
     Context mContext;
     FileAccessor mFileSystem;
 
+
     public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener, FileAccessor fileSystem) {
         super(parentItemList);
 
@@ -261,7 +262,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             int fromPosition = viewHolder.getAdapterPosition();
             int parentIndex = -1;
             int parentListIndex = 0;
-            List<?> list = null;
+            List<?> list;
             for (int i = 0; i < mList.size(); i++)
             {
                 list = mList.get(i).getChildItemList();
@@ -287,8 +288,8 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
 
                     }
                 });
-        snackbar.show();
 
+        snackbar.show();
         return onDismiss(viewHolder);
     }
 
@@ -343,5 +344,4 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         }
         return false;
     }
-
 }

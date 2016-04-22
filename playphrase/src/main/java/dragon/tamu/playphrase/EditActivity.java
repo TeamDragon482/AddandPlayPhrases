@@ -189,7 +189,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     public void animateFAB()
     {
-
         if (isFabOpen)
         {
             fab.startAnimation(rotate_backward);
@@ -302,6 +301,5 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
 
     }
-
 
 }
