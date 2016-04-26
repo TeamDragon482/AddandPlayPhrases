@@ -13,4 +13,13 @@
         <item name="colorButtonNormal">@color/colorPrimary</item>
     </style>
 
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">#000000</item>
+        <!-- Used for the background -->
+        <item name="android:background">@android:color/background_light</item>
+    </style>
+
 </resources>
