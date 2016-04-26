@@ -343,6 +343,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             List<Object> list = (List<Object>) mList.get(position).getChildItemList();
             list.add(0, ((PhraseViewHolder) viewHolder).getPhrase());
             notifyChildItemInserted(position, 0);
+            notifyParentItemChanged(position);
         }
     }
 
@@ -390,6 +391,8 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
             list.remove(fromPosition - 1 - parentIndex);
             notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
+            if (mList.get(parentListIndex).getChildItemList().size() == 0)
+                notifyParentItemChanged(parentListIndex);
             ((EditActivity) mContext).saveList();
             return true;
         }

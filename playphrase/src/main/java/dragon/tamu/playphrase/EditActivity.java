@@ -115,10 +115,11 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         });
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            fab.setVisibility(View.INVISIBLE);
+
             int permissionCheck = ContextCompat.checkSelfPermission(this,
                     Manifest.permission.RECORD_AUDIO);
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                fab.setVisibility(View.INVISIBLE);
                 requestPermissions(
                         new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_RECORD_REQUEST);
             }
@@ -354,6 +355,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         if (!phraseExists) {
 
             mAdapter.notifyChildItemInserted(catIndex, 0);
+            mAdapter.notifyParentItemChanged(catIndex);
         }
 
 
