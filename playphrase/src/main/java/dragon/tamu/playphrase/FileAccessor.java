@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -367,6 +368,37 @@ public class FileAccessor
         } catch (JSONException e) {
             Log.d("saveInfoToFile", "JSONException " + e.getMessage());
             e.printStackTrace();
+        }
+
+        File directory = new File(context.getFilesDir().getAbsolutePath() + "/recordings");
+        if (directory.exists()) {
+            List<File> temp = Arrays.asList(directory.listFiles());
+            List<File> toDelete = new ArrayList<>(temp);
+            List<File> toKeep = new ArrayList<>();
+
+            for (Category cat : categoryArrayList) {
+                for (Object objPhrase : cat.phraseList) {
+                    Phrase phrase = (Phrase) objPhrase;
+                    for (String location : phrase.phraseLanguages.values()) {
+                        for (File check : toDelete) {
+                            if (check.getPath().equals(location)) {
+                                toKeep.add(check);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            for (File file : toKeep) {
+                toDelete.remove(file);
+            }
+
+            for (File file : toDelete) {
+                file.delete();
+            }
+            Log.d("saveInfoToFile", "delete check\n" + toDelete.toString() + "\n\n");
+            Log.d("saveInfoToFile", "delete check All files\n" + temp.toString() + "\n\n");
+
         }
 
         try {
