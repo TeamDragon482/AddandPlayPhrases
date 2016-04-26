@@ -337,6 +337,28 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             Category c = ((CategoryViewHolder) viewHolder).getCategory();
             mList.add(position, c);
             notifyParentItemInserted(position);
+            int unCatIndex = -1;
+            for (ParentListItem p : mList)
+            {
+
+                if (((Category) p).getCategoryTitle().equalsIgnoreCase("Uncategorized"))
+                {
+                    unCatIndex = mList.indexOf(p);
+                    break;
+                }
+            }
+            List<Object> list = (List<Object>) mList.get(unCatIndex).getChildItemList();
+            List<Object> list2 = (List<Object>) c.getChildItemList();
+            for (Object o : list)
+            {
+                if (list2.contains(o))
+                {
+                    int index = list.indexOf(o);
+                    list.remove(index);
+                    notifyChildItemRemoved(unCatIndex, index);
+                }
+            }
+
         }
         if (viewHolder instanceof PhraseViewHolder)
         {

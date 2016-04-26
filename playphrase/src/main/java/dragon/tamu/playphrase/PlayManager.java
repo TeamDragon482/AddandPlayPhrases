@@ -60,7 +60,8 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
         return mp != null && mp.isPlaying();
     }
 
-    public void stopPhrase() {
+    public void stopPhrase(boolean anim)
+    {
         if (mp != null) {
             mp.stop();
             mp.release();
@@ -70,7 +71,8 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
             paused = false;
 
         }
-        if (stopListener != null) {
+        if (stopListener != null && anim)
+        {
             stopListener.onStopPlayClick();
         }
     }
@@ -86,7 +88,7 @@ public class PlayManager implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private void playQueue() {
         paused = false;
         if (curPosition >= phraseFiles.size() && !repeat) {
-            stopPhrase();
+            stopPhrase(true);
         } else {
             // mp.release();
             try {

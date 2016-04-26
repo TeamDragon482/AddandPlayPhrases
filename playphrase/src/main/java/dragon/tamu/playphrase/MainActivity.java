@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
     private RelativeLayout playBackLayout;
     private TextView playBackText;
     private boolean playbackVisible;
+    private SearchView searchView;
     private Runnable hidePlayback = new Runnable() {
         @Override
         public void run() {
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         mDrawerToggle.syncState();
 
         //SearchView initialization and settings
-        final SearchView searchView = (SearchView) findViewById(R.id.search_view);
+        searchView = (SearchView) findViewById(R.id.search_view);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
@@ -363,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playManager.stopPhrase();
+                playManager.stopPhrase(true);
             }
         });
 
@@ -538,8 +539,13 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             case R.id.edit_menu:
                 Intent edit_intent = new Intent(this, EditActivity.class);
                 //This is where any data goes that will be stuffed into the intent launching the new activity
-                playManager.stopPhrase();
                 startActivity(edit_intent);
+                playManager.stopPhrase(false);
+
+                searchList = null;
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+
                 return true;
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
