@@ -7,6 +7,7 @@
     android:layout_margin="15dp"
     android:background="#2693ff"
     android:configChanges="keyboard|keyboardHidden|orientation"
+    android:windowSoftInputMode="adjustResize"
     android:elevation="20dp"
     android:orientation="vertical"
     android:padding="10dp">
