@@ -167,16 +167,16 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     @Override
     protected void onStop()
-
     {
         super.onStop();
+        saveList(true);
         Log.d("Edit Activity", "OnStop");
     }
     @Override
     protected void onPause()
     {
         super.onPause();
-        saveList();
+        saveList(false);
         Log.d("Edit Activity", "OnPause");
     }
 
@@ -223,7 +223,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     private void startFragmentFromButton(View view, Fragment fragment)
     {
-        saveList();
+        saveList(false);
         mAdapter.collapseAllParents();
         Bundle args = new Bundle();
         int originalPos[] = new int[2];
@@ -260,12 +260,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    public void saveList() {
+    public void saveList(boolean remove) {
         ArrayList<Category> temp = new ArrayList<>();
         for (int i = 0; i < mCategoryList.size(); i++) {
             temp.add((Category) mCategoryList.get(i));
         }
-        fileSystem.saveInfoToFile(temp);
+        fileSystem.saveInfoToFile(temp, remove);
     }
 
     public void addCategory(String catName) {

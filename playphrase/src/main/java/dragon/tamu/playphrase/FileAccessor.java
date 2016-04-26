@@ -397,8 +397,8 @@ public class FileAccessor
                 for (File file : toDelete) {
                     file.delete();
                 }
-                Log.d("saveInfoToFile", "delete check\n" + toDelete.toString() + "\n\n");
-                Log.d("saveInfoToFile", "delete check All files\n" + temp.toString() + "\n\n");
+                Log.d("saveInfoToFile", "delete check List\n" + toDelete.toString() + "\n\n");
+                Log.d("saveInfoToFile", "All files\n" + temp.toString() + "\n\n");
 
             }
         }

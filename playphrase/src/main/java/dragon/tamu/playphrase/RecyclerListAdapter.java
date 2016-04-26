@@ -352,7 +352,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
             mList.remove(parentIndex);
             notifyParentItemRemoved(parentIndex);
-            ((EditActivity) mContext).saveList();
+            ((EditActivity) mContext).saveList(false);
             return true;
         }
         else if (viewHolder instanceof PhraseViewHolder)
@@ -375,7 +375,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
             list.remove(fromPosition - 1 - parentIndex);
             notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
-            ((EditActivity) mContext).saveList();
+            ((EditActivity) mContext).saveList(false);
             return true;
         }
         return false;
