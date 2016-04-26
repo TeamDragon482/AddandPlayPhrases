@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             }
         };
 
+
         mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_language_white_24dp);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -531,18 +532,22 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         mDrawerToggle.onOptionsItemSelected(item);
+
         switch (item.getItemId())
         {
             case R.id.edit_menu:
                 Intent edit_intent = new Intent(this, EditActivity.class);
                 //This is where any data goes that will be stuffed into the intent launching the new activity
+                playManager.stopPhrase();
                 startActivity(edit_intent);
                 return true;
-            case R.id.home:
+            case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
                     mDrawerLayout.closeDrawer(Gravity.LEFT);
+                    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_language_white_24dp);
                 } else {
                     mDrawerLayout.openDrawer(Gravity.LEFT);
+                    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
                 }
                 return true;
             default:
