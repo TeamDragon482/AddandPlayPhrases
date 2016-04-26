@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
@@ -70,7 +71,9 @@ public class RecordingFragment extends Fragment {
     private Visualizer mVisualizer;
     private Snackbar snackbar;
     private Boolean snackbarShown = false;
-    private Boolean lockEdit = false;
+    //private Boolean lockEditCategory = false;
+    private Boolean lockEditPhrase = false;
+    private Boolean implicitCatSelect = false;
     private Boolean abbrExists = false;
     private Phrase phr = null;
     //For visualization
@@ -167,7 +170,7 @@ public class RecordingFragment extends Fragment {
         newCategoryText = (EditText) view.findViewById(R.id.newCategoryText);
         newLanguageText = (EditText) view.findViewById(R.id.newLanguageText);
         newLanguageAbbr = (EditText) view.findViewById(R.id.newLanguageAbbr);
-        btnCancelPhrase = (ImageButton) view.findViewById(R.id.cancelPhrase); //save buttons are now Cancel
+        btnCancelPhrase = (ImageButton) view.findViewById(R.id.cancelPhrase);
         btnCancelCategory = (ImageButton) view.findViewById(R.id.cancelCategory);
         btnCancelLanguage = (ImageButton) view.findViewById(R.id.cancelLanguage);
         visualizerView = (VisualizerView) view.findViewById(R.id.visualizer_view);
@@ -195,31 +198,36 @@ public class RecordingFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 phrase_spinner_pos = pos;
+                implicitCatSelect = false;
+                if(category_spinner_pos==0) {
+                    ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, category_list);
+                    dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    category_spinner.setPrompt("Select Category...");
+                    category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                            dataAdapter2,
+                            R.layout.contact_category_spinner_row_nothing_selected,
+                            // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                            getActivity()));
+                }
+                if (pos == phrase_spinner.getAdapter().getCount()-1) {
+                    addItemsOnPhraseSpinner();
+                    //addItemsOnCategorySpinner();
+                    phrase_spinner.setSelection(0);
 
-                ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, category_list);
-                dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                category_spinner.setPrompt("Select Category...");
-                category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                        dataAdapter2,
-                        R.layout.contact_category_spinner_row_nothing_selected,
-                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                        getActivity()));
-
-                if (pos == 1) {
+                } else if (pos == 1) {
                     phraseSaved = false;
-                    lockEdit = false;
+                    //lockEditCategory = false;
                     newPhraseText.setVisibility(View.VISIBLE);
 
+                    Boolean success = false;
                     newPhraseText.setFocusableInTouchMode(true);
-                    newPhraseText.requestFocus();
-
-                    //TODO doesn't seem to do anything
+                    success = newPhraseText.requestFocus();
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
+                    success = imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelPhrase.setVisibility(View.VISIBLE);
 
-                } else {
+                } else if (pos != 0) {
                     //Change Category list/selection to match selected phrase
                     Category category = null;
                     cont = true;
@@ -237,23 +245,25 @@ public class RecordingFragment extends Fragment {
                     if (category != null) {
                         for (int i = 1; i < category_spinner.getAdapter().getCount(); i++) {
                             if (category_spinner.getAdapter().getItem(i).toString().equals(category.name)) {
-                                List<String> short_list = new ArrayList<>();
-                                short_list.add(category.name);
-                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, short_list);
-                                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-                                category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                                        dataAdapter,
-                                        R.layout.contact_category_spinner_row_nothing_selected,
-                                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                                        getActivity()));
-                                category_spinner.setSelection(1);
+//                                List<String> short_list = new ArrayList<>();
+//                                short_list.add(category.name);
+//                                short_list.add("Clear Selection");
+//                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, short_list);
+//                                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//
+//                                category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+//                                        dataAdapter,
+//                                        R.layout.contact_category_spinner_row_nothing_selected,
+//                                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+//                                        getActivity()));
+                                implicitCatSelect = true;
+                                category_spinner.setSelection(i);
 
                                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
 
-                                lockEdit = true;
+                                //lockEditCategory = true;
                             }
                         }
                     }
@@ -269,7 +279,16 @@ public class RecordingFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 category_spinner_pos = pos;
-                if (pos == 1 && !lockEdit) {
+                if (pos == category_spinner.getAdapter().getCount()-1) {
+                    addItemsOnPhraseSpinner();
+                    addItemsOnCategorySpinner();
+                    category_spinner.setSelection(0);
+
+                } else if (pos == 1 /*&& !lockEditCategory*/) {
+                    if (lockEditPhrase) {
+                        addItemsOnPhraseSpinner();
+                        lockEditPhrase = false;
+                    }
                     categorySaved = false;
                     newCategoryText.setVisibility(View.VISIBLE);
 
@@ -279,12 +298,41 @@ public class RecordingFragment extends Fragment {
                     imm.showSoftInput(newCategoryText, InputMethodManager.SHOW_IMPLICIT);
 
                     btnCancelCategory.setVisibility(View.VISIBLE);
-                }
-                else
-                {
+                } else {
+                    if (category_spinner_pos != 0 && category_spinner_pos != 1 && !implicitCatSelect) {
+                        //then set available phrases to be those within the selected category
+                        List<String> short_list = new ArrayList<>();
+                        Category category = null;
+                        for (Category cat : catList) {
+                            if (cat.getCategoryTitle().equalsIgnoreCase((String) category_spinner.getAdapter().getItem(pos))) {
+                                category = cat;
+                                break;
+                            }
+                            if (category != null) break;
+                        }
+                        short_list.add("Add New Phrase");
+                        for (int i=0; i < category.phraseList.size(); i++) {
+                            short_list.add(((Phrase) (category.phraseList.get(i))).getPhraseText());
+                        }
+                        short_list.add("Clear Selection");
+                        ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, short_list);
+                        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        phrase_spinner.setPrompt("Select Phrase...");
+                        phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
+                                dataAdapter1,
+                                R.layout.contact_phrase_spinner_row_nothing_selected,
+                                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                                getActivity()));
+                        lockEditPhrase = true;
+                        phrase_spinner.setSelection(0);
+//                        category_spinner.setSelection(pos);
+
+                    }
+
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
                 }
+                implicitCatSelect = false;
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -321,23 +369,26 @@ public class RecordingFragment extends Fragment {
         btnSubmit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && (lockEdit || category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3)) && !abbrExists)
-                {
 
+                String pattern = "(\\s+)";
+                String abbreviation = newLanguageAbbr.getText().toString().toUpperCase().replaceAll(pattern, "");
+
+                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && /*(lockEditCategory ||*/ (category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && abbreviation.length() >= 2 && abbreviation.length() <= 3)) && !abbrExists)
+                {
                     //Establish values to be saved and then call addPhrase
                     if (phrase_spinner_pos == 1) {
                         finalPhraseName = newPhraseText.getText().toString();
                     } else {
                         finalPhraseName = phrase_spinner.getSelectedItem().toString();
                     }
-                    if (category_spinner_pos == 1 && !lockEdit) {
+                    if (category_spinner_pos == 1 /*&& !lockEditCategory*/) {
                         finalCatName = newCategoryText.getText().toString();
                     } else {
                         finalCatName = category_spinner.getSelectedItem().toString();
                     }
                     if (language_spinner_pos == 1) {
                         finalLangName = newLanguageText.getText().toString();
-                        finalLangAbbr = newLanguageAbbr.getText().toString();
+                        finalLangAbbr = abbreviation;
                     } else {
                         String temp = language_spinner.getSelectedItem().toString();
                         temp = temp.replace(" ", "");
@@ -389,7 +440,7 @@ public class RecordingFragment extends Fragment {
 
                     snackbar.show();
                 }
-                else if (!(("" + newCategoryText.getText()).length() >= 2) && category_spinner_pos == 1 && !lockEdit)
+                else if (!(("" + newCategoryText.getText()).length() >= 2) && category_spinner_pos == 1 /*&& !lockEditCategory*/)
                 {
                     snackbar = Snackbar
                             .make(view, "Category Must Have 2+ Characters", Snackbar.LENGTH_SHORT);
@@ -403,7 +454,7 @@ public class RecordingFragment extends Fragment {
 
                     snackbar.show();
                 }
-                else if (!(("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3))
+                else if (!(abbreviation.length() >= 2 && abbreviation.length() <= 3))
                 {
                     snackbar = Snackbar
                             .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
@@ -694,9 +745,11 @@ public class RecordingFragment extends Fragment {
                     String[] tempAbbrArray = new String[abbrList.size()];
                     tempAbbrArray = abbrList.toArray(tempAbbrArray);
                     abbrExists = false;
+                    String pattern = "(\\s+)";
+                    String abbrev = newLanguageAbbr.getText().toString().toUpperCase().replaceAll(pattern, "");
                     for (int i = 0; i < tempAbbrArray.length; i++)
                     {
-                        if (newLanguageAbbr.getText().toString().equalsIgnoreCase(tempAbbrArray[i]))
+                        if (abbrev.equalsIgnoreCase(tempAbbrArray[i]))
                         {
                             abbrExists = true;
                             break;
@@ -704,26 +757,26 @@ public class RecordingFragment extends Fragment {
                     }
 
                     //if (!languageSaved || !abbrSaved) {
-                    if (("" + newLanguageAbbr.getText()).length() >= 2 && ("" + newLanguageAbbr.getText()).length() <= 3 && !abbrExists)
+                    if (abbrev.length() >= 2 && abbrev.length() <= 3 && !abbrExists)
                     {
 //                        snackbar = Snackbar
 //                                .make(view, "New Language Saved", Snackbar.LENGTH_SHORT);
 //
 //                        snackbar.show();
 
-                        newLanguageAbbr.setText(newLanguageAbbr.getText().toString().toUpperCase());
+                        newLanguageAbbr.setText(abbrev);
                         InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm2.hideSoftInputFromWindow(newLanguageAbbr.getWindowToken(), 0);
 
 
                         languageSaved = true;
-                    } else if (!(("" + newLanguageAbbr.getText()).length() >= 2)) {
+                    } else if (!(abbrev.length() >= 2)) {
                         snackbar = Snackbar
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
 
                         snackbar.show();
                     }
-                    else if (!(("" + newLanguageAbbr.getText()).length() <= 3))
+                    else if (!((abbrev).length() <= 3))
                     {
                         snackbar = Snackbar
                                 .make(view, "Abbreviation Must Have 2-3 Characters", Snackbar.LENGTH_SHORT);
@@ -775,6 +828,8 @@ public class RecordingFragment extends Fragment {
                 phrase_list.add(phr);
             }
         }
+
+        phrase_list.add("Clear Selection");
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -871,6 +926,8 @@ public class RecordingFragment extends Fragment {
         for (Category cat : catList) {
             category_list.add(cat.getCategoryTitle());
         }
+
+        category_list.add("Clear Selection");
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

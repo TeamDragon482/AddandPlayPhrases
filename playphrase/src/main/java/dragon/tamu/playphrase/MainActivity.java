@@ -2,12 +2,16 @@ package dragon.tamu.playphrase;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
     private RelativeLayout playBackLayout;
     private TextView playBackText;
     private boolean playbackVisible;
+    private SearchView searchView;
     private Runnable hidePlayback = new Runnable() {
         @Override
         public void run() {
@@ -140,7 +145,8 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
                 super.onDrawerOpened(v);
                 mActionBar.setTitle(R.string.drawer_open_title);
                 invalidateOptionsMenu();
-
+                if (currentlySelectedLang.size() == 0)
+                    grayDeleteButton(true);
                 //Re-populate Language Pane when switching back from Other Activities
                 for (int i = 0; i < currentlySelectedLang.size(); i++)
                 {
@@ -149,11 +155,14 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             }
         };
 
+
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+        mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_language_white_24dp);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
         //SearchView initialization and settings
-        final SearchView searchView = (SearchView) findViewById(R.id.search_view);
+        searchView = (SearchView) findViewById(R.id.search_view);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
@@ -200,14 +209,17 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
                 if (!currentlySelectedLang.contains(displayLanguages.get(position)))
                 {
                     currentlySelectedLang.add(displayLanguages.get(position));
+                    grayDeleteButton(false);
                     prepareSelectedListData();
                 }
                 //If it is it means its a deselecting so we remove it
                 else
                 {
                     currentlySelectedLang.remove(displayLanguages.get(position));
-                    if (currentlySelectedLang.size() == 0)
+                    if (currentlySelectedLang.size() == 0) {
                         loadList();
+                        grayDeleteButton(true);
+                    }
                 }
             }
         });
@@ -217,21 +229,38 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         deleteSelectedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = displayLanguages.size() - 1; i >= 0; i--)
-                    if (mDrawerList.isItemChecked(i)) {
-                        String s = displayLanguages.get(i);
-                        removeLangauge(s.substring(0, s.indexOf('[')), s.substring(s.indexOf('[') + 1, s.indexOf(']')));
-                        displayLanguages.remove(i);
-                        if (currentlySelectedLang.contains(s)) {
-                            currentlySelectedLang.remove(s);
-                            if (currentlySelectedLang.size() == 0)
-                                loadList();
-                        }
-                    }
-                adapter.notifyDataSetChanged();
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                new AlertDialog.Builder(MainActivity.this).setTitle("Delete Language").setMessage("Deleting this language will delete all phrases associated with it. Would you like to continue anyway?")
+                        .setPositiveButton(R.string.delete_language, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (int i = displayLanguages.size() - 1; i >= 0; i--)
+                                    if (mDrawerList.isItemChecked(i)) {
+                                        String s = displayLanguages.get(i);
+                                        removeLangauge(s.substring(0, s.indexOf('[')), s.substring(s.indexOf('[') + 1, s.indexOf(']')));
+                                        displayLanguages.remove(i);
+                                        if (currentlySelectedLang.contains(s)) {
+                                            currentlySelectedLang.remove(s);
+                                            if (currentlySelectedLang.size() == 0)
+                                                loadList();
+                                        }
+                                    }
+                                adapter.notifyDataSetChanged();
+                                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel_delete_language, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).show();
+
             }
         });
+
+        if (currentlySelectedLang.size() == 0)
+            grayDeleteButton(true);
 
 
         //Setup for anything having to do with playback
@@ -287,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             public void onAnimationStart(Animation animation)
             {
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mListView.getLayoutParams();
-                params.addRule(RelativeLayout.BELOW, 0);
+                params.addRule(RelativeLayout.ABOVE, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 mListView.setLayoutParams(params);
             }
@@ -335,12 +364,22 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playManager.stopPhrase();
+                playManager.stopPhrase(true);
             }
         });
 
     }
 
+    public void grayDeleteButton(boolean b) {
+        if (b) {
+            deleteSelectedButton.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+            deleteSelectedButton.setEnabled(false);
+        } else {
+            deleteSelectedButton.getBackground().setColorFilter(null);
+            deleteSelectedButton.setEnabled(true);
+        }
+
+    }
     private void upDateWithQuery(String query)
     {
         searchList = new ArrayList<>();
@@ -418,6 +457,8 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         {
             loadList();
         }
+        if (currentlySelectedLang.size() == 0)
+            grayDeleteButton(true);
         mListView.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mListView.getWindowToken(), 0);
@@ -492,14 +533,28 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         mDrawerToggle.onOptionsItemSelected(item);
+
         switch (item.getItemId())
         {
             case R.id.edit_menu:
                 Intent edit_intent = new Intent(this, EditActivity.class);
                 //This is where any data goes that will be stuffed into the intent launching the new activity
-
-
                 startActivity(edit_intent);
+                playManager.stopPhrase(false);
+
+                searchList = null;
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+
+                return true;
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_language_white_24dp);
+                } else {
+                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

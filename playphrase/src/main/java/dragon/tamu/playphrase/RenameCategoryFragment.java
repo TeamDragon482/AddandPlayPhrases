@@ -100,7 +100,9 @@ public class RenameCategoryFragment extends Fragment
 
         //catText = (TextView) getView().findViewById(R.id.cat_text);
         categoryName = (EditText) getView().findViewById(R.id.category_name);
-
+        Bundle ofJoy = getArguments();
+        oldName = ofJoy.getString("cat");
+        categoryName.setHint(oldName);
         categoryName.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
             @Override
@@ -109,9 +111,6 @@ public class RenameCategoryFragment extends Fragment
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                 {
-                    //TODO oldName = ??? HOW TO GET FROM RECYCLER LIST ADAPTER
-                    Bundle ofJoy = getArguments();
-                    oldName = ofJoy.getString("cat");
                     newName = categoryName.getText().toString();
                     renameCategory(oldName, newName);
 
