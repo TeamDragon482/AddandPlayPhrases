@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             public void onAnimationStart(Animation animation)
             {
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mListView.getLayoutParams();
-                params.addRule(RelativeLayout.BELOW, 0);
+                params.addRule(RelativeLayout.ABOVE, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 mListView.setLayoutParams(params);
             }

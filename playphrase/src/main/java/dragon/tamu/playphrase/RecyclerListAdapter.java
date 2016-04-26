@@ -18,20 +18,20 @@ import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.bignerdranch.expandablerecyclerview.Model.ParentWrapper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewHolder, PhraseViewHolder> implements ItemTouchHelperAdapter{
 
+    public Fragment renameCategoryFrag;
     LayoutInflater mInflater;
     List<ParentListItem> mList;
     OnStartDragListener mOnStartDragListener;
     Context mContext;
     FileAccessor mFileSystem;
     EditActivity.RenameCategoryClickListener mListener;
-
-    public Fragment renameCategoryFrag;
 
     public RecyclerListAdapter(Context context, List<ParentListItem> parentItemList, OnStartDragListener listener, FileAccessor fileSystem) {
         super(parentItemList);
@@ -82,9 +82,11 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         });
         if (category.getCategoryTitle().equalsIgnoreCase("Uncategorized"))
         {
-            parentViewHolder.rename.setVisibility(View.GONE);
-            parentViewHolder.arrow.setVisibility(View.VISIBLE);
+            parentViewHolder.rename.setVisibility(View.INVISIBLE);
+//            parentViewHolder.arrow.setVisibility(View.VISIBLE);
         }
+        if (category.getChildItemList().size() == 0)
+            parentViewHolder.arrow.setVisibility(View.INVISIBLE);
         parentViewHolder.rename.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -294,7 +296,6 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         int adapterPosition = viewHolder.getAdapterPosition();
         if (viewHolder instanceof PhraseViewHolder)
         {
-            //TODO give a warning before deleting.
             int fromPosition = viewHolder.getAdapterPosition();
             int parentIndex = -1;
             int parentListIndex = 0;
@@ -350,14 +351,28 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
         if (viewHolder instanceof CategoryViewHolder)
         {
             int parentIndex = mList.indexOf(((CategoryViewHolder) viewHolder).getCategory());
+            List<Object> list = new ArrayList<>(mList.get(parentIndex).getChildItemList());
             mList.remove(parentIndex);
             notifyParentItemRemoved(parentIndex);
+            int unCatIndex = -1;
+            for (ParentListItem p : mList) {
+
+                if (((Category) p).getCategoryTitle().equalsIgnoreCase("Uncategorized")) {
+                    unCatIndex = mList.indexOf(p);
+                    break;
+                }
+            }
+            if (unCatIndex >= 0) {
+                List<Object> uncatList = (List<Object>) mList.get(unCatIndex).getChildItemList();
+                int og_size = uncatList.size();
+                uncatList.addAll(list);
+                notifyChildItemRangeInserted(unCatIndex, og_size, list.size());
+            }
             ((EditActivity) mContext).saveList();
             return true;
         }
         else if (viewHolder instanceof PhraseViewHolder)
         {
-            //TODO give a warning before deleting.
             int fromPosition = viewHolder.getAdapterPosition();
             int parentIndex = -1;
             int parentListIndex = 0;

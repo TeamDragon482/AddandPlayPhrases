@@ -1,9 +1,15 @@
 package dragon.tamu.playphrase;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,23 +34,21 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 {
 
 
+    private final int PERMISSION_RECORD_REQUEST = 1;
     //Members for fragments
     public Fragment addCategoryFrag;
     public Fragment recordingFragment;
     List<ParentListItem> mCategoryList; //List of categories
-
     RecyclerView listView;
     FileAccessor fileSystem;
     private RecyclerListAdapter mAdapter;
     private ItemTouchHelper touchHelper;
     //Add Phrase/Category members
     private FloatingActionButton fab, addPhraseButton, addCategoryButton;
-
     private TextView addCat, addPhrase;
     private View maskView;
     private boolean isFabOpen;
     private Animation rotate_forward, rotate_backward, fab_open, fab_close, slide_in, slide_out;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -92,6 +96,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
             }
         });
 
+
         addPhraseButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -108,6 +113,27 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
                 startFragmentFromButton(v, addCategoryFrag);
             }
         });
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fab.setVisibility(View.INVISIBLE);
+            int permissionCheck = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.RECORD_AUDIO);
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_RECORD_REQUEST);
+            }
+        }
+    }
+
+    @TargetApi(23)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_RECORD_REQUEST: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    fab.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
