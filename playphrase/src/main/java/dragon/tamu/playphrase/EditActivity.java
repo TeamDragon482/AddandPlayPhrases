@@ -1,6 +1,7 @@
 package dragon.tamu.playphrase;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
@@ -129,10 +131,14 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         {
             maskView.setVisibility(View.INVISIBLE);
             getFragmentManager().popBackStack();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(maskView.getWindowToken(), 0);
             fab.show();
         }
         else
+        {
             super.onBackPressed();
+        }
     }
 
     //temporary generator for demonstration purposes
@@ -189,7 +195,6 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     public void animateFAB()
     {
-
         if (isFabOpen)
         {
             fab.startAnimation(rotate_backward);
@@ -238,6 +243,15 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
     {
         fileSystem = new FileAccessor(EditActivity.this.getBaseContext());
         mAdapter = new RecyclerListAdapter(this, generateList(), this, fileSystem);
+        mAdapter.setRenameCategoryClickListener(new RenameCategoryClickListener()
+        {
+            @Override
+            public void onRenameCategoryClick()
+            {
+                fab.hide();
+                maskView.setVisibility(View.VISIBLE);
+            }
+        });
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(listView);
@@ -259,6 +273,22 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         mCategoryList.add(0, new Category(catName));
         mAdapter.notifyParentItemInserted(0);
 
+    }
+
+    public void renameCategory(String oldCatName, String newCatName)
+    {
+        Category cat = null;
+        for (int i = 0; i < mCategoryList.size(); i++)
+        {
+            if (((Category) mCategoryList.get(i)).getCategoryTitle().equals(oldCatName))
+            {
+                ((Category) mCategoryList.get(i)).setCategoryTitle(newCatName);
+                mAdapter.notifyParentItemChanged(i);
+                break;
+            }
+        }
+
+        //edit mCategoryList to correctky display the new category name
     }
 
     public int containsCategoryName(String categoryName) {
@@ -303,5 +333,10 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
+    public interface RenameCategoryClickListener
+    {
+
+        void onRenameCategoryClick();
+    }
 
 }

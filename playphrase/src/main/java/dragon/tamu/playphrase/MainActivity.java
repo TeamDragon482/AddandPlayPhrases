@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         public void run() {
             playBackLayout.startAnimation(slideDown);
             playbackVisible = false;
+
         }
     };
 
@@ -256,7 +257,53 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
         playBackText = (TextView) findViewById(R.id.currently_playing_phrase);
 
         slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
+        slideUp.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override
+            public void onAnimationStart(Animation animation)
+            {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mListView.getLayoutParams();
+                params.addRule(RelativeLayout.ABOVE, R.id.playback_layout);
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0);
+                mListView.setLayoutParams(params);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation)
+            {
+
+            }
+        });
         slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+        slideDown.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override
+            public void onAnimationStart(Animation animation)
+            {
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mListView.getLayoutParams();
+                params.addRule(RelativeLayout.BELOW, 0);
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                mListView.setLayoutParams(params);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation)
+            {
+
+            }
+        });
 
         playbackVisible = false;
 
