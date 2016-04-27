@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
@@ -76,6 +75,7 @@ public class RecordingFragment extends Fragment {
     private Boolean implicitCatSelect = false;
     private Boolean abbrExists = false;
     private Phrase phr = null;
+    private Boolean exceptionThrown = false;
     //For visualization
     private VisualizerView visualizerView;
 
@@ -218,15 +218,18 @@ public class RecordingFragment extends Fragment {
                     phraseSaved = false;
                     //lockEditCategory = false;
                     newPhraseText.setVisibility(View.VISIBLE);
-
                     Boolean success = false;
                     newPhraseText.setFocusableInTouchMode(true);
-                    success = newPhraseText.requestFocus();
-                    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    success = imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
-
                     btnCancelPhrase.setVisibility(View.VISIBLE);
 
+                    success = newPhraseText.requestFocus();
+                    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    success = imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_FORCED);
+                    //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    if (!imm.isActive())
+                    {
+                        imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_FORCED);
+                    }
                 } else if (pos != 0) {
                     //Change Category list/selection to match selected phrase
                     Category category = null;
@@ -324,7 +327,10 @@ public class RecordingFragment extends Fragment {
                                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                                 getActivity()));
                         lockEditPhrase = true;
-                        phrase_spinner.setSelection(0);
+                        if (phrase_spinner_pos != 1)
+                        {
+                            phrase_spinner.setSelection(0);
+                        }
 //                        category_spinner.setSelection(pos);
 
                     }
@@ -373,10 +379,11 @@ public class RecordingFragment extends Fragment {
                 String pattern = "(\\s+)";
                 String abbreviation = newLanguageAbbr.getText().toString().toUpperCase().replaceAll(pattern, "");
 
-                if (phrase_spinner_pos != 0 && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && /*(lockEditCategory ||*/ (category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && abbreviation.length() >= 2 && abbreviation.length() <= 3)) && !abbrExists)
+                if ((phrase_spinner_pos != 0 || newPhraseText.getText().length() > 1) && category_spinner_pos != 0 && language_spinner_pos != 0 && recordStopped && (phrase_spinner_pos != 1 || ("" + newPhraseText.getText()).length() >= 2) && /*(lockEditCategory ||*/ (category_spinner_pos != 1 || ("" + newCategoryText.getText()).length() >= 2) && (language_spinner_pos != 1 || (("" + newLanguageText.getText()).length() >= 2 && abbreviation.length() >= 2 && abbreviation.length() <= 3)) && !abbrExists)
                 {
                     //Establish values to be saved and then call addPhrase
-                    if (phrase_spinner_pos == 1) {
+                    if (phrase_spinner_pos == 1 || newPhraseText.getText().length() > 1)
+                    {
                         finalPhraseName = newPhraseText.getText().toString();
                     } else {
                         finalPhraseName = phrase_spinner.getSelectedItem().toString();
@@ -404,7 +411,9 @@ public class RecordingFragment extends Fragment {
                     addPhrase(finalPhraseName, finalLangName, finalLangAbbr, finalFilePath, finalCatName);
 
 
-                } else if (phrase_spinner_pos == 0) {
+                }
+                else if (phrase_spinner_pos == 0 && newPhraseText.getText().length() <= 1)
+                {
                     snackbar = Snackbar
                             .make(view, "Phrase Not Selected", Snackbar.LENGTH_SHORT);
 
@@ -543,21 +552,28 @@ public class RecordingFragment extends Fragment {
         btnStopRecording.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                snackbar = Snackbar
-                        .make(view, "Stop Recording", Snackbar.LENGTH_SHORT);
+                if (mediaRecorder != null)
+                {
 
-                snackbar.show();
+                    stopRecord();
+
+                    snackbar = Snackbar
+                            .make(view, "Stop Recording", Snackbar.LENGTH_SHORT);
+
+                    snackbar.show();
 
 
-                stopRecord();
+                    mediaPlayer = MediaPlayer.create(getActivity(), R.raw.catname_langname_phrasename);
 
-                mediaPlayer = MediaPlayer.create(getActivity(), R.raw.catname_langname_phrasename);
-
-                btnStartRecording.setVisibility(View.VISIBLE);
-                btnStopRecording.setVisibility(View.INVISIBLE);
-                btnPlay.setEnabled(true);
-                btnSubmit.setEnabled(true);
-                recordStopped = true;
+                    btnStartRecording.setVisibility(View.VISIBLE);
+                    btnStopRecording.setVisibility(View.INVISIBLE);
+                    btnPlay.setEnabled(true);
+                    btnSubmit.setEnabled(true);
+                    if (exceptionThrown == false)
+                    {
+                        recordStopped = true;
+                    }
+                }
             }
         });
 
@@ -609,13 +625,11 @@ public class RecordingFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent key) {
                 boolean handled = false;
-                //DO THE HANDLING
 
 
-                //hide keyboard and save data
-                newPhraseText.requestFocus();
-                final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
+//                newPhraseText.requestFocus();
+//                final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
@@ -646,6 +660,14 @@ public class RecordingFragment extends Fragment {
                     handled = true;
                 }
                 return handled;
+            }
+        });
+
+        newPhraseText.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            public void onFocusChange(View v, boolean hasFocus)
+            {
+                setImeVisibility(hasFocus);
             }
         });
 
@@ -1123,9 +1145,18 @@ public class RecordingFragment extends Fragment {
     }
 
     private void stopRecord() {
-        mediaRecorder.stop();
-        mediaRecorder.release();
-        mediaRecorder = null;
+        try
+        {
+            mediaRecorder.stop();
+            mediaRecorder.release();
+            mediaRecorder = null;
+            exceptionThrown = false;
+        }
+        catch (RuntimeException e)
+        {
+            e.getMessage();
+            exceptionThrown = true;
+        }
     }
 
     private void startPlay() {
@@ -1179,6 +1210,39 @@ public class RecordingFragment extends Fragment {
                                                  byte[] bytes, int samplingRate) {
                     }
                 }, Visualizer.getMaxCaptureRate() / 2, true, false);
+    }
+
+    private Runnable mShowImeRunnable = new Runnable()
+    {
+        public void run()
+        {
+            InputMethodManager imm = (InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            if (imm != null)
+            {
+                imm.showSoftInput(newPhraseText, 0);
+            }
+        }
+    };
+
+    private void setImeVisibility(final boolean visible)
+    {
+        if (visible)
+        {
+            getView().post(mShowImeRunnable);
+        }
+        else
+        {
+            getView().removeCallbacks(mShowImeRunnable);
+            InputMethodManager imm = (InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            if (imm != null)
+            {
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+            }
+        }
     }
 }
 

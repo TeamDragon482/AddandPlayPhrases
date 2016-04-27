@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,9 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-/**
- * Created by Marc on 4/21/2016.
- */
 public class RenameCategoryFragment extends Fragment
 {
 
@@ -99,7 +97,7 @@ public class RenameCategoryFragment extends Fragment
         fileSystem = ((EditActivity) getActivity()).fileSystem;
 
         //catText = (TextView) getView().findViewById(R.id.cat_text);
-        categoryName = (EditText) getView().findViewById(R.id.category_name);
+        categoryName = (EditText) view.findViewById(R.id.category_name);
         Bundle ofJoy = getArguments();
         oldName = ofJoy.getString("cat");
         categoryName.setHint(oldName);
@@ -112,13 +110,21 @@ public class RenameCategoryFragment extends Fragment
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                 {
                     newName = categoryName.getText().toString();
-                    renameCategory(oldName, newName);
+                    if (newName.length() >= 2)
+                    {
+                        renameCategory(oldName, newName);
 
-                    // hide keyboard
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(categoryName.getWindowToken(), 0);
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(categoryName.getWindowToken(), 0);
 
-                    handled = true;
+                        handled = true;
+                    }
+                    else
+                    {
+                        Snackbar snack = Snackbar.make(((EditActivity) getActivity()).listView, "Category name must be 2+ characters", Snackbar.LENGTH_SHORT);
+                        snack.show();
+                    }
                 }
                 return handled;
             }
@@ -129,7 +135,7 @@ public class RenameCategoryFragment extends Fragment
     @Override
     public void onResume()
     {
-        categoryName.setText("");
+        categoryName.setText(oldName);
         categoryName.requestFocus();
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(categoryName, InputMethodManager.SHOW_IMPLICIT);
