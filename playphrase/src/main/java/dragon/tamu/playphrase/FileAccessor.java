@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -243,7 +244,7 @@ public class FileAccessor
         }
         phrase.addLanguage(language, newName.getPath());
 
-        saveInfoToFile(informationList);
+        saveInfoToFile(informationList, false);
 
         return phrase;
     }
@@ -272,7 +273,7 @@ public class FileAccessor
 
         if (phrase != null) {
             category.phraseList.remove(phrase);
-            saveInfoToFile(informationList);
+            saveInfoToFile(informationList, false);
         }
     }
 
@@ -295,7 +296,7 @@ public class FileAccessor
             // Adding a new category to the top will help keep Uncategorized at end
             // Also provides right functionality for the AddCategory button
             informationList.add(0, newCat);
-            saveInfoToFile(informationList);
+            saveInfoToFile(informationList, false);
         }
         return informationList;
     }
@@ -328,7 +329,7 @@ public class FileAccessor
             }
 
             informationList.remove(category);
-            saveInfoToFile(informationList);
+            saveInfoToFile(informationList, false);
         }
         return informationList;
     }
@@ -358,7 +359,7 @@ public class FileAccessor
         }
     }
 
-    public void saveInfoToFile(ArrayList<Category> categoryArrayList) {
+    public void saveInfoToFile(ArrayList<Category> categoryArrayList, boolean cleanFiles) {
         JSONArray categories = categoryToJSON(categoryArrayList);
 
         JSONObject saveJSON = new JSONObject();
@@ -367,6 +368,39 @@ public class FileAccessor
         } catch (JSONException e) {
             Log.d("saveInfoToFile", "JSONException " + e.getMessage());
             e.printStackTrace();
+        }
+
+        if (cleanFiles) {
+            File directory = new File(context.getFilesDir().getAbsolutePath() + "/recordings");
+            if (directory.exists()) {
+                List<File> temp = Arrays.asList(directory.listFiles());
+                List<File> toDelete = new ArrayList<>(temp);
+                List<File> toKeep = new ArrayList<>();
+
+                for (Category cat : categoryArrayList) {
+                    for (Object objPhrase : cat.phraseList) {
+                        Phrase phrase = (Phrase) objPhrase;
+                        for (String location : phrase.phraseLanguages.values()) {
+                            for (File check : toDelete) {
+                                if (check.getPath().equals(location)) {
+                                    toKeep.add(check);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                for (File file : toKeep) {
+                    toDelete.remove(file);
+                }
+
+                for (File file : toDelete) {
+                    file.delete();
+                }
+                Log.d("saveInfoToFile", "delete check List\n" + toDelete.toString() + "\n\n");
+                Log.d("saveInfoToFile", "All files\n" + temp.toString() + "\n\n");
+
+            }
         }
 
         try {
