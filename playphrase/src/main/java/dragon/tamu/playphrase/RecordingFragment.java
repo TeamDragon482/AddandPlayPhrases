@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -218,15 +220,17 @@ public class RecordingFragment extends Fragment {
                     phraseSaved = false;
                     //lockEditCategory = false;
                     newPhraseText.setVisibility(View.VISIBLE);
-
                     Boolean success = false;
                     newPhraseText.setFocusableInTouchMode(true);
-                    success = newPhraseText.requestFocus();
-                    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    success = imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
-
                     btnCancelPhrase.setVisibility(View.VISIBLE);
 
+                    success = newPhraseText.requestFocus();
+                    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    success = imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_FORCED);
+                    //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    if (!imm.isActive()) {
+                        imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_FORCED);
+                    }
                 } else if (pos != 0) {
                     //Change Category list/selection to match selected phrase
                     Category category = null;
@@ -622,13 +626,11 @@ public class RecordingFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent key) {
                 boolean handled = false;
-                //DO THE HANDLING
 
 
-                //hide keyboard and save data
-                newPhraseText.requestFocus();
-                final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
+//                newPhraseText.requestFocus();
+//                final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_IMPLICIT);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     //imm.hideSoftInputFromWindow(newCategoryText.getWindowToken(), 0);
@@ -659,6 +661,12 @@ public class RecordingFragment extends Fragment {
                     handled = true;
                 }
                 return handled;
+            }
+        });
+
+        newPhraseText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                setImeVisibility(hasFocus);
             }
         });
 
@@ -1201,6 +1209,31 @@ public class RecordingFragment extends Fragment {
                                                  byte[] bytes, int samplingRate) {
                     }
                 }, Visualizer.getMaxCaptureRate() / 2, true, false);
+    }
+
+    private Runnable mShowImeRunnable = new Runnable() {
+        public void run() {
+            InputMethodManager imm = (InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            if (imm != null) {
+                imm.showSoftInput(newPhraseText, 0);
+            }
+        }
+    };
+
+    private void setImeVisibility(final boolean visible) {
+        if (visible) {
+            getView().post(mShowImeRunnable);
+        } else {
+            getView().removeCallbacks(mShowImeRunnable);
+            InputMethodManager imm = (InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+            }
+        }
     }
 }
 
