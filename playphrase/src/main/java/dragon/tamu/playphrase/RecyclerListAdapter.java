@@ -92,6 +92,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             @Override
             public boolean onTouch(View v, MotionEvent event)
             {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
                 renameCategoryFrag = new RenameCategoryFragment();
                 Bundle args = new Bundle();
                 int originalPos[] = new int[2];
@@ -306,7 +307,6 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 if (list.contains(((PhraseViewHolder) viewHolder).getPhrase()))
                 {
                     int itemIndex = list.indexOf(((PhraseViewHolder) viewHolder).getPhrase());
-                    parentIndex = fromPosition - 1 - itemIndex;
                     parentListIndex = i;
                     break;
                 }
@@ -349,16 +349,19 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             }
             List<Object> list = (List<Object>) mList.get(unCatIndex).getChildItemList();
             List<Object> list2 = (List<Object>) c.getChildItemList();
-            for (Object o : list)
+            for (int i = 0; i < list.size(); i++)
             {
-                if (list2.contains(o))
+                Object o = list.get(i);
                 {
-                    int index = list.indexOf(o);
-                    list.remove(index);
-                    notifyChildItemRemoved(unCatIndex, index);
+                    if (list2.contains(o))
+                    {
+                        int index = list.indexOf(o);
+                        list.remove(index);
+                        notifyChildItemRemoved(unCatIndex, index);
+                    }
                 }
-            }
 
+            }
         }
         if (viewHolder instanceof PhraseViewHolder)
         {

@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             {
                 super.onDrawerClosed(v);
                 mActionBar.setTitle(R.string.drawer_close_title);
+                mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_language_white_24dp);
                 invalidateOptionsMenu();
 
                 if (currentlySelectedLang.isEmpty())
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
             {
                 super.onDrawerOpened(v);
                 mActionBar.setTitle(R.string.drawer_open_title);
+                mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
                 invalidateOptionsMenu();
                 if (currentlySelectedLang.size() == 0)
                     grayDeleteButton(true);
@@ -635,6 +637,13 @@ public class MainActivity extends AppCompatActivity implements PhraseViewHolder_
 
     interface OnPausePlayClickListener {
         void OnPausePlayClick();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        playManager.stopPhrase(true);
     }
 
     interface OnStopPlayClickListener {
