@@ -10,7 +10,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
-import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -21,7 +20,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -228,7 +226,8 @@ public class RecordingFragment extends Fragment {
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     success = imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_FORCED);
                     //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    if (!imm.isActive()) {
+                    if (!imm.isActive())
+                    {
                         imm.showSoftInput(newPhraseText, InputMethodManager.SHOW_FORCED);
                     }
                 } else if (pos != 0) {
@@ -664,8 +663,10 @@ public class RecordingFragment extends Fragment {
             }
         });
 
-        newPhraseText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
+        newPhraseText.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            public void onFocusChange(View v, boolean hasFocus)
+            {
                 setImeVisibility(hasFocus);
             }
         });
@@ -1211,26 +1212,34 @@ public class RecordingFragment extends Fragment {
                 }, Visualizer.getMaxCaptureRate() / 2, true, false);
     }
 
-    private Runnable mShowImeRunnable = new Runnable() {
-        public void run() {
+    private Runnable mShowImeRunnable = new Runnable()
+    {
+        public void run()
+        {
             InputMethodManager imm = (InputMethodManager) getActivity()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            if (imm != null) {
+            if (imm != null)
+            {
                 imm.showSoftInput(newPhraseText, 0);
             }
         }
     };
 
-    private void setImeVisibility(final boolean visible) {
-        if (visible) {
+    private void setImeVisibility(final boolean visible)
+    {
+        if (visible)
+        {
             getView().post(mShowImeRunnable);
-        } else {
+        }
+        else
+        {
             getView().removeCallbacks(mShowImeRunnable);
             InputMethodManager imm = (InputMethodManager) getActivity()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            if (imm != null) {
+            if (imm != null)
+            {
                 imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
             }
         }
