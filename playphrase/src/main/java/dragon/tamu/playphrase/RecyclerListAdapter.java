@@ -396,7 +396,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 notifyChildItemRangeInserted(unCatIndex, og_size, list.size());
                 notifyParentItemChanged(unCatIndex);
             }
-            ((EditActivity) mContext).saveList();
+            ((EditActivity) mContext).saveList(false);
             return true;
         }
         else if (viewHolder instanceof PhraseViewHolder)
@@ -420,7 +420,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
             notifyChildItemRemoved(parentListIndex, fromPosition - 1 - parentIndex);
             if (mList.get(parentListIndex).getChildItemList().size() == 0)
                 notifyParentItemChanged(parentListIndex);
-            ((EditActivity) mContext).saveList();
+            ((EditActivity) mContext).saveList(false);
             return true;
         }
         return false;
