@@ -362,6 +362,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 }
 
             }
+            notifyParentItemChanged(unCatIndex);
         }
         if (viewHolder instanceof PhraseViewHolder)
         {
@@ -393,6 +394,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 int og_size = uncatList.size();
                 uncatList.addAll(list);
                 notifyChildItemRangeInserted(unCatIndex, og_size, list.size());
+                notifyParentItemChanged(unCatIndex);
             }
             ((EditActivity) mContext).saveList();
             return true;
