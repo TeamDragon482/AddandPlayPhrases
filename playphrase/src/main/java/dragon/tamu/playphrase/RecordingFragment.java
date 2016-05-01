@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +31,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +58,7 @@ public class RecordingFragment extends Fragment {
     private ArrayList<Category> catList = new ArrayList<>();
     private Set<String> langList;
     private Collection<String> abbrList;
+    private TextView timeView;
     private EditText newPhraseText, newCategoryText, newLanguageText, newLanguageAbbr;
     private ImageButton btnCancelPhrase, btnCancelCategory, btnCancelLanguage;
     private Boolean phraseSaved, categorySaved, languageSaved, abbrSaved;
@@ -78,6 +83,24 @@ public class RecordingFragment extends Fragment {
     private Boolean exceptionThrown = false;
     //For visualization
     private VisualizerView visualizerView;
+
+    long startTime = 0;
+    //runs without a timer by reposting this handler at the end of the runnable
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            timeView.setText(String.format("%02d:%02d", minutes, seconds));
+
+            timerHandler.postDelayed(this, 500);
+        }
+    };
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -109,6 +132,7 @@ public class RecordingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         super.onCreate(savedInstanceState);
     }
 
@@ -130,6 +154,8 @@ public class RecordingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         //Inflate the layout for this fragment
         View recordingFragmentView = inflater.inflate(R.layout.recording_fragment, container, false);
+
+        ((EditActivity) getActivity()).setActionBarTitle("Record A Phrase");
 
         //This bit of code is for a fancy expandable animation.
         recordingFragmentView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -173,6 +199,7 @@ public class RecordingFragment extends Fragment {
         btnCancelPhrase = (ImageButton) view.findViewById(R.id.cancelPhrase);
         btnCancelCategory = (ImageButton) view.findViewById(R.id.cancelCategory);
         btnCancelLanguage = (ImageButton) view.findViewById(R.id.cancelLanguage);
+        timeView = (TextView) view.findViewById(R.id.timeView);
         visualizerView = (VisualizerView) view.findViewById(R.id.visualizer_view);
 
         phrase_spinner_pos = 0;
@@ -478,7 +505,7 @@ public class RecordingFragment extends Fragment {
             public void onClick(View v) {
                 if (recordStopped) {
                     snackbar = Snackbar
-                            .make(view, "PLAYBACK", Snackbar.LENGTH_SHORT);
+                            .make(view, "Playback", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
 
@@ -486,6 +513,10 @@ public class RecordingFragment extends Fragment {
                     startPlay();
                     btnPlay.setVisibility(View.INVISIBLE);
                     btnPause.setVisibility(View.VISIBLE);
+
+                    timeView.setVisibility(View.INVISIBLE);
+                    timerHandler.removeCallbacks(timerRunnable);
+                    visualizerView.setVisibility(View.VISIBLE);
 
                 } else {
                     snackbar = Snackbar
@@ -502,7 +533,7 @@ public class RecordingFragment extends Fragment {
             public void onClick(View v) {
                 if (recordStopped) {
                     snackbar = Snackbar
-                            .make(view, "PAUSE PLAYBACK", Snackbar.LENGTH_SHORT);
+                            .make(view, "Pause Playback", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
 
@@ -525,7 +556,7 @@ public class RecordingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 snackbar = Snackbar
-                        .make(view, "Start Recording", Snackbar.LENGTH_SHORT);
+                        .make(view, "Recording...", Snackbar.LENGTH_LONG);
 
                 snackbar.show();
                 if (mediaPlayer != null) {
@@ -545,6 +576,12 @@ public class RecordingFragment extends Fragment {
                 btnPlay.setVisibility(View.VISIBLE);
                 btnStartRecording.setVisibility(View.INVISIBLE);
                 btnStopRecording.setVisibility(View.VISIBLE);
+
+                timeView.setVisibility(View.VISIBLE);
+                visualizerView.setVisibility(View.INVISIBLE);
+                startTime = System.currentTimeMillis();
+                timerHandler.postDelayed(timerRunnable, 0);
+
                 recordStopped = false;
             }
         });
@@ -558,7 +595,7 @@ public class RecordingFragment extends Fragment {
                     stopRecord();
 
                     snackbar = Snackbar
-                            .make(view, "Stop Recording", Snackbar.LENGTH_SHORT);
+                            .make(view, "Recording Stopped", Snackbar.LENGTH_SHORT);
 
                     snackbar.show();
 
@@ -569,6 +606,9 @@ public class RecordingFragment extends Fragment {
                     btnStopRecording.setVisibility(View.INVISIBLE);
                     btnPlay.setEnabled(true);
                     btnSubmit.setEnabled(true);
+
+                    timerHandler.removeCallbacks(timerRunnable);
+
                     if (exceptionThrown == false)
                     {
                         recordStopped = true;
@@ -822,20 +862,6 @@ public class RecordingFragment extends Fragment {
 
     }
 
-    public void addOneItemOnPhraseSpinner(String newPhrase) {
-        phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
-        phrase_list.add(newPhrase);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, phrase_list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        phrase_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                dataAdapter,
-                R.layout.contact_phrase_spinner_row_nothing_selected,
-                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                this.getActivity()));
-        phrase_spinner.setSelection(phrase_list.size());
-    }
-
     public void addItemsOnPhraseSpinner() {
         phrase_spinner = (Spinner) view.findViewById(R.id.phrase_spinner);
 
@@ -866,18 +892,25 @@ public class RecordingFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
+        stopRecord();
+        if (timerHandler != null) {
+            timerHandler.removeCallbacks(timerRunnable);
+        }
         if (isRemoving() && mediaPlayer != null) {
-            if (mVisualizer != null)
-                mVisualizer.release();
+            mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
-            if (mediaRecorder != null) {
-                mediaRecorder.release();
-                mediaRecorder = null;
-
-            }
         }
+        if (isRemoving() && mVisualizer != null) {
+            mVisualizer.release();
+            mVisualizer = null;
+        }
+        if (isRemoving() && mediaRecorder != null) {
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+        if (snackbar != null) dismissSnackbar();
+        super.onPause();
     }
 
     public void resumeSpinners() {
@@ -925,20 +958,6 @@ public class RecordingFragment extends Fragment {
         language_spinner.setSelection(0);
     }
 
-    public void addOneItemOnCategorySpinner(String newCategory) {
-        category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
-        category_list.add(newCategory);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //phrase_spinner.setAdapter(dataAdapter);
-        category_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                dataAdapter,
-                R.layout.contact_phrase_spinner_row_nothing_selected,
-                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                this.getActivity()));
-        category_spinner.setSelection(category_list.size());
-    }
-
     public void addItemsOnCategorySpinner() {
         category_spinner = (Spinner) view.findViewById(R.id.category_spinner);
         category_list.clear();
@@ -961,21 +980,6 @@ public class RecordingFragment extends Fragment {
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
 
-    }
-
-    public void addOneItemOnLanguageSpinner(String newLanguage, String newAbbr) {
-        language_spinner = (Spinner) view.findViewById(R.id.language_spinner);
-        String langAndAbbr = newLanguage + " [" + newAbbr.toUpperCase() + "]";
-        language_list.add(langAndAbbr);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        language_spinner.setAdapter(new NothingSelectedSpinnerAdapter(
-                dataAdapter,
-                R.layout.contact_phrase_spinner_row_nothing_selected,
-                // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                this.getActivity()));
-        language_spinner.setSelection(language_list.size());
     }
 
     public void addItemsOnLanguageSpinner() {
@@ -1144,7 +1148,7 @@ public class RecordingFragment extends Fragment {
 
     }
 
-    private void stopRecord() {
+    public void stopRecord() {
         try
         {
             mediaRecorder.stop();
@@ -1180,6 +1184,7 @@ public class RecordingFragment extends Fragment {
     }
 
     private void stopPlay() {
+        mediaPlayer.stop();
         mediaPlayer.release();
         mediaPlayer = null;
     }

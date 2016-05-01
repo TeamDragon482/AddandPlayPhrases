@@ -7,6 +7,7 @@
                                                  android:layout_height="match_parent"
                                                  android:background="#a29f9f"
                                                  android:orientation="vertical"
+                                                 android:configChanges="keyboard|keyboardHidden|orientation"
                                                  tools:context="dragon.tamu.playphrase.EditActivity">
 
     <android.support.v7.widget.RecyclerView

@@ -56,8 +56,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle("Edit Phrases");
+        setActionBarTitle("Edit Phrases");
 
         listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));
@@ -157,10 +156,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         if (getFragmentManager().getBackStackEntryCount() > 0)
         {
             maskView.setVisibility(View.INVISIBLE);
+            recordingFragment.onPause();
             getFragmentManager().popBackStack();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(maskView.getWindowToken(), 0);
             fab.show();
+            setActionBarTitle("Edit Phrases");
         }
         else
         {
@@ -361,9 +362,12 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
 
     }
 
-    public interface RenameCategoryClickListener
-    {
+    public void setActionBarTitle(String title) {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(title);
+    }
 
+    public interface RenameCategoryClickListener {
         void onRenameCategoryClick();
     }
 
