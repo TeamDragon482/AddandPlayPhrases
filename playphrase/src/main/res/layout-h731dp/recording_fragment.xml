@@ -86,7 +86,7 @@
         <TextView
             android:id="@+id/spacer1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_below="@+id/phrase_layout"
             />
 
@@ -133,7 +133,7 @@
         <TextView
             android:id="@+id/spacer2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_below="@+id/category_layout"
         />
 
@@ -193,7 +193,7 @@
         <TextView
             android:id="@+id/spacer3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:layout_below="@+id/language_layout"
         />
 
@@ -208,14 +208,14 @@
                 android:id="@+id/timeView"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_height="200dp"
                 android:text="00:00"
-                android:textSize="80dp"
+                android:textSize="100dp"
                 />
             <dragon.tamu.playphrase.VisualizerView
                 android:id="@+id/visualizer_view"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="200dp"
                 android:visibility="invisible"
                 />
             <ImageButton

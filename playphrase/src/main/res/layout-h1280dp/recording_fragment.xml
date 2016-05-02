@@ -51,7 +51,7 @@
             <Spinner
                 android:id="@+id/phrase_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_gravity="fill_horizontal"
                 android:background="#FFFFFF"
                 android:entries="@array/Phrase_choices"
@@ -62,7 +62,7 @@
             <EditText
                 android:id="@+id/newPhraseText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:background="#FFFFFFFF"
                 android:elevation="26dp"
                 android:hint="Phrase..."
@@ -99,7 +99,7 @@
             <Spinner
                 android:id="@+id/category_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_gravity="fill_horizontal"
                 android:background="#FFFFFF"
                 android:entries="@array/Category_choices"
@@ -109,7 +109,7 @@
             <EditText
                 android:id="@+id/newCategoryText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:background="#FFFFFFFF"
                 android:elevation="26dp"
                 android:hint="Category..."
@@ -146,7 +146,7 @@
             <Spinner
                 android:id="@+id/language_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_gravity="fill_horizontal"
                 android:background="#FFFFFF"
                 android:entries="@array/Language_choices"
@@ -156,7 +156,7 @@
             <EditText
                 android:id="@+id/newLanguageText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:background="#FFFFFFFF"
                 android:elevation="26dp"
                 android:hint="Language..."
@@ -168,7 +168,7 @@
             <EditText
                 android:id="@+id/newLanguageAbbr"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_below="@+id/newLanguageText"
                 android:background="#FFFFFFFF"
                 android:elevation="26dp"
@@ -193,7 +193,7 @@
         <TextView
             android:id="@+id/spacer3"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="100dp"
             android:layout_below="@+id/language_layout"
         />
 
@@ -208,14 +208,14 @@
                 android:id="@+id/timeView"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_height="300dp"
                 android:text="00:00"
-                android:textSize="80dp"
+                android:textSize="200dp"
                 />
             <dragon.tamu.playphrase.VisualizerView
                 android:id="@+id/visualizer_view"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="300dp"
                 android:visibility="invisible"
                 />
             <ImageButton
