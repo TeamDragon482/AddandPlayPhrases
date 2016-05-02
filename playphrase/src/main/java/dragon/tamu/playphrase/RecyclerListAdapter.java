@@ -104,8 +104,7 @@ public class RecyclerListAdapter extends ExpandableRecyclerAdapter<CategoryViewH
                 args.putString("cat", ((Category) parentListItem).getCategoryTitle());
                 renameCategoryFrag.setArguments(args);
                 ((Activity) mContext).getFragmentManager().beginTransaction().add(R.id.edit_coord_layout, renameCategoryFrag, "cat_rename_frag").addToBackStack(null).commit();
-                if (mListener != null)
-                {
+                if (mListener != null) {
                     mListener.onRenameCategoryClick();
                 }
                 return false;
