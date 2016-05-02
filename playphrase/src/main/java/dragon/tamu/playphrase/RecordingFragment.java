@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.Visualizer;
@@ -235,6 +236,7 @@ public class RecordingFragment extends Fragment {
                             R.layout.contact_category_spinner_row_nothing_selected,
                             // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                             getActivity()));
+                    //((TextView) category_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
                 }
                 if (pos == phrase_spinner.getAdapter().getCount()-1) {
                     addItemsOnPhraseSpinner();
@@ -353,6 +355,8 @@ public class RecordingFragment extends Fragment {
                                 R.layout.contact_phrase_spinner_row_nothing_selected,
                                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                                 getActivity()));
+                        //((TextView) phrase_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
+
                         lockEditPhrase = true;
                         if (phrase_spinner_pos != 1)
                         {
@@ -888,6 +892,7 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_phrase_spinner_row_nothing_selected,
 
                 this.getActivity()));
+        //((TextView) phrase_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
     }
 
     @Override
@@ -933,6 +938,7 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_phrase_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
+        //((TextView) phrase_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
 
         ArrayAdapter<String> dataAdapter2;
         dataAdapter2 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, category_list);
@@ -943,6 +949,7 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_category_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
+        //((TextView) category_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
 
         ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, language_list);
         dataAdapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -952,6 +959,7 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_language_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
+        //((TextView) language_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
 
         phrase_spinner.setSelection(0);
         category_spinner.setSelection(0);
@@ -979,7 +987,7 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_category_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
-
+        //((TextView) category_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
     }
 
     public void addItemsOnLanguageSpinner() {
@@ -1009,6 +1017,7 @@ public class RecordingFragment extends Fragment {
                 R.layout.contact_language_spinner_row_nothing_selected,
                 // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
                 this.getActivity()));
+        //((TextView) language_spinner.getAdapter().getItem(1)).setTextColor(Color.CYAN);
 
     }
 

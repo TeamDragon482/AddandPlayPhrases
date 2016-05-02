@@ -5,6 +5,7 @@ package dragon.tamu.playphrase;
  */
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +93,16 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
         }
 
         // Could re-use the convertView if possible, use setTag...
-        return adapter.getDropDownView(position - EXTRA, null, parent);
+        //------------------------------------------------------------------------EDITED BY MARC DEBOLT
+        View view = adapter.getDropDownView(position - EXTRA, null, parent);
+        if (position == 1) {
+            view.setBackgroundColor(Color.parseColor("#99cc99")); //#99cc99 is a lighter shade of green
+        }
+        if ((adapter.getItem(position-1).toString()).equalsIgnoreCase("Clear Selection")) {
+            view.setBackgroundColor(Color.parseColor("#ff4c4c")); //#ff4c4c is a lighter shade of red
+        }
+        return view;
+        //------------------------------------------------------------------------EDITED BY MARC DEBOLT
     }
 
     /**
