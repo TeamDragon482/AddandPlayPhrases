@@ -3,7 +3,7 @@
     android:id="@+id/recycler_inner_item"
     android:layout_width="match_parent"
     android:layout_height="?listPreferredItemHeight"
-    android:background="#00695c"
+    android:background="@color/colorGroupItem"
     android:clickable="true"
     android:focusable="true"
     >

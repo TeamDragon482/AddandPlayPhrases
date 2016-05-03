@@ -1,15 +1,15 @@
 <resources>
     <string name="delete_language">Delete</string>
     <string name="cancel_delete_language">Cancel</string>
-    <string name="app_name">PlayPhrase</string>
+    <string name="app_name">PhraseMate</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="drawer_close_title">Pick Phrases</string>
+    <string name="drawer_close_title">PhraseMate</string>
     <string name="drawer_open_title">Select Languages</string>
     <string name="play_button">Play</string>
     <string name="drawer_title">Playback Languages</string>
     <string name="search_bar_title">Search Phrases</string>
-    <string name="searchable_label">PlayPhrase</string>
+    <string name="searchable_label">PhraseMate</string>
     <string name="searchable_hint">Search phrases</string>
     <string name="edit_title">Edit Menu</string>
     <string name="swipe_instr">Swipe right to delete...</string>

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#b53f51</color>
-    <color name="colorListItem">#b53f51</color>
-    <color name="colorNeutral">#7F8C8D</color>
+    <color name="colorPrimary">#003333</color>
+    <color name="colorPrimaryDark">#1C1C1C</color> <!-- Language pane title -->
+    <color name="colorBackground">#cccccc</color>
+    <color name="colorAccent">#cc0052</color>
+    <color name="colorGroupItem">#006666</color>
+    <color name="colorListItem">#81DAF5</color>
+    <color name="colorNeutral">#cccccc</color> <!-- recording window background -->
+
 </resources>

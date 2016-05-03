@@ -56,7 +56,7 @@ public class EditActivity extends AppCompatActivity implements OnStartDragListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        setActionBarTitle("Edit Phrases");
+        setActionBarTitle("Edit Mode");
 
         listView = (RecyclerView) findViewById(R.id.edit_list_view);
         listView.setLayoutManager(new LinearLayoutManager(this));

@@ -156,7 +156,7 @@ public class RecordingFragment extends Fragment {
         //Inflate the layout for this fragment
         View recordingFragmentView = inflater.inflate(R.layout.recording_fragment, container, false);
 
-        ((EditActivity) getActivity()).setActionBarTitle("Record A Phrase");
+        ((EditActivity) getActivity()).setActionBarTitle("Record a Phrase");
 
         //This bit of code is for a fancy expandable animation.
         recordingFragmentView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
